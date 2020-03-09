@@ -68,8 +68,6 @@
 
 {% block content %}
 
-{{ data.filters | dump }}
-
 <h1 class="govuk-heading-xl">{{ index }}</h1>
 
 <div class="govuk-grid-row" id="show">
@@ -79,8 +77,10 @@
   {% for filter in filters %}
     {% set filterCheckboxes  %}
       {% for option in filter.options %}
-        {% if option.value !== null %}
+        {% if option.value %}
           {% include "all-data/partials/filters/checkboxes.njk" %}
+        {% elif option.list %}
+          {% include "all-data/partials/filters/list-checkboxes.njk" %}
         {% endif %}
       {% endfor %}
     {% endset -%}

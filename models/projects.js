@@ -5,26 +5,56 @@ const Milestone = require('./milestones');
 const modelDefinition = {
   impact: {
     type: ENUM(0,1,2,3),
+    values: [
+      { value: 0, title: 'Very high impact' }, 
+      { value: 1, title: 'High impact' },
+      { value: 2, title: 'Medium impact' },
+      { value: 3, title: 'Low impact' }
+    ],
     allowNull: true,
-    displayName: 'Impact'
+    displayName: 'Impact',
   },
   hmg_confidence: {
     type: ENUM(0,1,2,3),
+    values: [
+      { value: 0, title: 'Very low confidence' }, 
+      { value: 1, title: 'Low confidence' },
+      { value: 2, title: 'Medium confidence' },
+      { value: 3, title: 'High confidence' }
+    ],
     allowNull: true,
     displayName: 'HMG Confidence'
   },
   citizen_readiness: {
     type: ENUM(0,1,2,3),
+    values: [
+      { value: 0, title: 'Very low confidence' }, 
+      { value: 1, title: 'Low confidence' },
+      { value: 2, title: 'Medium confidence' },
+      { value: 3, title: 'High confidence' }
+    ],    
     allowNull: true,
     displayName: 'Citizen Readiness'
   },
   business_readiness: {
     type: ENUM(0,1,2,3),
+    values: [
+      { value: 0, title: 'Very low confidence' }, 
+      { value: 1, title: 'Low confidence' },
+      { value: 2, title: 'Medium confidence' },
+      { value: 3, title: 'High confidence' }
+    ],    
     allowNull: true,
     displayName: 'Business Readiness'
   },
   eu_state_confidence: {
     type: ENUM(0,1,2,3),
+    values: [
+      { value: 0, title: 'Very low confidence' }, 
+      { value: 1, title: 'Low confidence' },
+      { value: 2, title: 'Medium confidence' },
+      { value: 3, title: 'High confidence' }
+    ],      
     allowNull: true,
     displayName: 'EU State Readiness'
   },

@@ -36,10 +36,10 @@ const getFiltersWithCounts = async (attribute, search) => {
 
 const applyDefaultOptions = (attribute, options) => {
   if (attribute.values) {
-    return attribute.values.map(value => {
-      const found = options.find(r => r.value === value);
+    return attribute.values.map(list => {
+      const found = options.find(r => r.value === list);
       return {
-        value,
+        list,
         count: found ? found.count : 0
       }
     });
