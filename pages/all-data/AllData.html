@@ -166,7 +166,29 @@
   {% endfor %}
 
   <div>
+
+    {% for filter in filters %}
+
+    {% set filterSummary  %}
+      {% for option in filter.options %}
+          {% include "all-data/partials/filters/filter-list.njk" %}
+      {% endfor %}
+    {% endset -%}
+
+      {% if filter.name in filterNames %}
+            {% set summary = (summary.push ({
+            key: {
+              html: "<span class='filter-name'>" + filter.name + "</span>"
+            },
+            value: {
+              html: filterSummary
+            }
+          }), summary)
+        %}
+      {% endif %}
+    {% endfor %}
   
+  {#
   {% for key, items in data.filters.projects %}
         {% set filterDefinition = getFilter(key, filters) %}
         {% set filterSummary %}
@@ -188,6 +210,7 @@
           }), summary)
         %}
   {% endfor %}
+  #}
 
   {% if (data.filters.projects) or (data.filters.milestones.due_date) %}
       {% include "all-data/partials/filters/filter-summary.njk" %}
@@ -206,15 +229,3 @@
 </div>
 
 {% endblock %}
-
-{#
-
-<form action="{{ url }}" method="post">
-  <label for="department">Project Name:</label>
-  <input type="text" id="department" name="filters[department][]" value="{{ data.filters.department }}"><br><br>
-  <input type="text" id="department" name="filters[department][]" value="{{ data.filters.department }}"><br><br>
-  <input type="submit" value="Submit">
-</form>
-
-#}
-
