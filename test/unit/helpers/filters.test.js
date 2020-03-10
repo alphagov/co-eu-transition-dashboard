@@ -1,8 +1,8 @@
 const filters = require('helpers/filters');
-const Projects = require('models/projects');
+const Projects = require('models/project');
 const { expect, sinon } = require('test/unit/util/chai');
 const sequelize = require('sequelize');
-const Milestones = require('models/milestones');
+const Milestones = require('models/milestone');
 
 describe('helpers/filters', () => {
   describe('#getFiltersWithCounts', () => {

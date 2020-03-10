@@ -3,8 +3,8 @@ const { paths } = require('config');
 const jwt = require('services/jwt');
 const sequelize = require('sequelize');
 const proxyquire = require('proxyquire');
-const Projects = require('models/projects');
-const Milestone = require('models/milestones');
+const Projects = require('models/project');
+const Milestone = require('models/milestone');
 const moment = require('moment');
 
 let page = {};

@@ -1,5 +1,5 @@
-const Projects = require('models/projects');
-const Milestones = require('models/milestones');
+const Projects = require('models/project');
+const Milestones = require('models/milestone');
 const sequelize = require('sequelize');
 
 const getFiltersWithCounts = async (attribute, search) => {

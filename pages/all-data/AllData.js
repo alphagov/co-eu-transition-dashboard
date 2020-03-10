@@ -1,8 +1,8 @@
 const Page = require('core/pages/page');
 const { paths } = require('config');
 const sequelize = require('sequelize');
-const Projects = require('models/projects');
-const Milestones = require('models/milestones');
+const Projects = require('models/project');
+const Milestones = require('models/milestone');
 const { filters } = require('helpers');
 const moment = require('moment');
 

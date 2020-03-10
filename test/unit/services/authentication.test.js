@@ -4,7 +4,7 @@ const proxyquire = require('proxyquire');
 const config = require('config');
 const logger = require('services/logger');
 const bcrypt = require('bcrypt');
-const User = require('models/users');
+const User = require('models/user');
 
 let passportLocalStrategyStub = {};
 let passportJWTStrategyStub = {};

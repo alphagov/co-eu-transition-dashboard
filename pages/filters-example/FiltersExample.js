@@ -1,8 +1,8 @@
 const Page = require('core/pages/page');
 const { paths } = require('config');
 const sequelize = require('sequelize');
-const Projects = require('models/projects');
-const Milestone = require('models/milestones');
+const Projects = require('models/project');
+const Milestone = require('models/milestone');
 const { filters } = require('helpers');
 
 class FiltersExample extends Page {

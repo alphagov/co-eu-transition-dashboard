@@ -1,9 +1,9 @@
 const { expect } = require('test/unit/util/chai');
-const Milestone = require('models/milestones');
-const Projects = require('models/projects');
+const Milestone = require('models/milestone');
+const Projects = require('models/project');
 const { STRING, ENUM } = require('sequelize');
 
-describe('models/projects', () => {
+describe('models/project', () => {
   it('called Projects.init with the correct parameters', () => {
     expect(Projects.init).to.have.been.calledWith({
       project_name: {

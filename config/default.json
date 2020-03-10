@@ -10,7 +10,7 @@
       "host": "127.0.0.1",
       "user": "root",
       "password": "password",
-      "database": "dashboard",
+      "database": "co_transition_dashboard",
       "port": 3306
     }
   },
