@@ -13,7 +13,7 @@ class ProjectFieldEntry extends Model {
   get fields() {
     const projectField = this.get('projectField');
     return {
-      id: `projectFieldEntry->'${projectField.name}'`,
+      id: `projectFieldEntry->${projectField.id}`,
       name: projectField.name,
       value: this.get('value')
     };

@@ -1,7 +1,5 @@
-const { Model, STRING, ENUM, DATE, INTEGER } = require('sequelize');
+const { Model, STRING, INTEGER } = require('sequelize');
 const sequelize = require('services/sequelize');
-const Department = require('models/department');
-const User = require('models/user');
 
 class DepartmentUser extends Model {}
 DepartmentUser.init({
