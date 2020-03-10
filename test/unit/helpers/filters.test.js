@@ -55,16 +55,18 @@ describe('helpers/filters', () => {
     it('applies default values if defined', () => {
       const attribute = {
         fieldName: 'field_name',
-        values: ['value1', 'value2']
+        values: [{ value: 0, title: 'Description' }, { value: 1, title: 'Description 1' }]
       };
       const options = [{
-        value: 'value1',
-        count: 2
+        list: { value: 0, title: 'Description' },
+        count: 0
       }];
 
       const optionsWithDefaults = filters.applyDefaultOptions(attribute, options);
 
-      expect(optionsWithDefaults).to.eql([ { value: 'value1', count: 2 }, { value: 'value2', count: 0 } ]);
+      expect(optionsWithDefaults).to.eql([ 
+        { list: { value: 0, title: 'Description' }, count: 0 }, 
+        { list: { value: 1, title: 'Description 1' }, count: 0 } ]);
     });
 
     it('does not apply default values if not defined', () => {
