@@ -1,8 +1,9 @@
 const User = require('models/user');
-const Department = require('models/department');
-const Project = require('models/project');
-const Milestone = require('models/milestone');
-const ProjectFieldEntry = require('models/projectFieldEntry')
+// const Department = require('models/department');
+// const Project = require('models/project');
+// const Milestone = require('models/milestone');
+// const ProjectFieldEntry = require('models/projectFieldEntry');
+const sequelize = require('sequelize');
 
 describe.only('models/user', () => {
   it('called Projects.init with the correct parameters', async () => {
@@ -40,11 +41,13 @@ describe.only('models/user', () => {
       // include: {all: true, nested: true}
     });
 
-    const projects = await user.getProjects();
+    const projects = await user.getProjects({
+
+    });
 
     projects.forEach(project => {
       console.log(project.fields)
-      project.milestones.forEach(milestone => console.log(milestone.fields));
+      // project.milestones.forEach(milestone => console.log(milestone.fields));
     });
 
     // console.log(projects);

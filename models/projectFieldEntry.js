@@ -13,17 +13,23 @@ class ProjectFieldEntry extends Model {
   get fields() {
     const projectField = this.get('projectField');
     return {
-      id: `projectFieldEntry->${projectField.id}`,
+      id: JSON.stringify({
+        path: 'projects->ProjectFieldEntryFilter',
+        id: this.get('id')
+      }),
       name: projectField.name,
-      value: this.get('value')
+      value: modelUtils.parseFieldEntryValue(this.get('value'), projectField)
     };
   }
 }
 
 ProjectFieldEntry.init({
-  project_field_id: {
+  id: {
     type: INTEGER,
     primaryKey: true
+  },
+  project_field_id: {
+    type: INTEGER
   },
   project_uid: {
     type: STRING(45),
@@ -38,5 +44,9 @@ ProjectFieldEntry.init({
 }, { sequelize, modelName: 'projectFieldEntry', tableName: 'project_field_entry', createdAt: 'created_at', updatedAt: 'updated_at' });
 
 ProjectFieldEntry.belongsTo(ProjectField, { foreignKey: 'project_field_id' });
+ProjectField.hasMany(ProjectFieldEntry, { foreignKey: 'project_field_id' });
+// ProjectFieldEntry.hasMany(ProjectFieldEntry, { as: 'project_filter_field', foreignKey: 'id' });
 
 module.exports = ProjectFieldEntry;
+// module.exports.ProjectFieldEntry = ProjectFieldEntry;
+// module.exports.ProjectField = ProjectField;

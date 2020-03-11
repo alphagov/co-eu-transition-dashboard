@@ -53,7 +53,7 @@
     }
   })
 }}
-            
+
  {{ summary.push ({
     key: {
       html: "<span class='date-name'>Date</span>"
@@ -166,8 +166,8 @@
   {% endfor %}
 
   <div>
-  
-  {% for key, items in data.filters.projects %}
+
+  {% for key, items in data.filters %}
         {% set filterDefinition = getFilter(key, filters) %}
         {% set filterSummary %}
           {% for item in items %}
@@ -189,7 +189,7 @@
         %}
   {% endfor %}
 
-  {% if (data.filters.projects) or (data.filters.milestones.due_date) %}
+  {% if (data.filters) %}
       {% include "all-data/partials/filters/filter-summary.njk" %}
   {% endif %}
 

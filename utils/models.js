@@ -24,8 +24,8 @@ const parseFieldEntryValue = (value, fieldDefinition) => {
         value = parseFloat(value);
         break;
     }
-    return value;
   }
+  return value;
 };
 
 module.exports = {

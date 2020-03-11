@@ -11,5 +11,6 @@ Department.init({
 }, { sequelize, modelName: 'department', tableName: 'department', timestamps: false });
 
 Department.hasMany(Project, { foreignKey: 'department_name' });
+Project.belongsTo(Department, { foreignKey: 'department_name' });
 
 module.exports = Department;

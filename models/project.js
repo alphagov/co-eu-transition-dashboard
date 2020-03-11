@@ -8,9 +8,11 @@ class Project extends Model {
   get fields() {
     const fields = modelUtils.transformForView(this);
 
-    this.get('projectFieldEntries').forEach(field => {
-      fields.push(field.fields);
-    });
+    if(this.get('projectFieldEntries')){
+      this.get('projectFieldEntries').forEach(field => {
+        fields.push(field.fields);
+      });
+    }
 
     return fields;
   }
@@ -21,24 +23,29 @@ Project.init({
     type: STRING(45),
     primaryKey: true,
     displayName: 'ID',
+    searchable: true
   },
   department_name: {
     type: STRING(10),
     displayName: 'Department',
     allowNull: false,
-    showCount: true
+    showCount: true,
+    searchable: true
   },
   issue: {
     type: STRING(1024),
     displayName: 'Issue',
+    searchable: true
   },
   impact: {
     type: INTEGER,
     displayName: 'Impact',
+    searchable: true
   },
   is_completed: {
     type: BOOLEAN,
-    displayName: 'Status'
+    displayName: 'Status',
+    searchable: true
   },
   sro: {
     type: STRING(256),
@@ -52,5 +59,7 @@ Project.init({
 
 Project.hasMany(Milestone, { foreignKey: 'project_uid' });
 Project.hasMany(ProjectFieldEntry, { foreignKey: 'project_uid' });
+Project.hasMany(ProjectFieldEntry, { foreignKey: 'project_uid', as: 'ProjectFieldEntryFilter' });
+ProjectFieldEntry.belongsTo(Project, { foreignKey: 'project_uid' });
 
 module.exports = Project;

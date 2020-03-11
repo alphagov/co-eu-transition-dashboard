@@ -2,25 +2,25 @@
   rows: [
     [
       {
-        text: data.project_name
+        text: data.uid
       },
       {
-        text: data.department
+        text: data.department_name
       },
       {
         html: "<span class=" + cellBlock + data.impact + ">" + data.impact + "</span>"
       },
       {
-        html: "<span class=" + cellBlock + data.hmg_confidence + ">" + data.hmg_confidence + "</span>"
+        html: "<span class=" + cellBlock + data.hmg_confidence + ">" + data['HMG Confidence'] + "</span>"
       },
       {
-        html: "<span class=" + cellBlock + data.citizen_readiness + ">" + data.citizen_readiness + "</span>"
+        html: "<span class=" + cellBlock + data.citizen_readiness + ">" + data['Citizen Readiness'] + "</span>"
       },
       {
-        html: "<span class=" + cellBlock + data.business_readiness + ">" + data.business_readiness + "</span>"
+        html: "<span class=" + cellBlock + data.business_readiness + ">" + data['Business Readiness'] + "</span>"
       },
-      { 
-        html: "<span class=" + cellBlock + data.eu_state_confidence + ">" + data.eu_state_confidence + "</span>"
+      {
+        html: "<span class=" + cellBlock + data.eu_state_confidence + ">" + data['EU State Readiness'] + "</span>"
       }
     ]
   ]

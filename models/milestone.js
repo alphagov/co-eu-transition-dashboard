@@ -1,6 +1,7 @@
 const { STRING, DATE, Model } = require('sequelize');
 const sequelize = require('services/sequelize');
 const modelUtils = require('utils/models');
+const MilestoneFieldEntry = require('./milestoneFieldEntry');
 
 class Milestone extends Model {
   get fields() {
@@ -28,5 +29,7 @@ Milestone.init({
     displayName: 'Date'
   }
 }, { sequelize, modelName: 'milestone', tableName: 'milestone', createdAt: 'created_at', updatedAt: 'updated_at' });
+
+Milestone.hasMany(MilestoneFieldEntry, { foreignKey: 'milestone_uid' });
 
 module.exports = Milestone;
