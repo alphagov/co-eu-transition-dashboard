@@ -22,7 +22,7 @@ Project.init({
   uid: {
     type: STRING(45),
     primaryKey: true,
-    displayName: 'ID',
+    displayName: 'Project Name',
     searchable: true
   },
   department_name: {
@@ -33,9 +33,7 @@ Project.init({
     searchable: true
   },
   issue: {
-    type: STRING(1024),
-    displayName: 'Issue',
-    searchable: true
+    type: STRING(1024)
   },
   impact: {
     type: INTEGER,
@@ -44,12 +42,10 @@ Project.init({
   },
   is_completed: {
     type: BOOLEAN,
-    displayName: 'Status',
-    searchable: true
+    displayName: 'Status'
   },
   sro: {
-    type: STRING(256),
-    displayName: 'SRO'
+    type: STRING(256)
   },
   description: {
     type: TEXT,

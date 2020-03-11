@@ -5,7 +5,7 @@ const User = require('models/user');
 // const ProjectFieldEntry = require('models/projectFieldEntry');
 const sequelize = require('sequelize');
 
-describe.only('models/user', () => {
+describe('models/user', () => {
   it('called Projects.init with the correct parameters', async () => {
 
     // const user = await Project.findAll({

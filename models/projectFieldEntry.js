@@ -45,8 +45,5 @@ ProjectFieldEntry.init({
 
 ProjectFieldEntry.belongsTo(ProjectField, { foreignKey: 'project_field_id' });
 ProjectField.hasMany(ProjectFieldEntry, { foreignKey: 'project_field_id' });
-// ProjectFieldEntry.hasMany(ProjectFieldEntry, { as: 'project_filter_field', foreignKey: 'id' });
 
 module.exports = ProjectFieldEntry;
-// module.exports.ProjectFieldEntry = ProjectFieldEntry;
-// module.exports.ProjectField = ProjectField;

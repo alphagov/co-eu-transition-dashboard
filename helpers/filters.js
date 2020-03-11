@@ -13,15 +13,15 @@ const getFiltersWithCounts = async (attribute, search, user) => {
   const attributes = [];
   let group;
 
-  if(attribute.showCount) {
+  // if(attribute.showCount) {
     attributes.push([sequelize.literal(`project.${attribute.fieldName}`), 'value']);
     attributes.push([sequelize.literal(`COUNT(DISTINCT project.uid)`), 'count']);
 
     group = [];
     group.push(`project.${attribute.fieldName}`);
-  } else {
-    attributes.push([sequelize.literal(`DISTINCT project.${attribute.fieldName}`), 'value']);
-  }
+  // } else {
+  //   attributes.push([sequelize.literal(`DISTINCT project.${attribute.fieldName}`), 'value']);
+  // }
 
   return await Project.findAll({
     attributes: attributes,
@@ -51,7 +51,8 @@ const getFiltersWithCounts = async (attribute, search, user) => {
     ],
     group,
     raw: true,
-    nest: true
+    nest: true,
+    includeIgnoreAttributes: false
   });
 };
 
@@ -138,7 +139,9 @@ const getFilters = async (search = {}, user) => {
   });
 
   filters.forEach(filter => {
-    filter.options.sort(option => option.value)
+    filter.options = filter.options.sort((a,b) => {
+      return a.value > b.value;
+    });
   });
 
   return filters;

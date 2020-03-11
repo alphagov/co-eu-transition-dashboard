@@ -3,6 +3,8 @@ const { paths } = require('config');
 const sequelize = require('sequelize');
 const { filters } = require('helpers');
 const moment = require('moment');
+const Project = require('models/project');
+const Milestone = require('models/milestone');
 
 class AllData extends Page {
   get url() {
@@ -18,7 +20,9 @@ class AllData extends Page {
   }
 
   get search() {
-    return Object.entries(this.data.filters || {}).reduce((filters, [attirbute, options]) => {
+    const groupedFilters = { project: {}, milestone: {}, projectField: [], milestoneField: {} };
+
+    const filters = Object.entries(this.data.filters || {}).reduce((filters, [attirbute, options]) => {
       if (attirbute.includes('date')) {
         const dates = options.map(date => moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD'));
         filters[attirbute] = { [sequelize.Op.between]: dates };
@@ -27,6 +31,30 @@ class AllData extends Page {
       }
       return filters;
     }, {});
+
+    for (const searchKey of Object.keys(filters)) {
+      const searchItem = filters[searchKey];
+
+      if(Object.keys(Project.rawAttributes).includes(searchKey)) {
+        groupedFilters.project[searchKey] = searchItem;
+      } else if(Object.keys(Milestone.rawAttributes).includes(searchKey)) {
+        groupedFilters.milestone[searchKey] = searchItem;
+      } else if(searchKey.includes('ProjectFieldEntryFilter')) {
+        const filter = JSON.parse(searchKey);
+        const options = searchItem;
+
+        const likeString = [];
+        for(const option of options[sequelize.Op.or]) {
+          likeString.push(`\`${filter.path}\`.\`value\` LIKE "%${option}%"`)
+        }
+
+        const string = `\`${filter.path}\`.\`project_field_id\`=${filter.id} AND ${likeString.join(' OR ')}`;
+
+        groupedFilters.projectField.push(sequelize.literal(string));
+      }
+    }
+
+    return groupedFilters;
   }
 
   async projects() {
