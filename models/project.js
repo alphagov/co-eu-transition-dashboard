@@ -40,17 +40,17 @@ Project.init({
     displayName: 'Impact',
     searchable: true
   },
-  is_completed: {
-    type: BOOLEAN,
-    displayName: 'Status'
-  },
+  // is_completed: {
+  //   type: BOOLEAN,
+  //   displayName: 'Status'
+  // },
   sro: {
     type: STRING(256)
   },
-  description: {
-    type: TEXT,
-    displayName: 'Description'
-  }
+  // description: {
+  //   type: TEXT,
+  //   displayName: 'Description'
+  // }
 }, { sequelize, modelName: 'project', tableName: 'project', createdAt: 'created_at', updatedAt: 'updated_at' });
 
 Project.hasMany(Milestone, { foreignKey: 'project_uid' });

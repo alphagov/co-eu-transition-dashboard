@@ -1,27 +1,3 @@
 {{ govukTable({
-  rows: [
-    [
-      {
-        text: data.uid
-      },
-      {
-        text: data.department_name
-      },
-      {
-        html: "<span class=" + cellBlock + data.impact + ">" + data.impact + "</span>"
-      },
-      {
-        html: "<span class=" + cellBlock + data.hmg_confidence + ">" + data['HMG Confidence'] + "</span>"
-      },
-      {
-        html: "<span class=" + cellBlock + data.citizen_readiness + ">" + data['Citizen Readiness'] + "</span>"
-      },
-      {
-        html: "<span class=" + cellBlock + data.business_readiness + ">" + data['Business Readiness'] + "</span>"
-      },
-      {
-        html: "<span class=" + cellBlock + data.eu_state_confidence + ">" + data['EU State Readiness'] + "</span>"
-      }
-    ]
-  ]
+  rows: projectFields
 }) }}

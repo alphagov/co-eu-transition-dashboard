@@ -22,10 +22,6 @@
 {% include "all-data/partials/filters/date-list.njk" %}
 {% endset %}
 
-{% set tableHeaderHtml %}
-{% include "all-data/partials/data-table/table-header.njk" %}
-{% endset -%}
-
 {% set contentHtml %}
 {% include "all-data/partials/data-table/content.njk" %}
 {% endset -%}
@@ -35,7 +31,24 @@
 {% set sections = [] %}
 {% set summary = [] %}
 {% set filterNames = [] %}
+{% set projectKey = [] %}
+{% set projectValue = [] %}
+{% set projectFields = [] %}
+{% set milestoneKey = [] %}
+{% set milestoneValue = [] %}
+{% set milestoneFields = [] %}
 {% set filters = filters() | await %}
+
+  {% for project in projects() | await %}
+    {% set projectKey = [] %}
+    {% for field in project.fields %}
+      {{ projectKey.push({text: field.name }) }}
+    {% endfor %}
+  {% endfor %}
+
+{% set tableHeaderHtml %}
+    {% include "all-data/partials/data-table/table-header.njk" %}
+{% endset -%}
 
 {{ sections.push ({
     heading: {
@@ -67,8 +80,6 @@
 {% block pageTitle %}{{ index }}{% endblock %}
 
 {% block content %}
-
-{{ data.filters | dump }}
 
 <h1 class="govuk-heading-xl">{{ index }}</h1>
 
@@ -116,36 +127,33 @@
   {% include "all-data/partials/filters/hide-filter-btn.njk" %}
   </div>
 
- {% for data in projects() | await %}
+  {% for project in projects() | await %}
+
+  {% set milestoneKey = [] %}
+  {% for field in project.fields %}
+    {{ projectValue.push({html: "<span class=" + cellBlock + field.value + ">" + field.value + "</span>" }) }}   
+  {% endfor %}
+
+    {{ projectFields.push(projectValue) }}
+
+  {% for milestone in project.milestones %}
+    {% for field in milestone.fields %}
+      {{ milestoneKey.push({text: field.name }) }}
+
+    {% if (field.name == 'Date') and (field.value < currentDate) %}
+      {% set flag = 'red-date' %}
+    {% endif %}
+
+      {{ milestoneValue.push({html: "<span class=" + flag + ">" + field.value | date("D MMM YYYY") + "</span>"  if field.name == 'Date' else 
+      "<span>" + field.value + "</span>" }) }}
+    {% endfor %}
+  {% endfor %}
+
+    {{ milestoneFields.push(milestoneValue) }}
 
   {% set dataRowsHtml  %}
     {% include "all-data/partials/data-table/data-rows.njk" %}
   {% endset  %}
-
-  {% set content = [] %}
-
-  {% for milestone in data.milestones %}
-
-    {% if milestone.due_date < currentDate %}
-      {% set flag = 'red-date' %}
-    {% endif %}
-
-    {% set content = (content.push ([
-      {
-        text: milestone.milestone_uid
-      },
-      {
-        text: milestone.description
-      },
-      {
-        html: "<span class=" + flag + ">" + milestone.due_date | date("D MMM YYYY") + "</span>"
-      },
-      {
-        text: milestone.last_comment
-      }]), content)
-    %}
-
-  {% endfor %}
 
   {% set contentHtml  %}
     {% include "all-data/partials/data-table/content.njk" %}
@@ -161,7 +169,12 @@
         }), sections)
       %}
 
-   {% set count = loop.index %}
+    {% set projectFields = [] %}
+    {% set milestoneFields = [] %}
+    {% set projectValue = [] %}
+    {% set milestoneValue = [] %}
+
+    {% set count = loop.index %}
 
   {% endfor %}
 
