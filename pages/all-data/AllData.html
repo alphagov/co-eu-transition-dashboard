@@ -37,6 +37,8 @@
 {% set milestoneKey = [] %}
 {% set milestoneValue = [] %}
 {% set milestoneFields = [] %}
+{% set filterNames = [] %}
+{% set filterTitles = [] %}
 {% set filters = filters() | await %}
 
   {% for project in projects() | await %}
@@ -44,6 +46,13 @@
     {% for field in project.fields %}
       {{ projectKey.push({text: field.name }) }}
     {% endfor %}
+
+  {% for milestone in project.milestones %}
+    {% for field in milestone.fields %}
+      {{ field.name }}: {{ field.value }}<br>
+    {% endfor %}
+  {% endfor %}
+
   {% endfor %}
 
 {% set tableHeaderHtml %}
@@ -89,13 +98,17 @@
 
   {% for filter in filters %}
     {% set filterCheckboxes  %}
-      {% for option in filter.options %}
-        {% if option.value !== null %}
-          {% include "all-data/partials/filters/checkboxes.njk" %}
-        {% endif %}
-      {% endfor %}
+      {% if (filter.options | length != 1) %}
+        {% set filterTitles = (filterTitles.push (filter.name), filterTitles) %}
+        {% for option in filter.options %}
+          {% if option.value !== null %}
+            {% include "all-data/partials/filters/checkboxes.njk" %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
     {% endset -%}
 
+    {% if filter.name in filterTitles %}
        {% set items = (items.push ({
           heading: {
             text: filter.name
@@ -105,6 +118,7 @@
           }
         }), items)
       %}
+    {% endif %}
 
   {% endfor %}
 
@@ -129,34 +143,37 @@
 
   {% for project in projects() | await %}
 
-  {% set milestoneKey = [] %}
   {% for field in project.fields %}
-    {{ projectValue.push({html: "<span class=" + cellBlock + field.value + ">" + field.value + "</span>" }) }}   
+     {% set projectValue = (projectValue.push({html: "<span class=" + cellBlock + field.value + ">" + field.value + "</span>" }), projectValue) %}  
   {% endfor %}
 
-    {{ projectFields.push(projectValue) }}
+    {% set projectFields = (projectFields.push(projectValue), projectFields) %} 
 
   {% for milestone in project.milestones %}
+    {% set milestoneKey = [] %}
     {% for field in milestone.fields %}
-      {{ milestoneKey.push({text: field.name }) }}
+
+      {% set milestoneKey = (milestoneKey.push({text: field.name }), milestoneKey) %} 
 
     {% if (field.name == 'Due Date') and (field.value < currentDate) %}
       {% set flag = 'red-date' %}
     {% endif %}
 
-      {{ milestoneValue.push({html: "<span class=" + flag + ">" + field.value | date("D MMM YYYY") + "</span>"  if field.name == 'Due Date' else 
-      "<span>" + field.value + "</span>" }) }}
+      {% set milestoneValue = (milestoneValue.push({html: "<span class=" + flag + ">" + field.value | date("D MMM YYYY") + "</span>"  if field.name == 'Due Date' else 
+      "<span>" + field.value + "</span>" }), milestoneValue) %} 
+
     {% endfor %}
+
   {% endfor %}
 
-    {{ milestoneFields.push(milestoneValue) }}
+    {% set milestoneFields = (milestoneFields.push(milestoneValue), milestoneFields) %} 
+
+    {% set contentHtml  %}
+      {% include "all-data/partials/data-table/content.njk" %}
+    {% endset  %}
 
   {% set dataRowsHtml  %}
     {% include "all-data/partials/data-table/data-rows.njk" %}
-  {% endset  %}
-
-  {% set contentHtml  %}
-    {% include "all-data/partials/data-table/content.njk" %}
   {% endset  %}
 
       {% set sections = (sections.push ({
@@ -180,31 +197,29 @@
 
   <div>
 
-  {% for key, items in data.filters %}
-        {% set filterDefinition = getFilter(key, filters) %}
-        {% set filterSummary %}
-          {% for item in items %}
-            <div class="filter-nav">
-              <nav>
-            {% include "all-data/partials/filters/filter-list.njk" %}
-              </nav>
-            </div>
-          {% endfor %}
-        {% endset  %}
-        {% set summary = (summary.push ({
+{% for filter in filters %}
+
+    {% set filterSummary  %}
+      {% for option in filter.options %}
+          {% include "all-data/partials/filters/filter-list.njk" %}
+      {% endfor %}
+    {% endset -%}
+
+      {% if filter.name in filterNames %}
+            {% set summary = (summary.push ({
             key: {
-              html: "<span class='filter-name'>" + filterDefinition.name + "</span>"
+              html: "<span class='filter-name'>" + filter.name + "</span>"
             },
             value: {
               html: filterSummary
             }
           }), summary)
         %}
-  {% endfor %}
+      {% endif %}
+    {% endfor %}
+  
+    {% include "all-data/partials/filters/filter-summary.njk" %}
 
-  {% if (data.filters) %}
-      {% include "all-data/partials/filters/filter-summary.njk" %}
-  {% endif %}
 
   </div>
 
@@ -220,14 +235,4 @@
 
 {% endblock %}
 
-{#
-
-<form action="{{ url }}" method="post">
-  <label for="department">Project Name:</label>
-  <input type="text" id="department" name="filters[department][]" value="{{ data.filters.department }}"><br><br>
-  <input type="text" id="department" name="filters[department][]" value="{{ data.filters.department }}"><br><br>
-  <input type="submit" value="Submit">
-</form>
-
-#}
 

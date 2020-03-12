@@ -273,6 +273,7 @@ LOCK TABLES `milestone` WRITE;
 INSERT INTO `milestone` (`uid`, `project_uid`, `description`, `date`, `created_at`, `updated_at`)
 VALUES
   ('Milestone 1','Project 1','description','2020-01-22',NULL,NULL),
+  ('Milestone 12','Project 1','description','2020-01-22',NULL,NULL),
   ('Milestone 2','Project 2','description','2020-02-22',NULL,NULL),
   ('Milestone 3','Project 3','description','2020-03-22',NULL,NULL),
   ('Milestone 4','Project 4','description','2020-04-22',NULL,NULL),
