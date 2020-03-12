@@ -140,11 +140,11 @@
     {% for field in milestone.fields %}
       {{ milestoneKey.push({text: field.name }) }}
 
-    {% if (field.name == 'Date') and (field.value < currentDate) %}
+    {% if (field.name == 'Due Date') and (field.value < currentDate) %}
       {% set flag = 'red-date' %}
     {% endif %}
 
-      {{ milestoneValue.push({html: "<span class=" + flag + ">" + field.value | date("D MMM YYYY") + "</span>"  if field.name == 'Date' else 
+      {{ milestoneValue.push({html: "<span class=" + flag + ">" + field.value | date("D MMM YYYY") + "</span>"  if field.name == 'Due Date' else 
       "<span>" + field.value + "</span>" }) }}
     {% endfor %}
   {% endfor %}
