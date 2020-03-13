@@ -41,31 +41,6 @@
 {% set filterTitles = [] %}
 {% set filters = filters() | await %}
 
-  {% for project in projects() | await %}
-    {% set projectKey = [] %}
-    {% for field in project.fields %}
-      {{ projectKey.push({text: field.name }) }}
-    {% endfor %}
-
-  {% for milestone in project.milestones %}
-    {% for field in milestone.fields %}
-      {{ field.name }}: {{ field.value }}<br>
-    {% endfor %}
-  {% endfor %}
-
-  {% endfor %}
-
-{% set tableHeaderHtml %}
-    {% include "all-data/partials/data-table/table-header.njk" %}
-{% endset -%}
-
-{{ sections.push ({
-    heading: {
-      html: tableHeaderHtml
-    }
-  })
-}}
-
  {{ items.push ({
     heading: {
       text: "Date"
@@ -122,6 +97,7 @@
 
   {% endfor %}
 
+
   <form action="{{ url }}" method="post">
 
     {% include "all-data/partials/filters/all-filters.njk" %}
@@ -142,16 +118,40 @@
   </div>
 
   {% for project in projects() | await %}
+    {% set projectKey = [] %}
+    {% for field in project.fields %}
+      {% if (field.name == 'Department') and (field.name not in filterTitles) %}
+      {% else %}
+      {% set projectKey = (projectKey.push({text: field.name }), projectKey) %}  
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+{% set tableHeaderHtml %}
+    {% include "all-data/partials/data-table/table-header.njk" %}
+{% endset -%}
+
+{% set sections = (sections.push ({
+    heading: {
+      html: tableHeaderHtml
+    }
+  }), sections) %}  
+
+  {% for project in projects() | await %}
 
   {% for field in project.fields %}
-     {% set projectValue = (projectValue.push({html: "<span class=" + cellBlock + field.value + ">" + field.value + "</span>" }), projectValue) %}  
+
+      {% if (field.name == 'Department') and (field.name not in filterTitles) %}
+      {% else %}
+      {% set projectValue = (projectValue.push({html: "<span class=" + cellBlock + field.value + ">" + field.value + "</span>" }), projectValue) %}  
+      {% endif %}
+
   {% endfor %}
 
     {% set projectFields = (projectFields.push(projectValue), projectFields) %} 
 
   {% for milestone in project.milestones %}
     {% set milestoneValue = [] %}
-
     {% set milestoneKey = [] %}
     {% for field in milestone.fields %}
 
