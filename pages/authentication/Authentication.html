@@ -7,11 +7,7 @@
 {% block pageTitle %}Sign in{% endblock %}
 
 {% block header %}
-  {{ govukHeader({
-    homepageUrl: "https://www.gov.uk/",
-    serviceName: "Transition Taskforce Dashboard",
-    serviceUrl: "/"
-  }) }}
+  {% include "authentication/partials/header.njk" %}
 {% endblock %}
 
 {% block content %}
@@ -19,35 +15,41 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-  <h1 class="govuk-heading-l">Sign in to the Transition Taskforce Dashboard</h1>
+  <h1 class="govuk-heading-xl">Sign in to the Transition Taskforce Dashboard</h1>
 
-  {{ govukInput({
-  label: {
-    html: "<strong>Username</strong>"
-  },
-  classes: "govuk-input--width-20",
-  id: "username",
-  name: "username"
-  }) }}
+  <form action="{{ url }}" method="post">
 
-  {{ govukInput({
+    {{ govukInput({
     label: {
-    html: "<strong>Password</strong>"
+      html: "<strong>Username</strong>"
     },
     classes: "govuk-input--width-20",
-    id: "password",
-    name: "password"
-  }) }}
+    id: "username",
+    name: "username"
+    }) }}
 
-  {{ govukButton({
-  text: "Sign in"
-  }) }}
+    {{ govukInput({
+      label: {
+      html: "<strong>Password</strong>"
+      },
+      classes: "govuk-input--width-20",
+      id: "password",
+      name: "password"
+    }) }}
 
-{{ govukDetails({
-  summaryText: "Problems signing in?",
-  html: "If you have forgotten your username or password you will need to contact us in order to reset your details. <br> <br> 
-  Please get in touch with us at <a class='govuk-link' href='#'>email@cabinetoffice.gov.uk</a>"
-}) }}
+    {{ govukButton({
+    text: "Sign in",
+    type: "submit",
+    preventDoubleClick: true
+    }) }}
+
+  </form>
+
+  {{ govukDetails({
+    summaryText: "Problems signing in?",
+    html: "<p class='govuk-body'>If you have forgotten your username or password you will need to contact us in order to reset your details.</p> 
+    <p class='govuk-body'>Please get in touch with us at <a class='govuk-link' href='#'>email@cabinetoffice.gov.uk</a></p>"
+  }) }}
 
  </div>
 </div>

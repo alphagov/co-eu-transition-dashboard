@@ -1,0 +1,28 @@
+{% extends "template.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}Verified{% endblock %}
+
+{% block header %}
+  {% include "authentication/partials/header.njk" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+  <h1 class="govuk-heading-xl">Verified</h1>
+
+  <p class="govuk-body">From now on, you can use Google Authenticator to log in to the Transition Taskforce Dashboard.</p>
+
+  {{ govukButton({
+    text: "Finish",
+    href: ""
+  }) }}
+
+ </div>
+</div>
+
+{% endblock %}

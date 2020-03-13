@@ -1,0 +1,32 @@
+{% extends "template.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}Register 2FA{% endblock %}
+
+{% block header %}
+  {% include "authentication/partials/header.njk" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+  <h1 class="govuk-heading-xl">Register the Transition Taskforce Dashboard</h1>
+
+    <p class="govuk-body">Open the Google Authenticator app and scan this QR code.</p>
+
+    <img src="" alt="QR Code">
+
+    <p class="govuk-body">You will then see a six-digit verification code that you need to enter on the next page.</p>
+
+  {{ govukButton({
+    text: "Next",
+    href: ""
+  }) }}
+
+ </div>
+</div>
+
+{% endblock %}
