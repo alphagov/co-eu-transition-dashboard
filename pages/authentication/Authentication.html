@@ -1,13 +1,55 @@
 {% extends "template.njk" %}
 
-{% block pageTitle %}Login{% endblock %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% block pageTitle %}Sign in{% endblock %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "https://www.gov.uk/",
+    serviceName: "Transition Taskforce Dashboard",
+    serviceUrl: "/"
+  }) }}
+{% endblock %}
 
 {% block content %}
 
-<form action="{{ url }}/login" method="post">
-  <input type="text" name="email" placeholder="Email address">
-  <input type="password" name="password" placeholder="Email address">
-  <input type="submit" value="Submit">
-</form>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+  <h1 class="govuk-heading-l">Sign in to the Transition Taskforce Dashboard</h1>
+
+  {{ govukInput({
+  label: {
+    html: "<strong>Username</strong>"
+  },
+  classes: "govuk-input--width-20",
+  id: "username",
+  name: "username"
+  }) }}
+
+  {{ govukInput({
+    label: {
+    html: "<strong>Password</strong>"
+    },
+    classes: "govuk-input--width-20",
+    id: "password",
+    name: "password"
+  }) }}
+
+  {{ govukButton({
+  text: "Sign in"
+  }) }}
+
+{{ govukDetails({
+  summaryText: "Problems signing in?",
+  html: "If you have forgotten your username or password you will need to contact us in order to reset your details. <br> <br> 
+  Please get in touch with us at <a class='govuk-link' href='#'>email@cabinetoffice.gov.uk</a>"
+}) }}
+
+ </div>
+</div>
 
 {% endblock %}
