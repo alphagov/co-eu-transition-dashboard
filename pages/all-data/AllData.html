@@ -202,7 +202,9 @@
 
     {% set filterSummary  %}
       {% for option in filter.options %}
+        {% if option.value in data.filters[filter.id] | default([]) %}
           {% include "all-data/partials/filters/filter-list.njk" %}
+        {% endif %}
       {% endfor %}
     {% endset -%}
 
@@ -220,7 +222,6 @@
     {% endfor %}
   
     {% include "all-data/partials/filters/filter-summary.njk" %}
-
 
   </div>
 
