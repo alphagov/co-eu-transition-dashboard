@@ -150,6 +150,8 @@
     {% set projectFields = (projectFields.push(projectValue), projectFields) %} 
 
   {% for milestone in project.milestones %}
+    {% set milestoneValue = [] %}
+
     {% set milestoneKey = [] %}
     {% for field in milestone.fields %}
 
@@ -164,13 +166,13 @@
 
     {% endfor %}
 
-  {% endfor %}
-
     {% set milestoneFields = (milestoneFields.push(milestoneValue), milestoneFields) %} 
 
     {% set contentHtml  %}
       {% include "all-data/partials/data-table/content.njk" %}
     {% endset  %}
+
+  {% endfor %}
 
   {% set dataRowsHtml  %}
     {% include "all-data/partials/data-table/data-rows.njk" %}
@@ -189,7 +191,6 @@
     {% set projectFields = [] %}
     {% set milestoneFields = [] %}
     {% set projectValue = [] %}
-    {% set milestoneValue = [] %}
 
     {% set count = loop.index %}
 
