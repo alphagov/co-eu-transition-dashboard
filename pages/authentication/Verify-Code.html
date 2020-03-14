@@ -2,6 +2,7 @@
 
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block pageTitle %}Verify Code{% endblock %}
 
@@ -15,6 +16,10 @@
   <div class="govuk-grid-column-two-thirds">
 
   <h1 class="govuk-heading-xl">Verify Google Authenticator</h1>
+
+  {# To be shown only on 6-digit error #}
+  {% include "authentication/partials/digit-error.njk" %}
+  {# To be shown only on 6-digit error #}
 
   <p class="govuk-body">Enter a code from Google Authenticator</p>
 

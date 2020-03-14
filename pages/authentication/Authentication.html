@@ -3,6 +3,7 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block pageTitle %}Sign in{% endblock %}
 
@@ -16,6 +17,10 @@
   <div class="govuk-grid-column-two-thirds">
 
   <h1 class="govuk-heading-xl">Sign in to the Transition Taskforce Dashboard</h1>
+
+  {# To be shown only on login error #}
+  {% include "authentication/partials/login-error.njk" %}
+  {# To be shown only on login error #}
 
   <form action="{{ url }}/login" method="post">
 
