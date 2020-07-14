@@ -8,10 +8,10 @@ const config = require('config');
 const department = [{
   dataValues: {
     name: 'department',
-    projects: [ ['project1'], ['project2'] ],
+    projects: [['project1'], ['project2']],
     departmentUser: ['departmentUser']
   },
-  projects: [ ['project1'], ['project2'] ],
+  projects: [['project1'], ['project2']],
   totalMilestones: 5,
   totalMilestonesMissed: 3
 }]
@@ -65,15 +65,15 @@ describe('pages/missed-milestones/MissedMilestones', () => {
     const departments = [{
       id: 1,
       projects: [{
-        milestones: [{},{},{}]
-      },{
+        milestones: [{}, {}, {}]
+      }, {
         milestones: [{}]
       }]
-    },{
+    }, {
       id: 2,
       projects: [{
         milestones: [{}, {}, {}]
-      },{
+      }, {
         milestones: [{}, {}, {}]
       }]
     }];
@@ -124,19 +124,19 @@ describe('pages/missed-milestones/MissedMilestones', () => {
 
   describe('#projectFields', () => {
     it('should return an array of project id and title', () => {
-      expect(page.projectFields).to.eql([{ title:'Project UID', id: 'uid' }, { title:'Project Name', id: 'title' }, { title:'Impact', id: 'impact' }, { title:'HMG Confidence', id: 'hmgConfidence' }, { title:'Citizen Readiness', id: 'citizenReadiness' }, { title:'Business Readiness', id: 'businessReadiness' }, { title:'EU Member State Delivery Confidence', id: 'euStateConfidence' }]);
+      expect(page.projectFields).to.eql([{ title: 'Project UID', id: 'uid' }, { title: 'Project Name', id: 'title' }, { title: 'Impact', id: 'impact' }, { title: 'HMG Confidence', id: 'hmgConfidence' }, { title: 'Citizen Readiness', id: 'citizenReadiness' }, { title: 'Business Readiness', id: 'businessReadiness' }, { title: 'EU Member State Delivery Confidence', id: 'euStateConfidence' }]);
     });
   });
 
   describe('#milestoneFields', () => {
     it('should return an array of milestone id and title', () => {
-      expect(page.milestoneFields).to.eql([{ title:'Milestone UID', id: 'uid' }, { title:'Milestone Description', id: 'description' }, { title:'Due Date', id: 'date' }, { title:'Latest Comments', id: 'comment' }]);
+      expect(page.milestoneFields).to.eql([{ title: 'Milestone UID', id: 'uid' }, { title: 'Milestone Description', id: 'description' }, { title: 'Due Date', id: 'date' }, { title: 'Latest Comments', id: 'comments' }]);
     });
   });
 
   describe('#chartData', () => {
     it('should return chart data when passed in department', () => {
-      expect(page.chartData(department)).to.eql( { data: [3], labels: [undefined], meta: [ { totalMilestones: 5, totalMilestonesMissed: 3 }] });
+      expect(page.chartData(department)).to.eql({ data: [3], labels: [undefined], meta: [{ totalMilestones: 5, totalMilestonesMissed: 3 }] });
     });
   });
 });

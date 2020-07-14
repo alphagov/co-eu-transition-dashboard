@@ -20,7 +20,7 @@ class MissedMilestones extends Page {
       impact: [0, 1]
     });
 
-    for(const department of departments) {
+    for (const department of departments) {
       department.totalMilestones = await this.totalMilestones(department);
       department.totalMilestonesMissed = department.projects.reduce((total, project) => {
         return total + project.milestones.length;
@@ -60,11 +60,11 @@ class MissedMilestones extends Page {
   }
 
   get projectFields() {
-    return [{ title:'Project UID', id: 'uid' }, { title:'Project Name', id: 'title' }, { title:'Impact', id: 'impact' }, { title:'HMG Confidence', id: 'hmgConfidence' }, { title:'Citizen Readiness', id: 'citizenReadiness' }, { title:'Business Readiness', id: 'businessReadiness' }, { title:'EU Member State Delivery Confidence', id: 'euStateConfidence' }];
+    return [{ title: 'Project UID', id: 'uid' }, { title: 'Project Name', id: 'title' }, { title: 'Impact', id: 'impact' }, { title: 'HMG Confidence', id: 'hmgConfidence' }, { title: 'Citizen Readiness', id: 'citizenReadiness' }, { title: 'Business Readiness', id: 'businessReadiness' }, { title: 'EU Member State Delivery Confidence', id: 'euStateConfidence' }];
   }
 
   get milestoneFields() {
-    return [{ title:'Milestone UID', id: 'uid' }, { title:'Milestone Description', id: 'description' }, { title:'Due Date', id: 'date' }, { title:'Latest Comments', id: 'comment' }];
+    return [{ title: 'Milestone UID', id: 'uid' }, { title: 'Milestone Description', id: 'description' }, { title: 'Due Date', id: 'date' }, { title: 'Latest Comments', id: 'comments' }];
   }
 }
 
