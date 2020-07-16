@@ -9,7 +9,8 @@
     "tfa": {
       "name": "Transition Taskforce Dashboard"
     },
-    "googleAnalytics": {}
+    "googleAnalytics": {},
+    "tableau": {}
   },
   "bcrypt": {
     "saltRounds": 10
