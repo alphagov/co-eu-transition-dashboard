@@ -155,12 +155,11 @@ class Theme extends Page {
       entity.hasOwnProperty('aYThreshold') &&
       entity.hasOwnProperty('greenThreshold') &&
       entity.hasOwnProperty('value')) {
-      const yellowThreshold = parseInt(entity.aYThreshold) + ((entity.greenThreshold - entity.aYThreshold) / 2);
       if (parseInt(entity.value) >= parseInt(entity.greenThreshold)) {
         color = "green";
-      } else if (parseInt(entity.value) >= parseInt(yellowThreshold)) {
-        color = "yellow";
       } else if (parseInt(entity.value) >= parseInt(entity.aYThreshold)) {
+        color = "yellow";
+      } else if (parseInt(entity.value) > parseInt(entity.redThreshold)) {
         color = "amber";
       } else {
         color = "red";
