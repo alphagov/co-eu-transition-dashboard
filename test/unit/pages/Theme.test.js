@@ -57,4 +57,17 @@ describe('pages/theme/Theme', () => {
     sinon.assert.calledWith(authentication.protect, ['viewer']);
   });
 
+  describe('#pathToBind', () => {
+    it('returns correct url with params', () => {
+      expect(page.pathToBind).to.eql(`${paths.transitionReadinessThemeDetail}/:theme/:statement?/:selectedPublicId?`);
+    });
+  });
+
+  describe('#themeUrl', () => {
+    it('returns theme url', () => {
+      page.req.params = { theme: 'borders' };
+      expect(page.themeUrl).to.eql(`${paths.transitionReadinessThemeDetail}/borders`);
+    });
+  });
+
 });
