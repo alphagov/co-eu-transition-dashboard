@@ -25,6 +25,11 @@
 
 @media only screen and (max-width:768px) {
 
+    .govuk-header__link--service-name {
+        margin-left: 25px !important;
+        margin-top: 10px;
+    }
+
     .top-statements {
         height: auto;
     }
