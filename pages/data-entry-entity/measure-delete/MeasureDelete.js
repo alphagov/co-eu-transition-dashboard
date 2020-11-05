@@ -2,7 +2,6 @@
 const Page = require('core/pages/page');
 const config = require('config');
 const authentication = require('services/authentication');
-const { METHOD_NOT_ALLOWED } = require('http-status-codes');
 const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
 const EntityFieldEntry = require('models/entityFieldEntry');
@@ -38,14 +37,6 @@ class MeasureDelete extends Page {
       ...authentication.protect(['admin']),
       flash
     ];
-  }
-
-  async handler(req, res) {
-    if(!req.user.isAdmin) {
-      return res.status(METHOD_NOT_ALLOWED).send('You do not have permisson to access this resource.');
-    }
-   
-    return super.handler(req, res);
   }
 
   async postRequest(req, res) {
