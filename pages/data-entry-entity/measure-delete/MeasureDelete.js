@@ -111,8 +111,6 @@ class MeasureDelete extends Page {
 
     const measureEntitiesMapped = await this.mapMeasureFieldsToEntity(entities);
 
-    // In certain case when a measure is the only item in the group, we need to up allow users to update the
-    // overall value which is stored in the RAYG row.
     return measureEntitiesMapped.reduce((data, entity) => {
       if(entity.filter === 'RAYG') {
         data.raygEntities.push(entity)
