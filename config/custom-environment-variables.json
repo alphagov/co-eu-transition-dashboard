@@ -25,6 +25,7 @@
     "summaryNotificationEmail": "SUMMARY_NOTIFICATION_EMAIL",
     "updatedMeasures" : {
       "mailingList": "UPDATED_MEASURES_MAILING_LIST"
+    }
   },
   "ipWhiteList": {
     "__name": "USER_WHITELIST_IP_RANGE",
