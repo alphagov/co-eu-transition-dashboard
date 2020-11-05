@@ -1,8 +1,33 @@
+@media only screen and (max-width:840px) {
+    // Header
+    .js-enabled .govuk-header__menu-button {
+        display: none;
+    }
+
+    .js-enabled .govuk-header__navigation {
+        display: table-cell;
+    }
+
+    // Parent navigation
+    .navigation {
+        border-bottom: 1px solid #505a5f;
+        .govuk-header__navigation-item {
+            &:last-of-type {
+                float: left;
+                border-bottom: 0;
+            }
+            .timer {
+                margin-left: 0;
+            }
+        }  
+    }
+}
+
 @media only screen and (max-width:768px) {
 
     .top-statements {
         height: auto;
-    } 
+    }
 
     // Readiness Overview
     .readiness-overview {
