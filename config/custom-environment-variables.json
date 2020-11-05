@@ -22,7 +22,10 @@
   },
   "notify": {
     "apiKey": "NOTIFY_API_KEY",
-    "summaryNotificationEmail": "SUMMARY_NOTIFICATION_EMAIL"
+    "summaryNotificationEmail": "SUMMARY_NOTIFICATION_EMAIL",
+    "updatedMeasures" : {
+      "mailingList": "DAILY_UPDATED_ENTITIES_MAILING_LIST"
+    }
   },
   "ipWhiteList": {
     "__name": "USER_WHITELIST_IP_RANGE",

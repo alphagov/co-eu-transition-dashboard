@@ -36,7 +36,7 @@ const authenticateLogin = async (email, password, done) => {
     error.maximumLoginAttempts = true;
     return done(error);
   }
-
+  
   const passwordMatches = await bcrypt.compare(password, user.hashedPassphrase);
   if (!passwordMatches) {
     await user.increment("loginAttempts");
@@ -99,7 +99,7 @@ const protect = (roles = []) => {
 
     const data = jwt.restoreData(req, res) || {};
     const tableauSkip2FA = get(res, 'locals.tableauIpWhiteList', false);
-    const userSkip2FA = req.user.skip2FA && get(res, 'locals.ipWhiteList', false);
+    const userSkip2FA = req.user && req.user.skip2FA && get(res, 'locals.ipWhiteList', false);
 
     if(!data.tfa && !tableauSkip2FA && !userSkip2FA) {
       return res.redirect(config.paths.authentication.login);

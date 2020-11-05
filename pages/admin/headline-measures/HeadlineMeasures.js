@@ -100,7 +100,7 @@ class HeadlineMeasures extends Page {
           model: CategoryField,
           where: { isActive: true },
           required: true
-        } 
+        }
       }, {
         model: Entity,
         as: 'parents',
