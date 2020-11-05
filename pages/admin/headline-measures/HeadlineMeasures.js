@@ -123,7 +123,7 @@ class HeadlineMeasures extends Page {
     });
 
     const measuresAsItems = measures.map(measure => {
-      let measureName = measure.entityFieldEntries.find(entry => {
+      const measureName = measure.entityFieldEntries.find(entry => {
         return entry.categoryField.name === 'groupDescription';
       });
 

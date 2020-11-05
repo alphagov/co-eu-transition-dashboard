@@ -48,6 +48,7 @@ const sendMeasuresUpdatedTodayEmail = async({ emails, measures }) => {
   const notifyClient = new NotifyClient(notify.apiKey);
 
   for(const email of emails) {
+    const reference = uuid.v4();
     try {
       await notifyClient.sendEmail(
         notify.updatedMeasuresKey,
@@ -56,12 +57,12 @@ const sendMeasuresUpdatedTodayEmail = async({ emails, measures }) => {
           personalisation: {
             measures
           },
-          reference: `${uuid.v4()}`
+          reference
         }
       );
       logger.info(`Sent measures updated today email to ${email}`);
     } catch(error) {
-      logger.error(`Error sending measures updated today email to ${email}". ${error}`);
+      logger.error(`Error sending measures updated today email to ${email}, reference: ${reference},  Err: ${error}`);
     }
   }
 }

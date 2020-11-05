@@ -37,8 +37,8 @@ const notifyUpdatedMeasures = async() => {
   cache.clear();
   const measureEntities = await getMeasuresUpdatedToday();
   const emails = getEmails();
-  const formattedMsrs = formatMeasures(measureEntities);
-  await notifyServices.sendMeasuresUpdatedTodayEmail({ emails, measures: formattedMsrs });
+  const formattedMeasures = formatMeasures(measureEntities);
+  await notifyServices.sendMeasuresUpdatedTodayEmail({ emails, measures: formattedMeasures });
 }
 
 module.exports = {
