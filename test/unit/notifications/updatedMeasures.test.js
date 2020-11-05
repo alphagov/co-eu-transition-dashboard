@@ -49,7 +49,9 @@ describe('notifications/updatedMeasures', () => {
   let getCategoryStub ;
 
   before(() => {
-    notify.updatedMeasures.mailingList = mockMailingList;
+    notify['updatedMeasures'] =  {
+      mailingList: mockMailingList
+    }
     updatedMeasures = proxyquire('notifications/updatedMeasures', {
       'sequelize': sequelizeStub
     });
