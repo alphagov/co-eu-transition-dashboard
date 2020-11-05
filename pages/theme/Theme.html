@@ -3,6 +3,7 @@
 
 {% set data = data() | await %}
 {% set activeStatement = '' %}
+{% set activeColor = '' %}
 
 {% block pageTitle %}Theme{% endblock %}
 
@@ -21,7 +22,7 @@
   {% for topOutcome in data.topLevelOutcomeStatements %}
   <a href="{{ topOutcome.link }}" class="statement-link">
     <div class="statement {{ topOutcome.color }} {{ 'active-statement' if topOutcome.active }}">
-    {% if topOutcome.active %} {% set activeStatement = topOutcome.name %} {% endif %}
+    {% if topOutcome.active %} {% set activeStatement = topOutcome.name %} {% set activeColor = topOutcome.color %} {% endif %}
         <h2 class="govuk-heading-s">{{ topOutcome.name }}</h2>
         <p class="govuk-body govuk-!-font-size-16">{{ topOutcome.description }}</p>
     </div>
@@ -32,7 +33,7 @@
   <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'show-statement' if req.params.statement and not req.params.selectedPublicId }}" id="column-sub-statements">
     
     <a href="{{ themeUrl }}" class="govuk-back-link govuk-!-margin-top-0 {{ 'show-statement' if req.params.statement }}" style="display: none;">Back to outcome statements</a>
-    <h3 class="govuk-heading-m {{ 'show-statement' if req.params.statement }}" style="display: none;">{{ activeStatement }}</h3>
+    <h3 class="govuk-heading-m theme-{{ activeColor }} theme-name {{ 'show-statement' if req.params.statement }}" style="display: none;">{{ activeStatement }}</h3>
 
     {% if data.subOutcomeStatementsAndDatas | length > 0 %}
       <div class="readiness-accordion-wrapper" >
