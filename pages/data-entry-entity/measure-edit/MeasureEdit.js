@@ -241,6 +241,10 @@ class MeasureEdit extends Page {
     const isLatestDateInTheFuture =  moment(latestDate, 'DD/MM/YYYY').isAfter(moment());
     const displayRaygValueCheckbox =  !doesHaveFilter && isOnlyMeasureInGroup && isLatestDateInTheFuture
 
+    // If measure is part of a group, and the measure id is used as both metricId and groupId hide the delete button
+    // This item will be able to be deleted after the rest of the group items have been removed.
+    const preventDeleteForGroupMeasure = !isOnlyMeasureInGroup & this.req.params.metricId === this.req.params.groupId
+
     return {
       latest: measuresEntities[measuresEntities.length - 1],
       grouped: groupedMeasureEntities,
@@ -248,7 +252,8 @@ class MeasureEdit extends Page {
       raygEntity: raygEntities[0],
       displayOverallRaygDropdown,
       displayRaygValueCheckbox,
-      uniqMetricIds
+      uniqMetricIds,
+      preventDeleteForGroupMeasure
     }
   }
 

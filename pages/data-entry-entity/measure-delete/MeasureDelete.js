@@ -3,21 +3,15 @@ const Page = require('core/pages/page');
 const config = require('config');
 const authentication = require('services/authentication');
 const { METHOD_NOT_ALLOWED } = require('http-status-codes');
-const moment = require('moment');
 const Category = require('models/category');
 const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const flash = require('middleware/flash');
 const measures = require('helpers/measures')
-const { buildDateString } = require("helpers/utils");
 const sequelize = require("services/sequelize");
 const logger = require("services/logger");
 const uniq = require('lodash/uniq');
-const utils = require('helpers/utils');
-const cloneDeep = require('lodash/cloneDeep');
-const groupBy = require('lodash/groupBy');
-const { lte } = require('lodash');
 
 class MeasureDelete extends Page {
   get url() {
@@ -68,14 +62,20 @@ class MeasureDelete extends Page {
   }
 
   async deleteMeasure() {
-    return true;
     const transaction = await sequelize.transaction();
 
     const { measureEntities, uniqMetricIds, raygEntities } = await this.getMeasure();
 
     try {
-      for (const entity of entitiesForSelectedDate) {
+      for (const entity of measureEntities) {
         await Entity.delete(entity.id, { transaction });
+      }
+      
+      // if measure is the only item in the group, remove the RAYG row
+      if (uniqMetricIds.length === 1) {
+        for (const entity of raygEntities) {
+          await Entity.delete(entity.id, { transaction });
+        }
       }
 
       await transaction.commit();
@@ -85,7 +85,6 @@ class MeasureDelete extends Page {
       throw error;
     }
   }
-
   async mapMeasureFieldsToEntity(measureEntities) {
     return measureEntities.map((entity) => {
 

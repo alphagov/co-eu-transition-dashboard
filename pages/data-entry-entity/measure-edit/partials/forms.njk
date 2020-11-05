@@ -49,7 +49,7 @@
   items: items
 }) }}
 
-{% if isUserAdmin %}
+{% if isUserAdmin and not preventDeleteForGroupMeasure %}
   {{ govukButton({
     text: "Delete Measure",
     href: deleteMeasureUrl,
