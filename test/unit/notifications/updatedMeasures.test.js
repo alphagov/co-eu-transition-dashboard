@@ -49,13 +49,13 @@ describe('notifications/updatedMeasures', () => {
   let getCategoryStub ;
 
   before(() => {
+    notify.updatedMeasures.mailingList = mockMailingList;
     updatedMeasures = proxyquire('notifications/updatedMeasures', {
       'sequelize': sequelizeStub
     });
   });
 
   beforeEach(()=>{
-    notify.updatedMeasures.mailingList= mockMailingList;
     sinon.stub(measures, 'getMeasureEntities').returns(mockUpdatedMeasures);
     getCategoryStub = sinon.stub(measures, 'getCategory')
     sinon.stub(notifyServices, 'sendMeasuresUpdatedTodayEmail').returns();
@@ -67,8 +67,7 @@ describe('notifications/updatedMeasures', () => {
   afterEach(()=>{
     measures.getCategory.restore();
     measures.getMeasureEntities.restore();
-    // sequelize.fn().restore();
-    getCategoryStub.restore();
+    notifyServices.sendMeasuresUpdatedTodayEmail.restore();
   })
 
   describe('#notifyUpdatedMeasures', () => {
