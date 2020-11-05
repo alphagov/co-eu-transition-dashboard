@@ -3,7 +3,6 @@ const Page = require('core/pages/page');
 const config = require('config');
 const authentication = require('services/authentication');
 const { METHOD_NOT_ALLOWED } = require('http-status-codes');
-const Category = require('models/category');
 const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
 const EntityFieldEntry = require('models/entityFieldEntry');
@@ -85,6 +84,7 @@ class MeasureDelete extends Page {
       throw error;
     }
   }
+
   async mapMeasureFieldsToEntity(measureEntities) {
     return measureEntities.map((entity) => {
 
@@ -111,13 +111,6 @@ class MeasureDelete extends Page {
           model: CategoryField,
           where: { name: 'groupId' },
         }
-      },{
-        // get direct parent of measure i.e. outcome statement
-        model: Entity,
-        as: 'parents',
-        include: [{
-          model: Category
-        }]
       }]
     });
 
