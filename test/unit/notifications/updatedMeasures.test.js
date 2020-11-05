@@ -1,5 +1,4 @@
 const measures = require('helpers/measures');
-// const updatedMeasures = require('notifications/updatedMeasures');
 const { notify } = require('config');
 const { sinon } = require('test/unit/util/chai');
 const notifyServices =require('services/notify');
@@ -42,7 +41,7 @@ const mockUpdatedMeasures = [{
   groupBy: 'none'
 }]
 const mockMailingList = '1@email.com;2@email.com';
-const formattedMeasres = " * Borders  Project 4444444  Description of project 4 * Borders  Project 555555  Description of project 5";
+const measureEntities = ["Borders Project 4444444 Description of project 4", "Borders Project 555555 Description of project 5"];
 
 describe('notifications/updatedMeasures', () => {
   
@@ -79,7 +78,7 @@ describe('notifications/updatedMeasures', () => {
 
       sinon.assert.calledWith(notifyServices.sendMeasuresUpdatedTodayEmail, {
         emails: ['1@email.com', '2@email.com'],
-        measures: formattedMeasres
+        measures: measureEntities
       });
     })
   });

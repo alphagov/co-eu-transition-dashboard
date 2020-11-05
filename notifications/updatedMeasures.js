@@ -16,7 +16,9 @@ const getMeasuresUpdatedToday = async() => {
       [Op.gte]: sequelize.fn('CURDATE')
     } }
   });
-  return measureEntities;
+  const formattedMeasures = measureEntities.map((curVal)=>(
+    `${curVal.theme} ${curVal.name} ${curVal.description}`));
+  return formattedMeasures;
 }
 
 const getEmails = () => {
@@ -25,20 +27,12 @@ const getEmails = () => {
   return emails;
 }
 
-const formatMeasures = (measureEntities) => {
-  const formattedMeasures = measureEntities.reduce((accu, curVal)=>(
-    `${accu} * ${curVal.theme}  ${curVal.name}  ${curVal.description}`
-  ), '');
-  return formattedMeasures.toString();
-}
-
 
 const notifyUpdatedMeasures = async() => {
   cache.clear();
   const measureEntities = await getMeasuresUpdatedToday();
   const emails = getEmails();
-  const formattedMeasures = formatMeasures(measureEntities);
-  await notifyServices.sendMeasuresUpdatedTodayEmail({ emails, measures: formattedMeasures });
+  await notifyServices.sendMeasuresUpdatedTodayEmail({ emails, measures: measureEntities });
 }
 
 module.exports = {
