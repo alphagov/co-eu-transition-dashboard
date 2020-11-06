@@ -59,135 +59,24 @@
     config.paths.transitionReadinessThemeDetail
     ]
 %}
-
-{% set coundDownTimer %}
-<li class="govuk-header__navigation-item pull-right">
-    <p class="govuk-body-s govuk-!-font-weight-bold timer">Days to go:  <span id="countdown">{{ countDownTime }}</span></p>
-</li>
-{% endset %}
-
-{% if not (req.user.roles | includes(['static', 'devolved_administrations'])) %}
 <nav class="navigation">
-    <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
-    {% if req.user.roles | includes(['viewer', 'static', 'devolved_administrations']) %}
+    <ul id="navigation" class="govuk-header__navigation" aria-label="Parent navigation">
+    <li class="govuk-header__navigation-item pull-right">
+        <p class="govuk-body-s govuk-!-font-weight-bold timer">Days to go:  <span id="countdown"></span></p>
+    </li>
+    <li class="govuk-header__navigation-item toggle-mobile-menu" style="display:none;">
+        <a class="govuk-header__link nav" href="#">Menu</a>
+    </li>
+
+
+
+    {% if req.user.roles | includes(['viewer', 'static']) %}
     <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in transitionReadinessUrls }}">
         <a class="govuk-header__link nav" href="{{ config.paths.readinessOverview }}">Transition readiness</a>
     </li>
     {% endif %}
-    {% if req.user.roles | includes(['management']) %}
-    <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in managementInformationUrls }}">
-        <a class="govuk-header__link nav" href="{{ config.paths.allData }}">HMG delivery management information</a>
-    </li>
-    {% endif %}
-    {% if req.user.roles | includes(['uploader','admin']) %}
-    <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in addProjectMilestonesUrls or url in addMeasuresUrls }}">
-        <a class="govuk-header__link nav" href="{{ config.paths.dataEntry.bulkUploadProjectMilestone }}">
-        Add data
-        </a>
-    </li>
-    {% endif %}
-    {% if req.user.roles | includes(['admin']) %}
-    <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in adminUrls or url in addEntitiesUrls }}">
-        <a class="govuk-header__link nav" href="{{ config.paths.admin.projectFieldList }}">
-        Admin
-        </a>
-    </li>
-    {% endif %}
-    {{ coundDownTimer | safe }}
-    </ul>
-</nav>
-{% endif %}
-
-{% if url in managementInformationUrls %}
-<nav class="child-navigation">
-    <ul id="childNavigation" class="govuk-header__navigation" aria-label="Second Level Navigation">
-    {% if req.user.roles | includes(['management_overview']) %}
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.reportingOverview }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.reportingOverview }}">
-        Reporting overview
-        </a>
-    </li>
-    {% endif %}
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.allData }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.allData }}">
-        All data
-        </a>
-    </li>
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.missedMilestones }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.missedMilestones }}">
-        Missed milestones
-        </a>
-    </li>
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.upcomingMilestones }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.upcomingMilestones }}">
-        Upcoming milestones
-        </a>
-    </li>
-    </ul>
-</nav>
-{% endif %}
-
-{% if url in addProjectMilestonesUrls or url in addMeasuresUrls %}
-<nav class="child-navigation">
-    <ul id="childNavigation" class="govuk-header__navigation" aria-label="Second Level Navigation">
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in addProjectMilestonesUrls }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.dataEntry.bulkUploadProjectMilestone }}">
-        Management information
-        </a>
-    </li>
-    {% if config.features.measureUpload %}
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in addMeasuresUrls }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.dataEntryEntity.measureList }}">
-        Measures
-        </a>
-    </li>
-    {% endif %}
-    </ul>
-</nav>
-{% endif %}
-
-{% if url in adminUrls or url in addEntitiesUrls %}
-<nav class="child-navigation">
-    <ul id="childNavigation" class="govuk-header__navigation" aria-label="Second Level Navigation">
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.projectFieldList }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.admin.projectFieldList }}">
-        MI data structure
-        </a>
-    </li>
-    {% if config.features.entityData %}
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.categoryList }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.admin.categoryList }}">
-        Manage categories
-        </a>
-    </li>
-    {% endif %}
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.headlineMeasures }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.admin.headlineMeasures }}">
-        Manage Headline Measures
-        </a>
-    </li>
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in adminUserManagementUrls }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.admin.userManagementList }}">
-        Manage Users
-        </a>
-    </li>
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in addEntitiesUrls }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.dataEntryEntity.bulkUpload }}">
-        Entity data import
-        </a>
-    </li>
-    <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.staticExports }}">
-        <a class="govuk-header__link child-nav" href="{{ config.paths.admin.staticExports }}">
-        Static Export
-        </a>
-    </li>
-    </ul>
-</nav>
-{% endif %}
-
-{% if url in transitionReadinessUrls%}
-<nav class="{{ 'navigation' if (req.user.roles | includes(['static', 'devolved_administrations'])) else 'child-navigation' }}">
-    <ul id="childNavigation" class="govuk-header__navigation" aria-label="Second Level Navigation">
+    {% if url in transitionReadinessUrls%}
+    <ul class="govuk-header__navigation childNavigation" aria-label="Child navigation">
     <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.readinessOverview }}">
         <a class="govuk-header__link child-nav" href="{{ config.paths.readinessOverview }}">
         Overview
@@ -244,5 +133,115 @@
       {{ coundDownTimer | safe }}
     {% endif %}
     </ul>
+    {% endif %}
+
+
+
+    {% if req.user.roles | includes(['management']) %}
+    <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in managementInformationUrls }}">
+        <a class="govuk-header__link nav" href="{{ config.paths.allData }}">HMG delivery management information</a>
+    </li>
+    {% endif %}
+    {% if url in managementInformationUrls %}
+    <ul class="govuk-header__navigation childNavigation" aria-label="Child navigation">
+        {% if req.user.roles | includes(['management_overview']) %}
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.reportingOverview }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.reportingOverview }}">
+            Reporting overview
+            </a>
+        </li>
+        {% endif %}
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.allData }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.allData }}">
+            All data
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.missedMilestones }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.missedMilestones }}">
+            Missed milestones
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.upcomingMilestones }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.upcomingMilestones }}">
+            Upcoming milestones
+            </a>
+        </li>
+    </ul>
+    {% endif %}
+
+
+    {% if req.user.roles | includes(['uploader','admin']) %}
+    <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in addProjectMilestonesUrls or url in addMeasuresUrls }}">
+        <a class="govuk-header__link nav" href="{{ config.paths.dataEntry.bulkUploadProjectMilestone }}">
+        Add data
+        </a>
+    </li>
+    {% endif %}
+    {% if url in addProjectMilestonesUrls or url in addMeasuresUrls %}
+    <ul class="govuk-header__navigation childNavigation" aria-label="Child navigation">
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in addProjectMilestonesUrls }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.dataEntry.bulkUploadProjectMilestone }}">
+            Management information
+            </a>
+        </li>
+        {% if config.features.measureUpload %}
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in addMeasuresUrls }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.dataEntryEntity.measureList }}">
+            Measures
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    {% endif %}
+
+
+
+    {% if req.user.roles | includes(['admin']) %}
+    <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in adminUrls or url in addEntitiesUrls }}">
+        <a class="govuk-header__link nav" href="{{ config.paths.admin.projectFieldList }}">
+        Admin
+        </a>
+    </li>
+    {% endif %}
+    {% if url in adminUrls or url in addEntitiesUrls %}
+    <ul class="govuk-header__navigation childNavigation" aria-label="Child navigation">
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.projectFieldList }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.admin.projectFieldList }}">
+            MI data structure
+            </a>
+        </li>
+        {% if config.features.entityData %}
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.categoryList }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.admin.categoryList }}">
+            Manage categories
+            </a>
+        </li>
+        {% endif %}
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.headlineMeasures }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.admin.headlineMeasures }}">
+            Manage Headline Measures
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in adminUserManagementUrls }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.admin.userManagementList }}">
+            Manage Users
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in addEntitiesUrls }}">
+            <a class="govuk-header__link child-nav" href="{{ config.paths.dataEntryEntity.bulkUpload }}">
+            Entity data import
+            </a>
+        </li>
+    </ul>
+    {% endif %}
+
+
+
+    </ul>
 </nav>
-{% endif %}
+
+
+
+
+
+

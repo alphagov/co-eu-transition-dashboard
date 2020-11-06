@@ -32,6 +32,26 @@ document.addEventListener('DOMContentLoaded', function() {
   if (document.getElementById('readiness-theme-page')) {
     ClearOrRestoreScroll(document.getElementById('readiness-theme-page'))
   }
+
+  function countDownTime() {
+    const second = 1000,
+      minute = second * 60,
+      hour = minute * 60,
+      day = hour * 24;
+
+    const finalTransitionDate = new Date('Jan 01, 2021 23:59:59').getTime();
+    const distance = finalTransitionDate - new Date().getTime();
+
+    let daysToDate = Math.floor(distance / day);
+
+    if (distance < 0) {
+      daysToDate = 0;
+    }
+
+    return daysToDate;
+  }
+
+  document.getElementById('countdown').innerHTML = countDownTime(); 
 });
 
 // The expanded state of individual instances of the accordion component persists across page loads using sessionStorage.
