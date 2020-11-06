@@ -20,7 +20,7 @@ const getMeasuresUpdatedToday = async() => {
   const formattedMeasures = measureEntities.map((curVal)=>(
     `${curVal.theme} ${curVal.metricID} ${curVal.name}`));
   
-    return uniq(formattedMeasures);
+  return uniq(formattedMeasures);
 }
 
 const getEmails = () => {
@@ -40,5 +40,3 @@ const notifyUpdatedMeasures = async() => {
 module.exports = {
   notifyUpdatedMeasures
 }
-
-notifyUpdatedMeasures();
