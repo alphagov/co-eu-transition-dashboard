@@ -12,7 +12,7 @@
 {% block head %}
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  {% if config.services.googleAnalytics.id %}
+  {% if config.services.googleAnalytics.id and not req.user.isStatic %}
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.services.googleAnalytics.id }}"></script>
     <script>
