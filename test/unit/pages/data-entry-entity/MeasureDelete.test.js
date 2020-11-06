@@ -97,7 +97,7 @@ describe('pages/data-entry-entity/measure-delete/MeasureDelete', () => {
       await page.postRequest(req, res);
 
       sinon.assert.calledOnce(page.deleteMeasure);
-      sinon.assert.calledWith(req.flash, ["An error occoured when deleting the measure."]);
+      sinon.assert.calledWith(req.flash, "An error occoured when deleting the measure.");
       sinon.assert.calledWith(res.redirect, req.originalUrl);
     });
   });
