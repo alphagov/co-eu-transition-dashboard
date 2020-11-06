@@ -78,6 +78,12 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     });
   });
 
+  describe('#deleteMeasureUrl', () => {
+    it('returns url for delete measure page', () => {
+      expect(page.deleteMeasureUrl).to.eql(`${paths.dataEntryEntity.measureDelete}/${req.params.metricId}/${req.params.groupId}`);
+    });
+  });
+
   describe('#successfulMode', () => {
     it('returns true when in successful mode', () => {
       page.req.params = { metricId: '123', type: "successful" };
