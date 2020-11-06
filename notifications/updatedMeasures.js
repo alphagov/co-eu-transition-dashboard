@@ -17,7 +17,7 @@ const getMeasuresUpdatedToday = async() => {
     } }
   });
   const formattedMeasures = measureEntities.map((curVal)=>(
-    `${curVal.theme} ${curVal.name} ${curVal.description}`));
+    `${curVal.theme} ${curVal.metricID} ${curVal.name}`));
   return formattedMeasures;
 }
 
