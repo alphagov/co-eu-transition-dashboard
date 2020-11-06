@@ -38,6 +38,3 @@ const notifyUpdatedMeasures = async() => {
 module.exports = {
   notifyUpdatedMeasures
 }
-
-
-notifyUpdatedMeasures();
