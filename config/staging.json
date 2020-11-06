@@ -17,5 +17,10 @@
   },
   "features": {
     "missedMilestones": true
+  },
+  "notify": {
+    "cron": {
+      "updatedMeasures": "* */5 * * * *"
+    }
   }
 }
