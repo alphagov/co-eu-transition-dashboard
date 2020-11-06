@@ -65,9 +65,6 @@ class MeasureEdit extends Page {
   get postData () {
     return this.req.body;
   }
-  get isUserAdmin() {
-    return this.req.user.isAdmin
-  }
 
   get middleware() {
     return [

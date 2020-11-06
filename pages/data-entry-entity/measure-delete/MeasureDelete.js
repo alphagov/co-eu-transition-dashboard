@@ -44,7 +44,7 @@ class MeasureDelete extends Page {
       await this.deleteMeasure();
     } catch (error) {
       logger.error(error);
-      req.flash(["An error occoured when deleting the measure."]);
+      req.flash("An error occoured when deleting the measure.");
       return res.redirect(this.req.originalUrl);
     }
 
@@ -70,7 +70,6 @@ class MeasureDelete extends Page {
 
       await transaction.commit();
     } catch (error) {
-      logger.error(error);
       await transaction.rollback();
       throw error;
     }
@@ -144,7 +143,7 @@ class MeasureDelete extends Page {
     const { measureEntities } = await this.getMeasure();
 
     // measuresEntities are already sorted by date, so the last entry is the newest
-    const latestEntity = measureEntities[measureEntities.length - 1];
+    const latestEntity = measureEntities.pop()
   
     return latestEntity
   }
