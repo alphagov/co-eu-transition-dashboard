@@ -34,6 +34,7 @@ const notifyUpdatedMeasures = async() => {
   cache.clear();
   const measureEntities = await getMeasuresUpdatedToday();
   const emails = getEmails();
+  
   await notifyServices.sendMeasuresUpdatedTodayEmail({ emails, measures: measureEntities });
 }
 
