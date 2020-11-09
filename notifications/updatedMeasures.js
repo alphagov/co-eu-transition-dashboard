@@ -65,14 +65,9 @@ const notifyUpdatedMeasures = async() => {
   const projects = await getProjectesUpdatedToday();
   const milestones = await getMileStonesUpdatedToday();
   const emails = getEmails();
-<<<<<<< HEAD
   await notifyServices.sendMeasuresUpdatedTodayEmail({ 
     emails, measures: measureEntities, projects, milestones
   });
-=======
-  
-  await notifyServices.sendMeasuresUpdatedTodayEmail({ emails, measures: measureEntities });
->>>>>>> master
 }
 
 module.exports = {
