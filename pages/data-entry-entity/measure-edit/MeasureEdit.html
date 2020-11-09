@@ -14,10 +14,7 @@
   {% include "feedback.njk" %}
   {{ govukBackLink({
     text: "Back",
-    href: "#",
-    attributes: {
-      onclick: "history.go(-1); return false;"
-    }
+    href: config.paths.dataEntryEntity.measureList
   }) }}
 {% endblock %}
 
