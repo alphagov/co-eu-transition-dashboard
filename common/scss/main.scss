@@ -86,6 +86,12 @@
   margin-left: 20px;
 }
 
+.main-navigation + .govuk-main-wrapper, 
+.navigation + .govuk-main-wrapper {
+  margin-top: 50px;
+}
+
+
 // Navigation
 .navigation {
   background-color: #f3f2f1;
@@ -139,6 +145,7 @@ li.govuk-header__navigation-item.child-item:last-child, li.govuk-header__navigat
     margin-top: 7px;
 }
 
+// Timer
 .timer {
     display: inline;
     color: #1E1348;

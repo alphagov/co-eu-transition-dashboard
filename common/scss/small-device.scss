@@ -9,18 +9,25 @@
         display: contents;
     }
 
-    .govuk-header__navigation-item {
-        border-bottom: 0;
-        display: block;
+    .main-navigation + .govuk-main-wrapper, 
+    .navigation + .govuk-main-wrapper {
+        margin-top: 10px !important;
     }
 
     .navigation {
         border-bottom: 1px solid #b1b4b6;
+        .govuk-header__navigation-item {
+            border-bottom: 0;
+            display: block;
+        }
+        .toggle-mobile-menu {
+            display: block !important;
+        }
     }
 
     .logout-item {
         border-bottom: 0;
-    } 
+    }
 }
 
 @media only screen and (max-width:768px) {
