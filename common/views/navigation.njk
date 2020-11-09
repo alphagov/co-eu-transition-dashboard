@@ -59,24 +59,24 @@
     config.paths.transitionReadinessThemeDetail
     ]
 %}
-<nav class="navigation">
+<nav class="navigation" id="show-menu">
     <ul id="navigation" class="govuk-header__navigation" aria-label="Parent navigation">
     <li class="govuk-header__navigation-item pull-right">
         <p class="govuk-body-s govuk-!-font-weight-bold timer">Days to go:  <span id="countdown"></span></p>
     </li>
-    <li class="govuk-header__navigation-item toggle-mobile-menu" style="display:none;">
-        <a class="govuk-header__link nav" href="#">Menu</a>
+    <li class="govuk-header__navigation-item" id="toggle-menu" style="display:none;">
+        <a class="govuk-header__link nav" id="show-menu-link" href="#show-menu">Menu</a>
+        <a class="govuk-header__link nav" id="hide-menu-link" href="#hide-menu">Menu</a>
     </li>
 
-
-
+<div id="toggle-mobile">
     {% if req.user.roles | includes(['viewer', 'static']) %}
     <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in transitionReadinessUrls }}">
         <a class="govuk-header__link nav" href="{{ config.paths.readinessOverview }}">Transition readiness</a>
     </li>
     {% endif %}
     {% if url in transitionReadinessUrls%}
-    <ul class="govuk-header__navigation childNavigation" aria-label="Child navigation">
+    <ul class="govuk-header__navigation child-navigation" aria-label="Child navigation">
     <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.readinessOverview }}">
         <a class="govuk-header__link child-nav" href="{{ config.paths.readinessOverview }}">
         Overview
@@ -135,15 +135,13 @@
     </ul>
     {% endif %}
 
-
-
     {% if req.user.roles | includes(['management']) %}
     <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in managementInformationUrls }}">
         <a class="govuk-header__link nav" href="{{ config.paths.allData }}">HMG delivery management information</a>
     </li>
     {% endif %}
     {% if url in managementInformationUrls %}
-    <ul class="govuk-header__navigation childNavigation" aria-label="Child navigation">
+    <ul class="govuk-header__navigation child-navigation" aria-label="Child navigation">
         {% if req.user.roles | includes(['management_overview']) %}
         <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.reportingOverview }}">
             <a class="govuk-header__link child-nav" href="{{ config.paths.reportingOverview }}">
@@ -169,7 +167,6 @@
     </ul>
     {% endif %}
 
-
     {% if req.user.roles | includes(['uploader','admin']) %}
     <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in addProjectMilestonesUrls or url in addMeasuresUrls }}">
         <a class="govuk-header__link nav" href="{{ config.paths.dataEntry.bulkUploadProjectMilestone }}">
@@ -178,7 +175,7 @@
     </li>
     {% endif %}
     {% if url in addProjectMilestonesUrls or url in addMeasuresUrls %}
-    <ul class="govuk-header__navigation childNavigation" aria-label="Child navigation">
+    <ul class="govuk-header__navigation child-navigation" aria-label="Child navigation">
         <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in addProjectMilestonesUrls }}">
             <a class="govuk-header__link child-nav" href="{{ config.paths.dataEntry.bulkUploadProjectMilestone }}">
             Management information
@@ -194,8 +191,6 @@
     </ul>
     {% endif %}
 
-
-
     {% if req.user.roles | includes(['admin']) %}
     <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in adminUrls or url in addEntitiesUrls }}">
         <a class="govuk-header__link nav" href="{{ config.paths.admin.projectFieldList }}">
@@ -204,7 +199,7 @@
     </li>
     {% endif %}
     {% if url in adminUrls or url in addEntitiesUrls %}
-    <ul class="govuk-header__navigation childNavigation" aria-label="Child navigation">
+    <ul class="govuk-header__navigation child-navigation" aria-label="Child navigation">
         <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.projectFieldList }}">
             <a class="govuk-header__link child-nav" href="{{ config.paths.admin.projectFieldList }}">
             MI data structure
@@ -234,9 +229,7 @@
         </li>
     </ul>
     {% endif %}
-
-
-
+</div>
     </ul>
 </nav>
 

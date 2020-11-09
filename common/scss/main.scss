@@ -86,8 +86,8 @@
   margin-left: 20px;
 }
 
-.main-navigation + .govuk-main-wrapper, 
-.navigation + .govuk-main-wrapper {
+.navigation + .govuk-main-wrapper,
+.navigation + .govuk-back-link {
   margin-top: 50px;
 }
 
@@ -98,38 +98,30 @@
   padding-top: 10px;
   padding-left: 24px;
   padding-right: 24px;
-}
 
-li.govuk-header__navigation-item.govuk-header__navigation-item--active {
-  border-bottom: 5px solid #1d70b8;
-  margin-bottom: -1px;
-  padding-bottom: 10px;
-}
-
-.pull-right {
-  float: right;
-  margin-right: 0 !important;
-}
-
-a.govuk-header__link.nav {
-  color: #2364AB;
-}
-
-a.govuk-header__link.child-nav {
+  .govuk-header__link.nav, .govuk-header__link.child-nav {
     color: #2364AB;
+  }
+
+  .govuk-header__link.child-nav {
     font-weight: normal;
-}
+  }
 
-.child-item.govuk-header__navigation-item.govuk-header__navigation-item--active > a {
-   color: #000000;
-}
+  .govuk-header__navigation-item.govuk-header__navigation-item--active {
+    border-bottom: 5px solid #1d70b8;
+  }
 
-li.govuk-header__navigation-item.child-item, li.govuk-header__navigation-item {
+  .child-item.govuk-header__navigation-item.govuk-header__navigation-item--active > a {
+    color: #000000;
+ }
+
+  .govuk-header__navigation-item.child-item, 
+  .govuk-header__navigation-item {
     margin-right: 25px;
-}
-
-li.govuk-header__navigation-item.child-item:last-child, li.govuk-header__navigation-item:last-child {
-    margin-right: 0px;
+    &:last-child {
+      margin-right: 0px;
+    }
+  }
 }
 
 .child-navigation {
@@ -146,15 +138,19 @@ li.govuk-header__navigation-item.child-item:last-child, li.govuk-header__navigat
 }
 
 // Timer
-.timer {
+.pull-right {
+  float: right;
+  margin-right: 0 !important;
+  .timer {
     display: inline;
     color: #1E1348;
-}
+  }
 
-#countdown {
-    background-color: #1E1348;
-    font-size: 16px;
-    padding: 4px 6px;
-    margin-left: 5px;
-    color: white;
+  #countdown {
+      background-color: #1E1348;
+      font-size: 16px;
+      padding: 4px 6px;
+      margin-left: 5px;
+      color: white;
+  }
 }
