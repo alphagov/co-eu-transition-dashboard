@@ -4,7 +4,6 @@
   "cookie": {
     "expires": 3600000
   },
-  "temporaryDirectory": "./dist",
   "services": {
     "redis": {},
     "mysql": {},
