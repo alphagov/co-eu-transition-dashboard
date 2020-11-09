@@ -141,7 +141,7 @@
     </li>
     {% endif %}
     {% if url in managementInformationUrls %}
-    <ul class="govuk-header__navigation child-navigation" aria-label="Child navigation">
+        <ul class="govuk-header__navigation child-navigation" aria-label="Child navigation">
         {% if req.user.roles | includes(['management_overview']) %}
         <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.reportingOverview }}">
             <a class="govuk-header__link child-nav" href="{{ config.paths.reportingOverview }}">

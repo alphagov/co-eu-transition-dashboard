@@ -30,15 +30,17 @@
             margin-right: 0 !important;
         }
         .govuk-header__navigation-item.child-item.govuk-header__navigation-item--active {
-            padding-left: 0;
-            padding-top: 0;
+            padding: 0;
             &:before {
                 content: "";
                 display: inline-block;
-                width: 5px;
-                height: 30px;
-                margin-right: 15px;
+                width: 6px;
+                height: 35px;
+                margin-right: 13px;
                 background-color: #1d70b8;
+            }
+            .child-nav {
+                vertical-align: super;
             }
         }
         #toggle-menu {
