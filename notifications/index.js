@@ -6,5 +6,5 @@ const config = require('config');
 
 cron.schedule(config.notify.cron.missedMilestones, upcomingMilestones.notifyUpcomingMilestones);
 logger.info(`Missed milestone notifications active`);
-cron.schedule(config.notify.cron.updatedMeasures, updatedMeasures.notifyUpdatedMeasures);
+cron.schedule(config.notify.cron.dailyUpdates, updatedMeasures.notifyUpdatedMeasures);
 logger.info(`Measures updated today notifications active`);
