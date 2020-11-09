@@ -3,8 +3,10 @@ const { notify } = require('config');
 const { sinon } = require('test/unit/util/chai');
 const notifyServices =require('services/notify');
 const proxyquire = require('proxyquire');
+const Project = require('models/project');
+const Milestone = require('models/milestone');
 
-let updatedMeasures = {};
+let dailyUpdates = {};
 let fnStub = sinon.stub();
 
 const sequelizeStub = {
@@ -56,18 +58,45 @@ const mockUpdatedMeasures = [{
   groupBy: 'none',
   metricID: 'm2'
 }]
-const mockMailingList = '1@email.com;2@email.com';
-const measureEntities = ["Borders m1 Project 4444444", "Borders m2 Project 555555"];
 
-describe('notifications/updatedMeasures', () => {
+const mockUpdatedProjects = [{
+  uid: 'p1',
+  title: 'project1'
+},{
+  uid: 'p2',
+  title: 'project2'
+}]
+
+const mockUpdatedMilestones = [{
+  uid: 'm1',
+  description: 'milestone1',
+  project:{
+    uid: 'p1',
+    title: 'project1'
+  }
+},{
+  uid: 'm2',
+  description: 'milestone2',
+  project:{
+    uid: 'p2',
+    title: 'project2'
+  }
+}]
+
+const mockMailingList = '1@email.com;2@email.com';
+const measureEntities = ["Borders - m1 - Project 4444444", "Borders - m2 - Project 555555"];
+const projects = ["p1 - project1", "p2 - project2"];
+const milestones = ["p1 - m1 - milestone1", "p2 - m2 - milestone2"];
+
+describe('notifications/dailyUpdates', () => {
   
   let getCategoryStub ;
 
   before(() => {
-    notify['updatedMeasures'] =  {
+    notify['dailyUpdates'] =  {
       mailingList: mockMailingList
     }
-    updatedMeasures = proxyquire('notifications/updatedMeasures', {
+    dailyUpdates = proxyquire('notifications/dailyUpdates', {
       'sequelize': sequelizeStub
     });
   });
@@ -75,26 +104,30 @@ describe('notifications/updatedMeasures', () => {
   beforeEach(()=>{
     sinon.stub(measures, 'getMeasureEntities').returns(mockUpdatedMeasures);
     getCategoryStub = sinon.stub(measures, 'getCategory')
-    sinon.stub(notifyServices, 'sendMeasuresUpdatedTodayEmail').returns();
+    sinon.stub(notifyServices, 'sendDailyUpdatesEmail').returns();
     getCategoryStub.onFirstCall().returns({ id: 'some-measure' });
     getCategoryStub.onSecondCall().returns({ id: 'some-measure' });
     fnStub.returns();
+    Project.findAll.resolves(mockUpdatedProjects);
+    Milestone.findAll.resolves(mockUpdatedMilestones);
   })
 
   afterEach(()=>{
     measures.getCategory.restore();
     measures.getMeasureEntities.restore();
-    notifyServices.sendMeasuresUpdatedTodayEmail.restore();
+    notifyServices.sendDailyUpdatesEmail.restore();
   })
 
-  describe('#notifyUpdatedMeasures', () => {
+  describe('#notifyDailyUpdates', () => {
     it('gets updated measures and calls notify', async () => {
 
-      await updatedMeasures.notifyUpdatedMeasures();
+      await dailyUpdates.notifyDailyUpdates();
 
-      sinon.assert.calledWith(notifyServices.sendMeasuresUpdatedTodayEmail, {
+      sinon.assert.calledWith(notifyServices.sendDailyUpdatesEmail, {
         emails: ['1@email.com', '2@email.com'],
-        measures: measureEntities
+        measures: measureEntities,
+        projects,
+        milestones
       });
     })
   });

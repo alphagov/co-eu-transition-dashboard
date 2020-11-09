@@ -20,7 +20,7 @@
   },
   "notify": {
     "cron": {
-      "updatedMeasures": "0 */5 * * * *"
+      "dailyUpdates": "0 */5 * * * *"
     }
   }
 }

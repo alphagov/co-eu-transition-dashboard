@@ -42,7 +42,7 @@ const sendEmailWithTempPassword = async ({ email, userId, password }) => {
   logger.info(`Email sent to ${email} with temporary password`);
 }
 
-const sendMeasuresUpdatedTodayEmail = async({ emails, measures }) => {
+const sendDailyUpdatesEmail = async({ emails, measures, projects, milestones }) => {
   assertNotifyApiKeyPresent();
 
   const notifyClient = new NotifyClient(notify.apiKey);
@@ -51,11 +51,13 @@ const sendMeasuresUpdatedTodayEmail = async({ emails, measures }) => {
     const reference = uuid.v4();
     try {
       await notifyClient.sendEmail(
-        notify.updatedMeasuresKey,
+        notify.dailyUpdatesNotifcationKey,
         email,
         {
           personalisation: {
-            measures
+            measures,
+            projects,
+            milestones
           },
           reference
         }
@@ -69,5 +71,5 @@ const sendMeasuresUpdatedTodayEmail = async({ emails, measures }) => {
 
 module.exports = {
   sendEmailWithTempPassword,
-  sendMeasuresUpdatedTodayEmail
+  sendDailyUpdatesEmail
 }
