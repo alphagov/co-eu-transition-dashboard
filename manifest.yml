@@ -8,3 +8,4 @@ applications:
     services:
     - co-eu-transition-database
     - transition-dashboard-cache
+    - static-exports
