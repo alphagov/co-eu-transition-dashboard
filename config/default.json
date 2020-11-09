@@ -7,6 +7,7 @@
   "services": {
     "redis": {},
     "mysql": {},
+    "s3": {},
     "tfa": {
       "name": "Transition Taskforce Dashboard"
     },
@@ -34,7 +35,8 @@
       "userManagementList": "/admin/manage-users-list",
       "userManagementAuthentication": "/admin/manage-users-authentication",
       "clearCache": "/admin/clear-cache",
-      "createUser": "/admin/create-user"
+      "createUser": "/admin/create-user",
+      "staticExports": "/admin/static-exports"
     },
     "allData": "/all-data",
     "filterExample": "/filter-example",
