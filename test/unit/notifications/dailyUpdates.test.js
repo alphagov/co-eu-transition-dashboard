@@ -4,7 +4,7 @@ const { sinon } = require('test/unit/util/chai');
 const notifyServices =require('services/notify');
 const proxyquire = require('proxyquire');
 
-let updatedMeasures = {};
+let dailyMeasures = {};
 let fnStub = sinon.stub();
 
 const sequelizeStub = {
@@ -59,15 +59,15 @@ const mockUpdatedMeasures = [{
 const mockMailingList = '1@email.com;2@email.com';
 const measureEntities = ["Borders m1 Project 4444444", "Borders m2 Project 555555"];
 
-describe('notifications/updatedMeasures', () => {
+describe('notifications/dailyUpdates', () => {
   
   let getCategoryStub ;
 
   before(() => {
-    notify['updatedMeasures'] =  {
+    notify['dailyUpdates'] =  {
       mailingList: mockMailingList
     }
-    updatedMeasures = proxyquire('notifications/updatedMeasures', {
+    dailyMeasures = proxyquire('notifications/dailyUpdates', {
       'sequelize': sequelizeStub
     });
   });
@@ -75,7 +75,7 @@ describe('notifications/updatedMeasures', () => {
   beforeEach(()=>{
     sinon.stub(measures, 'getMeasureEntities').returns(mockUpdatedMeasures);
     getCategoryStub = sinon.stub(measures, 'getCategory')
-    sinon.stub(notifyServices, 'sendMeasuresUpdatedTodayEmail').returns();
+    sinon.stub(notifyServices, 'sendDailyUpdatesEmail').returns();
     getCategoryStub.onFirstCall().returns({ id: 'some-measure' });
     getCategoryStub.onSecondCall().returns({ id: 'some-measure' });
     fnStub.returns();
@@ -84,15 +84,15 @@ describe('notifications/updatedMeasures', () => {
   afterEach(()=>{
     measures.getCategory.restore();
     measures.getMeasureEntities.restore();
-    notifyServices.sendMeasuresUpdatedTodayEmail.restore();
+    notifyServices.sendDailyUpdatesEmail.restore();
   })
 
-  describe('#notifyUpdatedMeasures', () => {
+  describe('#notifyDailyUpdates', () => {
     it('gets updated measures and calls notify', async () => {
 
-      await updatedMeasures.notifyUpdatedMeasures();
+      await dailyMeasures.notifyDailyUpdates();
 
-      sinon.assert.calledWith(notifyServices.sendMeasuresUpdatedTodayEmail, {
+      sinon.assert.calledWith(notifyServices.sendDailyUpdatesEmail, {
         emails: ['1@email.com', '2@email.com'],
         measures: measureEntities
       });

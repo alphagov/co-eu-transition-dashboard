@@ -25,7 +25,7 @@ const getMeasuresUpdatedToday = async() => {
 }
 
 const getEmails = () => {
-  const mailingList = notify.updatedMeasures.mailingList;
+  const mailingList = notify.dailyUpdates.mailingList;
   const emails = mailingList.split(';').map(email => (email.trim()));
   return emails;
 }
@@ -59,17 +59,17 @@ const getMileStonesUpdatedToday = async() => {
   return formattedMilestones;
 }
 
-const notifyUpdatedMeasures = async() => {
+const notifyDailyUpdates = async() => {
   cache.clear();
   const measureEntities = await getMeasuresUpdatedToday();
   const projects = await getProjectesUpdatedToday();
   const milestones = await getMileStonesUpdatedToday();
   const emails = getEmails();
-  await notifyServices.sendMeasuresUpdatedTodayEmail({ 
+  await notifyServices.sendDailyUpdatesEmail({ 
     emails, measures: measureEntities, projects, milestones
   });
 }
 
 module.exports = {
-  notifyUpdatedMeasures
+  notifyDailyUpdates
 }

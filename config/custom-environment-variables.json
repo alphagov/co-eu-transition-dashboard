@@ -23,7 +23,7 @@
   "notify": {
     "apiKey": "NOTIFY_API_KEY",
     "summaryNotificationEmail": "SUMMARY_NOTIFICATION_EMAIL",
-    "updatedMeasures" : {
+    "dailyUpdates" : {
       "mailingList": "DAILY_UPDATED_ENTITIES_MAILING_LIST"
     }
   },
