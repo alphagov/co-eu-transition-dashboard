@@ -41,6 +41,20 @@ const mockUpdatedMeasures = [{
   greenThreshold: 3000,
   groupBy: 'none',
   metricID: 'm2'
+},
+{
+  id: 950,
+  publicId: '5555555',
+  theme: 'Borders',
+  name: 'Project 555555',
+  description: 'Description of project 5',
+  unit: '#',
+  value: 555,
+  redThreshold: 1000,
+  aYThreshold: 2000,
+  greenThreshold: 3000,
+  groupBy: 'none',
+  metricID: 'm2'
 }]
 const mockMailingList = '1@email.com;2@email.com';
 const measureEntities = ["Borders m1 Project 4444444", "Borders m2 Project 555555"];

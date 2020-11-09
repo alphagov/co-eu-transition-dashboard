@@ -5,6 +5,7 @@ const notifyServices = require('services/notify');
 const Project = require('models/project');
 const Milestone = require('models/milestone');
 const cache = require('services/cache');
+const uniq = require('lodash/uniq');
 const Op = sequelize.Op;
 
 
@@ -20,7 +21,7 @@ const getMeasuresUpdatedToday = async() => {
   });
   const formattedMeasures = measureEntities.map((curVal)=>(
     `${curVal.theme} - ${curVal.metricID} - ${curVal.name}`));
-  return formattedMeasures;
+  return uniq(formattedMeasures);
 }
 
 const getEmails = () => {
@@ -64,9 +65,14 @@ const notifyUpdatedMeasures = async() => {
   const projects = await getProjectesUpdatedToday();
   const milestones = await getMileStonesUpdatedToday();
   const emails = getEmails();
+<<<<<<< HEAD
   await notifyServices.sendMeasuresUpdatedTodayEmail({ 
     emails, measures: measureEntities, projects, milestones
   });
+=======
+  
+  await notifyServices.sendMeasuresUpdatedTodayEmail({ emails, measures: measureEntities });
+>>>>>>> master
 }
 
 module.exports = {
