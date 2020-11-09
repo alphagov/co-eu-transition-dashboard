@@ -11,6 +11,7 @@ const tar = require('tar');
 const path = require('path');
 const fs = require('fs');
 const moment = require('moment');
+const os = require('os');
 
 let StaticExports;
 let page = {};
@@ -189,7 +190,7 @@ describe('pages/admin/static-exports/StaticExports', () => {
 
       expect(error).to.be.undefined;
 
-      sinon.assert.calledWith(execStub, `node scripts/staticSiteGenerator.js --url ${config.serviceUrl} --dir ${config.temporaryDirectory}/${exportUid}/export`);
+      sinon.assert.calledWith(execStub, `node scripts/staticSiteGenerator.js --url ${config.serviceUrl} --dir ${os.tmpdir()}/${exportUid}/export`);
     });
 
     it('returns error if statuc site generator failes', async () => {
@@ -219,7 +220,7 @@ describe('pages/admin/static-exports/StaticExports', () => {
 
     it('zips up directory', async () => {
       const exportUid = 'some-id';
-      const exportLocation = path.resolve(`${config.temporaryDirectory}/${exportUid}`)
+      const exportLocation = path.resolve(`${os.tmpdir()}/${exportUid}`)
 
       page.compressStaticSiteExport(exportUid);
 
@@ -256,7 +257,7 @@ describe('pages/admin/static-exports/StaticExports', () => {
       expect(error).to.be.undefined;
       expect(location).to.eql('someLocation');
 
-      sinon.assert.calledWith(fs.readFileSync, `${config.temporaryDirectory}/${exportUid}/export.tar.gz`);
+      sinon.assert.calledWith(fs.readFileSync, `${os.tmpdir()}/${exportUid}/export.tar.gz`);
       sinon.assert.calledWith(s3.upload, {
         Bucket: config.services.s3.exportStoreBucketName,
         Key: `${exportUid}.tar.gz`,
@@ -300,7 +301,7 @@ describe('pages/admin/static-exports/StaticExports', () => {
       }
 
       expect(error).to.be.undefined;
-      sinon.assert.calledWith(fs.rmdir, `${config.temporaryDirectory}/${exportUid}`, { recursive: true });
+      sinon.assert.calledWith(fs.rmdir, `${os.tmpdir()}/${exportUid}`, { recursive: true });
     });
 
     it('returns error if not able to remove dir', async () => {

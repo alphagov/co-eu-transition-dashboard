@@ -12,6 +12,7 @@ const pick = require('lodash/pick');
 const logger = require('services/logger');
 const moment = require('moment');
 const path = require('path');
+const os = require('os');
 
 let s3Bucket = config.services.s3.exportStoreBucketName;
 if(config.services.vcapServices && config.services.vcapServices['aws-s3-bucket'].length) {
@@ -82,7 +83,7 @@ class StaticExports extends Page {
 
   generateStaticSiteExport(exportUid) {
     return new Promise((resolve, reject) => {
-      const location = `${config.temporaryDirectory}/${exportUid}/export`;
+      const location = `${os.tmpdir()}/${exportUid}/export`;
       exec(`node scripts/staticSiteGenerator.js --url ${config.serviceUrl} --dir ${location}`, async (error) => {
         if (error) {
           return reject(error);
@@ -94,7 +95,7 @@ class StaticExports extends Page {
   }
 
   compressStaticSiteExport(exportUid) {
-    const exportLocation = path.resolve(`${config.temporaryDirectory}/${exportUid}`);
+    const exportLocation = path.resolve(`${os.tmpdir()}/${exportUid}`);
     return tar.c({
       gzip: true,
       file: `${exportLocation}/export.tar.gz`,
@@ -104,7 +105,7 @@ class StaticExports extends Page {
 
   async uploadCompressedStaticSiteExportToS3(exportUid) {
     const fileName = `${exportUid}.tar.gz`;
-    const file = fs.readFileSync(`${config.temporaryDirectory}/${exportUid}/export.tar.gz`);
+    const file = fs.readFileSync(`${os.tmpdir()}/${exportUid}/export.tar.gz`);
 
     const params = {
       Bucket: s3Bucket,
@@ -124,7 +125,7 @@ class StaticExports extends Page {
 
   async removeTemporaryDirectory(exportUid) {
     return new Promise((resolve, reject) => {
-      fs.rmdir(`${config.temporaryDirectory}/${exportUid}`, { recursive: true }, (err) => {
+      fs.rmdir(`${os.tmpdir()}/${exportUid}`, { recursive: true }, (err) => {
         if (err) {
           return reject(err);
         }
@@ -134,13 +135,12 @@ class StaticExports extends Page {
   }
 
   async doStaticExport(staticExport) {
-    try {
-      const exportUid = uuidv4();
+    const exportUid = uuidv4();
 
+    try {
       await this.generateStaticSiteExport(exportUid);
       await this.compressStaticSiteExport(exportUid);
       const url = await this.uploadCompressedStaticSiteExportToS3(exportUid);
-      await this.removeTemporaryDirectory(exportUid);
 
       staticExport.status = 'complete';
       staticExport.url = url;
@@ -149,7 +149,9 @@ class StaticExports extends Page {
       logger.error(error);
       staticExport.status = 'error';
       staticExport.error = error.message;
-      return await staticExport.save();
+      await staticExport.save();
+    } finally {
+      await this.removeTemporaryDirectory(exportUid);
     }
   }
 
