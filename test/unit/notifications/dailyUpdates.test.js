@@ -6,7 +6,7 @@ const proxyquire = require('proxyquire');
 const Project = require('models/project');
 const Milestone = require('models/milestone');
 
-let dailyMeasures = {};
+let dailyUpdates = {};
 let fnStub = sinon.stub();
 
 const sequelizeStub = {
@@ -96,7 +96,7 @@ describe('notifications/dailyUpdates', () => {
     notify['dailyUpdates'] =  {
       mailingList: mockMailingList
     }
-    dailyMeasures = proxyquire('notifications/dailyUpdates', {
+    dailyUpdates = proxyquire('notifications/dailyUpdates', {
       'sequelize': sequelizeStub
     });
   });
@@ -121,7 +121,7 @@ describe('notifications/dailyUpdates', () => {
   describe('#notifyDailyUpdates', () => {
     it('gets updated measures and calls notify', async () => {
 
-      await dailyMeasures.notifyDailyUpdates();
+      await dailyUpdates.notifyDailyUpdates();
 
       sinon.assert.calledWith(notifyServices.sendDailyUpdatesEmail, {
         emails: ['1@email.com', '2@email.com'],

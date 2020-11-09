@@ -51,7 +51,7 @@ const sendDailyUpdatesEmail = async({ emails, measures, projects, milestones }) 
     const reference = uuid.v4();
     try {
       await notifyClient.sendEmail(
-        notify.dailyMeasuresKey,
+        notify.dailyUpdatesNotifcationKey,
         email,
         {
           personalisation: {
