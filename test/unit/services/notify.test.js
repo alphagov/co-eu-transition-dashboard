@@ -67,7 +67,7 @@ describe('services/notify', ()=>{
     });
   });
 
-  describe('#sendMeasuresUpdatedTodayEmail', ()=>{
+  describe('#sendDailyUpdatesEmail', ()=>{
     const emails = ['1@email.com' , '2@email.com'];
     const measures = ['m1', 'm2'];
     beforeEach(() => {
@@ -79,7 +79,7 @@ describe('services/notify', ()=>{
       sendEmailStub.onFirstCall().resolves();
       sendEmailStub.onSecondCall().resolves();
 
-      await notify.sendMeasuresUpdatedTodayEmail({ emails, measures });
+      await notify.sendDailyUpdatesEmail({ emails, measures });
       sinon.assert.callCount(sendEmailStub, 2);
     });
 
@@ -87,7 +87,7 @@ describe('services/notify', ()=>{
       sendEmailStub.onFirstCall().rejects();
       sendEmailStub.onSecondCall().resolves();
 
-      await notify.sendMeasuresUpdatedTodayEmail({ emails, measures });
+      await notify.sendDailyUpdatesEmail({ emails, measures });
       sinon.assert.callCount(sendEmailStub, 2);
     });
   })

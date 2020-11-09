@@ -101,10 +101,10 @@
     "createTemplateKey": "ca1dcdac-7d98-4158-be9d-5190ceb62289",
     "missedMilestonesKey": "81ac6df8-2e4a-4d33-9ba9-7d6d9bca46fb",
     "summaryNotificationKey": "26be1793-7401-4541-b119-78ce1d6a729b",
-    "updatedMeasuresKey": "7362db91-dc87-4490-9e06-fb267d4f85ac",
+    "dailyUpdatesNotifcationKey": "7362db91-dc87-4490-9e06-fb267d4f85ac",
     "cron": {
       "missedMilestones":"0 0 10 * * *",
-      "updatedMeasures": "0 5 15 * * *"
+      "dailyUpdates": "0 5 15 * * *"
     }
   },
   "locks": {
