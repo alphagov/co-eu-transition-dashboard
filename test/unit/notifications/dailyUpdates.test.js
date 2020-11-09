@@ -3,6 +3,8 @@ const { notify } = require('config');
 const { sinon } = require('test/unit/util/chai');
 const notifyServices =require('services/notify');
 const proxyquire = require('proxyquire');
+const Project = require('models/project');
+const Milestone = require('models/milestone');
 
 let dailyMeasures = {};
 let fnStub = sinon.stub();
@@ -56,8 +58,35 @@ const mockUpdatedMeasures = [{
   groupBy: 'none',
   metricID: 'm2'
 }]
+
+const mockUpdatedProjects = [{
+  uid: 'p1',
+  title: 'project1'
+},{
+  uid: 'p2',
+  title: 'project2'
+}]
+
+const mockUpdatedMilestones = [{
+  uid: 'm1',
+  description: 'milestone1',
+  project:{
+    uid: 'p1',
+    title: 'project1'
+  }
+},{
+  uid: 'm2',
+  description: 'milestone2',
+  project:{
+    uid: 'p2',
+    title: 'project2'
+  }
+}]
+
 const mockMailingList = '1@email.com;2@email.com';
-const measureEntities = ["Borders m1 Project 4444444", "Borders m2 Project 555555"];
+const measureEntities = ["Borders - m1 - Project 4444444", "Borders - m2 - Project 555555"];
+const projects = ["p1 - project1", "p2 - project2"];
+const milestones = ["p1 - m1 - milestone1", "p2 - m2 - milestone2"];
 
 describe('notifications/dailyUpdates', () => {
   
@@ -79,6 +108,8 @@ describe('notifications/dailyUpdates', () => {
     getCategoryStub.onFirstCall().returns({ id: 'some-measure' });
     getCategoryStub.onSecondCall().returns({ id: 'some-measure' });
     fnStub.returns();
+    Project.findAll.resolves(mockUpdatedProjects);
+    Milestone.findAll.resolves(mockUpdatedMilestones);
   })
 
   afterEach(()=>{
@@ -94,7 +125,9 @@ describe('notifications/dailyUpdates', () => {
 
       sinon.assert.calledWith(notifyServices.sendDailyUpdatesEmail, {
         emails: ['1@email.com', '2@email.com'],
-        measures: measureEntities
+        measures: measureEntities,
+        projects,
+        milestones
       });
     })
   });
