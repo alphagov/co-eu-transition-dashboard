@@ -3,6 +3,7 @@ const sequelize = require("sequelize");
 const { notify } = require('config');
 const notifyServices =require('services/notify');
 const cache = require('services/cache');
+const uniq = require('lodash/uniq');
 const Op = sequelize.Op;
 
 
@@ -18,7 +19,8 @@ const getMeasuresUpdatedToday = async() => {
   });
   const formattedMeasures = measureEntities.map((curVal)=>(
     `${curVal.theme} ${curVal.metricID} ${curVal.name}`));
-  return formattedMeasures;
+  
+  return uniq(formattedMeasures);
 }
 
 const getEmails = () => {
@@ -32,6 +34,7 @@ const notifyUpdatedMeasures = async() => {
   cache.clear();
   const measureEntities = await getMeasuresUpdatedToday();
   const emails = getEmails();
+  
   await notifyServices.sendMeasuresUpdatedTodayEmail({ emails, measures: measureEntities });
 }
 
