@@ -15,6 +15,10 @@
 @import 'pages/data-entry-entity/measure-value/MeasureValue.scss';
 @import './small-device.scss';
 
+.hidden {
+  display: none;
+}
+
 .rayg-status {
   &.rayg-block {
     width: 28px;
@@ -117,7 +121,7 @@ li.govuk-header__navigation-item.child-item:last-child, li.govuk-header__navigat
     padding-right: 24px;
 }
 
-ul#childNavigation {
+.child-navigation > ul {
     border-bottom: 1px solid #b1b4b6;
     display: inline-block;
 }

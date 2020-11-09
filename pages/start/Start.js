@@ -20,7 +20,7 @@ class Start extends Page {
       return res.redirect(config.paths.authentication.passwordReset);
     }
 
-    if (req.user.roles.some(role => role.name === 'viewer' || role.name === 'static')) {
+    if (req.user.roles.some(role => ['viewer', 'static', 'devolved_administrations'].includes(role.name))) {
       return res.redirect(config.paths.readinessOverview);
     }
 
