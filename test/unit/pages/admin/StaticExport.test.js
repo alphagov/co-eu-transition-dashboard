@@ -17,14 +17,19 @@ let StaticExports;
 let page = {};
 let res = {};
 let req = {};
-let execStub;
+let forkStub;
+let forkResponse;
 
 describe('pages/admin/static-exports/StaticExports', () => {
   beforeEach(() => {
-    execStub = sinon.stub().callsArg(1);
+    forkResponse = {
+      on: sinon.stub().callsArgWith(1, {}),
+      send: sinon.stub()
+    };
+    forkStub = sinon.stub().returns(forkResponse);
 
     StaticExports = proxyquire('pages/admin/static-exports/StaticExports', {
-      'child_process': { exec: execStub },
+      'child_process': { fork: forkStub },
       'uuid': { v4: sinon.stub().returns('some-id') }
     });
 
@@ -190,13 +195,18 @@ describe('pages/admin/static-exports/StaticExports', () => {
 
       expect(error).to.be.undefined;
 
-      sinon.assert.calledWith(execStub, `node scripts/staticSiteGenerator.js --url ${config.serviceUrl} --dir ${os.tmpdir()}/${exportUid}/export`);
+      sinon.assert.calledWith(forkStub, 'scripts/staticSiteGenerator');
+      sinon.assert.calledWith(forkResponse.on, 'message');
+      sinon.assert.calledWith(forkResponse.send, {
+        url: config.serviceUrl,
+        loginUrl: `${config.serviceUrl}login`,
+        dir: path.resolve(`${os.tmpdir()}/${exportUid}/export`)
+      });
     });
 
     it('returns error if statuc site generator failes', async () => {
       const exportUid = 'some-uid';
-      const errorToRejectWith = new Error('some error');
-      execStub.callsArgWith(1, errorToRejectWith);
+      forkResponse.on.callsArgWith(1, { error: 'some error' });
 
       let error;
       try {
@@ -205,7 +215,7 @@ describe('pages/admin/static-exports/StaticExports', () => {
         error = err;
       }
 
-      expect(error).to.eql(errorToRejectWith);
+      expect(error.message).to.eql('some error');
     });
   });
 
