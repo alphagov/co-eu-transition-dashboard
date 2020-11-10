@@ -2,6 +2,7 @@ const { expect, sinon } = require('test/unit/util/chai');
 const { paths } = require('config');
 const authentication = require('services/authentication');
 const jwt = require('services/jwt');
+const { ipWhiteList } = require('middleware/ipWhitelist');
 
 let page = {};
 let res = {};
@@ -29,11 +30,14 @@ describe('pages/rayg-definitions/RaygDefinitions', () => {
     });
   });
 
-  it('only viewer are allowed to access this page', () => {
-    expect(page.middleware).to.eql([
-      ...authentication.protect(['viewer'])
-    ]);
+  describe('#middleware', () => {
+    it('only viewer and static roles can access this page', () => {
+      expect(page.middleware).to.eql([
+        ipWhiteList,
+        ...authentication.protect(['viewer', 'static', 'devolved_administrations'])
+      ]);
 
-    sinon.assert.calledWith(authentication.protect, ['viewer']);
+      sinon.assert.calledWith(authentication.protect, ['viewer', 'static', 'devolved_administrations']);
+    });
   });
 });

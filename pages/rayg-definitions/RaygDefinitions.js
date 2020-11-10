@@ -11,7 +11,7 @@ class RaygDefinitions extends Page {
   get middleware() {
     return [
       ipWhiteList,
-      ...authentication.protect(['viewer', 'static'])
+      ...authentication.protect(['viewer', 'static', 'devolved_administrations'])
     ];
   }
 }
