@@ -431,60 +431,101 @@ const getAllEntities = async () => {
   return allEntities;
 }
 
-const createEntityHierarchy = async (category) => {
+function whitelistEntityArrayChildren(array,whitelistMap) {
+  let resultArray = [];
+  for (const entity of array) {
+    if (whitelistMap[entity.id]) {
+      if (entity.children) {
+        entity.children = whitelistEntityArrayChildren(entity.children,whitelistMap);
+      }
+      resultArray.push(entity);
+    }
+  }
+
+  return resultArray;
+}
+
+const whitelistEntityHeirarchy = async (whitelist,heirarchy) => {
+  if (whitelist && whitelist.length) {
+    const map = whitelist.reduce( (acc,entity) => {
+      acc[entity.id] = entity;
+      return acc;
+    },{});
+
+    const filteredHeirarchy = whitelistEntityArrayChildren(heirarchy,map);
+    return filteredHeirarchy;
+  }
+
+  return heirarchy;
+}
+
+const createEntityHierarchy = async (entitiesUserCanAccess,category) => {
+
+  let heirarchy = [];
+
   if(config.features.transitionReadinessCache) {
     const cached = await cache.get(`cache-transition-overview`);
     if(cached) {
-      return JSON.parse(cached);
+      heirarchy = JSON.parse(cached);
     }
   }
 
-  const allEntities = await getAllEntities();
+  if (!heirarchy.length) {
+    const allEntities = await getAllEntities();
 
-  if(!allEntities.length) {
-    throw new Error('No entited found in database');
-  }
-
-  const topLevelEntites = allEntities.filter(entity => entity.categoryId === category.id)
-
-  let entitesInHierarchy = [];
-  for(const topLevelEntity of topLevelEntites) {
-    const entitesMapped = mapEntityChildren(allEntities, topLevelEntity);
-    if(entitesMapped && entitesMapped.children && entitesMapped.children.length) {
-      await mapProjectsToEntities(entitesMapped);
+    if(!allEntities.length) {
+      throw new Error('No entited found in database');
     }
-    entitesInHierarchy.push(entitesMapped)
+
+    const topLevelEntites = allEntities.filter(entity => entity.categoryId === category.id)
+
+    heirarchy = [];
+    for(const topLevelEntity of topLevelEntites) {
+      const entitesMapped = mapEntityChildren(allEntities, topLevelEntity);
+      if(entitesMapped && entitesMapped.children && entitesMapped.children.length) {
+        await mapProjectsToEntities(entitesMapped);
+      }
+      heirarchy.push(entitesMapped)
+    }
+
+    await cache.set(`cache-transition-overview`, JSON.stringify(heirarchy));
   }
 
-  await cache.set(`cache-transition-overview`, JSON.stringify(entitesInHierarchy));
+  heirarchy = whitelistEntityHeirarchy(entitiesUserCanAccess,heirarchy);
 
-  return entitesInHierarchy;
+  return heirarchy;
 }
 
-const createEntityHierarchyForTheme = async (topLevelEntityPublicId) => {
+const createEntityHierarchyForTheme = async (entitiesUserCanAccess,topLevelEntityPublicId) => {
+
+  let topLevelEntityMapped;
+
   if(config.features.transitionReadinessCache) {
     const cached = await cache.get(`cache-transition-${topLevelEntityPublicId}`);
     if(cached) {
-      return JSON.parse(cached);
+      topLevelEntityMapped = JSON.parse(cached);
     }
   }
 
-  const allEntities = await getAllEntities();
-  if(!allEntities.length) {
-    throw new Error('No entited found in database');
+  if (!topLevelEntityMapped) {
+    const allEntities = await getAllEntities();
+    if(!allEntities.length) {
+      throw new Error('No entited found in database');
+    }
+
+    const topLevelEntity = allEntities.find(entity => entity.publicId === topLevelEntityPublicId);
+    if(!topLevelEntity) {
+      throw new Error(`Cannot find entity with Public Id ${topLevelEntityPublicId}`);
+    }
+
+    topLevelEntityMapped = mapEntityChildren(allEntities, topLevelEntity);
+    await mapProjectsToEntities(topLevelEntityMapped);
+
+    await cache.set(`cache-transition-${topLevelEntityPublicId}`, JSON.stringify(topLevelEntityMapped));
   }
 
-  const topLevelEntity = allEntities.find(entity => entity.publicId === topLevelEntityPublicId);
-  if(!topLevelEntity) {
-    throw new Error(`Cannot find entity with Public Id ${topLevelEntityPublicId}`);
-  }
-
-  const topLevelEntityMapped = mapEntityChildren(allEntities, topLevelEntity);
-  await mapProjectsToEntities(topLevelEntityMapped);
-
-  await cache.set(`cache-transition-${topLevelEntityPublicId}`, JSON.stringify(topLevelEntityMapped));
-
-  return topLevelEntityMapped;
+  const filteredHeirarchy = await whitelistEntityHeirarchy(entitiesUserCanAccess,[topLevelEntityMapped]);
+  return filteredHeirarchy[0];
 }
 
 const constructTopLevelCategories = async () => {
@@ -569,6 +610,15 @@ const getSubOutcomeStatementsAndDatas = async (pageUrl, req, topLevelEntity) => 
   return entities;
 }
 
+const getThemeEntities = async (entitiesUserCanAccess) => {
+  const themeCategory = await Category.findOne({
+    where: { name: 'Theme' }
+  });
+
+  // No need to await, just return the promise
+  return createEntityHierarchy(entitiesUserCanAccess,themeCategory);
+}
+
 const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
   const statementCategory = await Category.findOne({
     where: { name: 'Statement' }
@@ -638,9 +688,15 @@ const findSelected = (item, entity) => {
   return item;
 }
 
-const themeDetail = async (pageUrl, req) => {
-  const theme = await createEntityHierarchyForTheme(req.params.theme);
+const themeDetail = async (entitiesUserCanAccess, pageUrl, req) => {
+  const theme = await createEntityHierarchyForTheme(entitiesUserCanAccess,req.params.theme);
+  if (!theme) {
+    return;
+  }
   const topLevelOutcomeStatements = await getTopLevelOutcomeStatements(pageUrl, req, cloneDeep(theme));
+  if (!topLevelOutcomeStatements) {
+    return;
+  }
 
   let subOutcomeStatementsAndDatas = [];
   if (req.params.statement) {
@@ -684,15 +740,17 @@ const findEntity = (item, entity) => {
 const findTopLevelOutcomeStatementFromEntity = (statementCategory, allThemes, publicId) => {
   const entity = allThemes.reduce(findEntity, { publicId, found: false });
 
-  const parent = entity.parents.find(parent => parent.categoryId == statementCategory.id);
-  if(!parent) {
-    return entity;
-  } else {
-    return findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, parent.publicId)
+  if (entity.parents) {
+    const parent = entity.parents.find(parent => parent.categoryId == statementCategory.id);
+    if(!parent) {
+      return entity;
+    } else {
+      return findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, parent.publicId)
+    }
   }
 };
 
-const overview = async (transitionReadinessThemeDetailLink, headlinePublicIds) => {
+const overview = async (entitiesUserCanAccess, transitionReadinessThemeDetailLink, headlinePublicIds) => {
   const themeCategory = await Category.findOne({
     where: { name: 'Theme' }
   });
@@ -701,7 +759,7 @@ const overview = async (transitionReadinessThemeDetailLink, headlinePublicIds) =
     where: { name: 'Statement' }
   });
 
-  const allThemes = await createEntityHierarchy(themeCategory);
+  const allThemes = await createEntityHierarchy(entitiesUserCanAccess,themeCategory);
 
   allThemes.forEach(entity => {
     groupById(entity);
@@ -709,18 +767,21 @@ const overview = async (transitionReadinessThemeDetailLink, headlinePublicIds) =
   });
 
   // set headline Entity link
-  const headlineEntites = headlinePublicIds.map(publicId => {
+  let headlineEntites = [];
+  for (const publicId of headlinePublicIds) {
     const entity = allThemes.reduce(findEntity, { publicId, found: false });
 
-    const statement = findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, publicId);
-    const theme = statement.parents.find(parent => parent.categoryId == themeCategory.id);
-    const themeDetail = allThemes.reduce(findEntity, { publicId: theme.publicId, found: false });
+    if (entity.found) {
+      const statement = findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, publicId);
+      const theme = statement.parents.find(parent => parent.categoryId == themeCategory.id);
+      const themeDetail = allThemes.reduce(findEntity, { publicId: theme.publicId, found: false });
 
-    entity.theme = themeDetail.name;
-    entity.link = `${transitionReadinessThemeDetailLink}/${theme.publicId}/${statement.publicId}/${entity.publicId}`;
+      entity.theme = themeDetail.name;
+      entity.link = `${transitionReadinessThemeDetailLink}/${theme.publicId}/${statement.publicId}/${entity.publicId}`;
 
-    return entity;
-  });
+      headlineEntites.push(entity);
+    }
+  }
 
   allThemes.forEach(entity => {
     delete entity.entityChildren;
@@ -734,7 +795,10 @@ const overview = async (transitionReadinessThemeDetailLink, headlinePublicIds) =
   }
 }
 
+
+
 module.exports = {
   themeDetail,
-  overview
+  overview,
+  getThemeEntities
 };
