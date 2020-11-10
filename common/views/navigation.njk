@@ -59,18 +59,23 @@
     config.paths.transitionReadinessThemeDetail
     ]
 %}
+
+{% set coundDownTimer %}
+<li class="govuk-header__navigation-item pull-right">
+    <p class="govuk-body-s govuk-!-font-weight-bold timer">Days to go:  <span id="countdown"></span></p>
+</li>
+{% endset %}
+
 <nav class="navigation" id="show-menu">
     <ul id="navigation" class="govuk-header__navigation" aria-label="Parent navigation">
-    <li class="govuk-header__navigation-item pull-right">
-        <p class="govuk-body-s govuk-!-font-weight-bold timer">Days to go:  <span id="countdown"></span></p>
-    </li>
+        {{ coundDownTimer | safe }}
     <li class="govuk-header__navigation-item" id="toggle-menu" style="display:none;">
         <a class="govuk-header__link nav" id="show-menu-link" href="#show-menu">Menu</a>
         <a class="govuk-header__link nav" id="hide-menu-link" href="#hide-menu">Menu</a>
     </li>
 
 <div id="toggle-mobile">
-    {% if req.user.roles | includes(['viewer', 'static']) %}
+    {% if req.user.roles | includes(['viewer', 'static', 'devolved_administrations']) %}
     <li class="govuk-header__navigation-item {{ 'govuk-header__navigation-item--active' if url in transitionReadinessUrls }}">
         <a class="govuk-header__link nav" href="{{ config.paths.readinessOverview }}">Transition readiness</a>
     </li>
@@ -128,9 +133,6 @@
         Security
         </a>
     </li>
-    {% endif %}
-    {% if (req.user.roles | includes(['static', 'devolved_administrations'])) %}
-      {{ coundDownTimer | safe }}
     {% endif %}
     </ul>
     {% endif %}
@@ -229,7 +231,7 @@
         </li>
     </ul>
     {% endif %}
-</div>
+    </div>
     </ul>
 </nav>
 
