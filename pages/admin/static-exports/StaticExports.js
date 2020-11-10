@@ -2,7 +2,6 @@ const Page = require('core/pages/page');
 const flash = require('middleware/flash');
 const authentication = require('services/authentication');
 const StaticExport = require('models/staticExport');
-const { exec } = require('child_process');
 const tar = require('tar');
 const { v4: uuidv4 } = require("uuid");
 const config = require('config');
@@ -13,6 +12,7 @@ const logger = require('services/logger');
 const moment = require('moment');
 const path = require('path');
 const os = require('os');
+const { fork } = require('child_process');
 
 let s3Bucket = config.services.s3.exportStoreBucketName;
 if(config.services.vcapServices && config.services.vcapServices['aws-s3-bucket'].length) {
@@ -82,19 +82,28 @@ class StaticExports extends Page {
   }
 
   generateStaticSiteExport(exportUid) {
-    return new Promise((resolve, reject) => {
-      const location = `${os.tmpdir()}/${exportUid}/export`;
-      exec(`node scripts/staticSiteGenerator.js --url ${config.serviceUrl} --dir ${location}`, async (error) => {
-        if (error) {
-          return reject(error);
-        }
+    const forked = fork('scripts/staticSiteGenerator');
 
+    return new Promise((resolve, reject) => {
+      forked.on('message', (options = {}) => {
+        if(options.error) {
+          return reject(new Error(options.error));
+        }
+        logger.info('Export complete');
         resolve();
+      });
+
+      logger.info('Starting export');
+      forked.send({
+        url: config.serviceUrl,
+        loginUrl: `${config.serviceUrl}login`,
+        dir: path.resolve(`${os.tmpdir()}/${exportUid}/export`)
       });
     });
   }
 
   compressStaticSiteExport(exportUid) {
+    logger.info('Compressing export');
     const exportLocation = path.resolve(`${os.tmpdir()}/${exportUid}`);
     return tar.c({
       gzip: true,
@@ -104,6 +113,7 @@ class StaticExports extends Page {
   }
 
   async uploadCompressedStaticSiteExportToS3(exportUid) {
+    logger.info('Uploading export to s3');
     const fileName = `${exportUid}.tar.gz`;
     const file = fs.readFileSync(`${os.tmpdir()}/${exportUid}/export.tar.gz`);
 
@@ -118,12 +128,14 @@ class StaticExports extends Page {
         if (err) {
           return reject(err);
         }
+        logger.info('Uploaded export to s3 successfully');
         resolve(data.Location);
       });
     });
   }
 
   async removeTemporaryDirectory(exportUid) {
+    logger.info('Removing demporary directory');
     return new Promise((resolve, reject) => {
       fs.rmdir(`${os.tmpdir()}/${exportUid}`, { recursive: true }, (err) => {
         if (err) {
