@@ -86,6 +86,14 @@
   margin-left: 20px;
 }
 
+.govuk-phase-banner {
+  border-bottom: 1px solid #f3f2f1;
+  .govuk-phase-banner__content {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}
+
 .navigation + .govuk-main-wrapper,
 .navigation + .govuk-back-link,
 .tableu {

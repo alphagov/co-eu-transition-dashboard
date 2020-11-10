@@ -19,7 +19,6 @@
 {% set historicalReprofileReasons = getAuditRecords(milestone.uid, 'reprofiledReason') | await %}
 
 {% block beforeContent %}
-  {% include "feedback.njk" %}
   {{ govukBackLink({
     text: "Back",
     href: "#",
