@@ -16,7 +16,7 @@ class SearchTransitionReadiness extends Page {
   }
 
   static get isEnabled() {
-    return true;
+    return false;
   }
  
   getMeasures() {
