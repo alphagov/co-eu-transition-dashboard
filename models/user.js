@@ -21,6 +21,10 @@ class User extends Model {
     return this.roles.map(role => role.name).includes('static');
   }
 
+  get canViewAllData() {
+    return this.roles.map(role => role.name).includes('all_data');
+  }
+
   get skip2FA () {
     return this.roles.map(role => role.name).includes('skip_2fa');
   }

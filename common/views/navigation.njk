@@ -197,6 +197,8 @@
         {% for theme in res.locals.themesUserCanAccess %}
           {% if ((config.paths.transitionReadinessThemeDetail + '/' + theme.publicId == req.originalUrl) or (config.paths.transitionReadinessThemeDetail + '/' + theme.publicId + '/' in req.originalUrl)) %}
             {% set active = true %}
+          {% else %}
+            {% set active = false %}
           {% endif %}
           <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if active }}">
             <a class="govuk-header__link child-nav" href="{{ config.paths.transitionReadinessThemeDetail }}/{{ theme.publicId }}">

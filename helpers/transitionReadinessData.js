@@ -73,6 +73,7 @@ const mapProjectToEntity = (milestoneFieldDefinitions, projectFieldDefinitions, 
     entityFieldMap[projectFieldEntry.projectField.name] = projectFieldEntry.value
   });
 
+  /*
   entityFieldMap.children = project.milestones.map(milestone => {
     const milestoneFieldMap = {
       name: milestone.description,
@@ -96,42 +97,62 @@ const mapProjectToEntity = (milestoneFieldDefinitions, projectFieldDefinitions, 
     .sort((a, b) => {
       return moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf();
     });
+  */
+}
+
+const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project, milestone) => {
+  entityFieldMap.name = `${project.departmentName} - ${project.title}`;
+  entityFieldMap.hmgConfidence = project.hmgConfidence;
+
+  entityFieldMap.name = milestone.description;
+  entityFieldMap.deliveryConfidence = milestone.deliveryConfidence;
+  entityFieldMap.date = milestone.date;
+  entityFieldMap.complete = milestone.complete;
+
+  milestone.milestoneFieldEntries.forEach(milestoneFieldEntry => {
+    // Prevent entity category field overwriting the category
+    if (milestoneFieldEntry.milestoneField.name != "category") {
+      entityFieldMap[milestoneFieldEntry.milestoneField.name] = milestoneFieldEntry.value
+    }
+  });
 }
 
 const applyRagRollups = (entity) => {
   let color = '';
 
-  // entity is a project
-  if (entity.hasOwnProperty('hmgConfidence')) {
-    if (entity.hmgConfidence == 0) {
-      color = "red";
-    } else if (entity.hmgConfidence == 1) {
-      color = "amber";
-    } else if (entity.hmgConfidence == 2) {
-      color = "yellow";
-    } else if (entity.hmgConfidence == 3) {
-      color = "green";
+  if (entity.category) {
+    // entity is a project
+    if (entity.category.name == 'Project') {
+      if (entity.hmgConfidence == 0) {
+        color = "red";
+      } else if (entity.hmgConfidence == 1) {
+        color = "amber";
+      } else if (entity.hmgConfidence == 2) {
+        color = "yellow";
+      } else if (entity.hmgConfidence == 3) {
+        color = "green";
+      }
+
+      entity.color = color;
+      entity.children.forEach(applyRagRollups);
+      return color;
+
+    // entity is a milestone
+    // do not roll up status to project
+    } else if (entity.category.name == 'Milestone') {
+      if (entity.deliveryConfidence == 0) {
+        color = "red";
+      } else if (entity.deliveryConfidence == 1) {
+        color = "amber";
+      } else if (entity.deliveryConfidence == 2) {
+        color = "yellow";
+      } else if (entity.deliveryConfidence == 3) {
+        color = "green";
+      }
+
+      entity.color = color || '';
+      return color;
     }
-
-    entity.color = color;
-    entity.children.forEach(applyRagRollups);
-    return color;
-
-  // entity is a milestone
-  // do not roll up status to project
-  } else if (entity.hasOwnProperty('deliveryConfidence')) {
-    if (entity.deliveryConfidence == 0) {
-      color = "red";
-    } else if (entity.deliveryConfidence == 1) {
-      color = "amber";
-    } else if (entity.deliveryConfidence == 2) {
-      color = "yellow";
-    } else if (entity.deliveryConfidence == 3) {
-      color = "green";
-    }
-
-    entity.color = color || '';
-    return color;
   }
 
   if(entity.children) {
@@ -179,22 +200,24 @@ const applyActiveItems = (selectedPublicId) => {
   }
 }
 
-const filterEntitiesByCategoryId = (pageUrl, req, entities, categoryId) => {
+const filterEntitiesByCategoryId = (pageUrl, req, entities, categoryIds) => {
   for (var i = entities.length - 1; i >= 0; i--) {
     const entity = entities[i];
 
     if(entity.children) {
-      filterEntitiesByCategoryId(pageUrl,req, entity.children, categoryId);
+      filterEntitiesByCategoryId(pageUrl,req, entity.children, categoryIds);
 
       // remove ghost categories
       if(!entity.children.length) {
+        // console.log(`Ghost ${entity.publicId}`);
         entities.splice(i, 1);
       }
 
       continue;
     }
 
-    if(entity.categoryId !== categoryId) {
+    if(!categoryIds.includes(entity.categoryId)) {
+      // console.log(`Category ${entity.publicId} ${entity.categoryId} ${categoryIds}`);
       entities.splice(i, 1);
       continue;
     }
@@ -208,8 +231,12 @@ const mapProjectsToEntities = async (entitesInHierarchy) => {
     where: { name: 'Project' }
   });
 
-  if(!projectsCategory) {
-    throw new Error('Cannot find projects category');
+  const milestonesCategory = await Category.findOne({
+    where: { name: 'Milestone' }
+  });
+
+  if(!projectsCategory || !milestonesCategory) {
+    throw new Error('Cannot find projects and milestones category');
   }
 
   const dao = new DAO({
@@ -218,19 +245,26 @@ const mapProjectsToEntities = async (entitesInHierarchy) => {
   const milestoneFieldDefinitions = await Milestone.fieldDefinitions();
   const projectFieldDefinitions = await Project.fieldDefinitions();
 
-  const getProjectUid = (uids, entity) => {
+  let projectUids = [];
+  let milestoneUids = [];
+
+  const getProjectUid = (entity) => {
     if(entity.children) {
-      return entity.children.reduce(getProjectUid, uids);
+      for (const child of entity.children) {
+        getProjectUid(child);
+      }
     }
 
     if(entity.categoryId === projectsCategory.id) {
-      uids.push(entity.publicId);
+      projectUids.push(entity.publicId);
+    } else if (entity.categoryId === milestonesCategory.id) {
+      milestoneUids.push(entity.publicId);
     }
-
-    return uids;
+  }
+  for (const child of entitesInHierarchy.children) {
+    getProjectUid(child);
   }
 
-  const projectUids = entitesInHierarchy.children.reduce(getProjectUid, []);
   if(!projectUids.length) {
     return;
   }
@@ -248,12 +282,16 @@ const mapProjectsToEntities = async (entitesInHierarchy) => {
       entity.children = entity.children.filter(entity => {
         const isProject = entity.categoryId === projectsCategory.id;
         if(isProject) {
-          return entity.children && entity.children.length;
+          if (entity.children && entity.children.length) {
+            // console.log(`Adding project ${entity.publicId}`);
+            return true;
+          } else {
+            // console.log(`Removing project ${entity.publicId} due to missing milestones`);
+            return false;
+          }
         }
         return true;
       });
-
-      return entity;
     }
 
     if(entity.categoryId === projectsCategory.id) {
@@ -261,11 +299,22 @@ const mapProjectsToEntities = async (entitesInHierarchy) => {
       if(project) {
         mapProjectToEntity(milestoneFieldDefinitions, projectFieldDefinitions, entity, project);
         entity.isLastExpandable = true;
+      } else {
+        console.log(`Cannot find Project ${entity.publicId}`);
+      }
+    } else if (entity.categoryId === milestonesCategory.id) {
+      for (const project of projects) {
+        const milestone = project.milestones.find(milestone => milestone.uid === entity.publicId);
+        if (milestone) {
+          mapMilestoneToEntity(milestoneFieldDefinitions, entity, project, milestone);
+          break;
+        }
       }
     }
   };
 
   mapProjectsToEntites(entitesInHierarchy);
+  //console.log(JSON.stringify(entitesInHierarchy, null, '\t'));
 }
 
 const sortById = (entity, property) => {
@@ -434,7 +483,8 @@ const getAllEntities = async () => {
 function whitelistEntityArrayChildren(array,whitelistMap) {
   let resultArray = [];
   for (const entity of array) {
-    if (whitelistMap[entity.id]) {
+    // Milestones don't have entity id's currently
+    if (whitelistMap[entity.id] || !entity.id) {
       if (entity.children) {
         entity.children = whitelistEntityArrayChildren(entity.children,whitelistMap);
       }
@@ -474,7 +524,7 @@ const createEntityHierarchy = async (entitiesUserCanAccess,category) => {
     const allEntities = await getAllEntities();
 
     if(!allEntities.length) {
-      throw new Error('No entited found in database');
+      throw new Error('No entities found in database');
     }
 
     const topLevelEntites = allEntities.filter(entity => entity.categoryId === category.id)
@@ -546,15 +596,23 @@ const constructTopLevelCategories = async () => {
     throw new Error('Cannot find projectCategory category');
   }
 
+  const milestoneCategory = categories.find(category => category.name === 'Milestone');
+  if(!milestoneCategory) {
+    throw new Error('Cannot find milestoneCategory category');
+  }
+
   return [{
     name: "Empirical",
-    categoryId: measuresCategory.id
+    categoryId: measuresCategory.id,
+    filterCategoryIds: [measuresCategory.id]
   },{
     name: "Comms",
-    categoryId: communicationCategory.id
+    categoryId: communicationCategory.id,
+    filterCategoryIds: [communicationCategory.id]
   },{
     name: "HMG Delivery",
-    categoryId: projectCategory.id
+    categoryId: projectCategory.id,
+    filterCategoryIds: [projectCategory.id,milestoneCategory.id]
   }];
 }
 
@@ -589,7 +647,7 @@ const getSubOutcomeStatementsAndDatas = async (pageUrl, req, topLevelEntity) => 
     // sort all entites into respective categories i.e. Empirical, Comms, HMG Delivery
     entities.forEach(entity => {
       const topLevelEntityClone = cloneDeep(topLevelEntity);
-      filterEntitiesByCategoryId(pageUrl, req, topLevelEntityClone.children, entity.categoryId);
+      filterEntitiesByCategoryId(pageUrl, req, topLevelEntityClone.children, entity.filterCategoryIds);
       entity.children = topLevelEntityClone.children;
     });
 
@@ -635,12 +693,14 @@ const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
           filterChildren(entity.children);
 
           if(!entity.children.length) {
+            // console.log(`Removing ${entity.publicId}`);
             entities.splice(i, 1);
           }
           continue;
         }
 
         if(entity.categoryId === statementCategory.id) {
+          // console.log(`Removing ${entity.publicId}`);
           entities.splice(i, 1);
         }
       }
@@ -655,6 +715,7 @@ const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
     entities = entities.filter(entity => {
       const hasChildren = entity.children && entity.children.length;
       const hasOnlyParentOrLess = entity.parents.length <= 1;
+      // console.log(`Removing ${entity.publicId}`);
       return hasChildren && hasOnlyParentOrLess;
     });
 
@@ -665,6 +726,8 @@ const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
       entity.link = `${pageUrl}/${req.params.theme}/${entity.publicId}`;
 
       delete entity.children;
+      // console.log(`Removing ${entity.publicId} children`);
+
 
       applyActiveItems(req.params.statement)(entity);
     });
