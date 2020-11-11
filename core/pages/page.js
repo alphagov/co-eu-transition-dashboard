@@ -144,24 +144,6 @@ class Page {
         return obj;
       }, {});
   }
-
-  get countDownTime() {
-    const second = 1000,
-      minute = second * 60,
-      hour = minute * 60,
-      day = hour * 24;
-
-    const finalTransitionDate = new Date('Jan 01, 2021 23:59:59').getTime();
-    const distance = finalTransitionDate - new Date().getTime();
-
-    let daysToDate = Math.floor(distance / day);
-
-    if (distance < 0) {
-      daysToDate = 0;
-    }
-
-    return daysToDate;
-  }
 }
 
 module.exports = Page;
