@@ -6,6 +6,7 @@ const Role = require('models/role');
 const RoleEntity = require('models/roleEntity');
 const RoleEntityBlacklist = require('models/roleEntityBlacklist');
 const UserRole = require('models/userRole');
+const transitionReadinessData = require('helpers/transitionReadinessData');
 
 describe('middleware/entityUserPermissions', () => {
   describe('#assignEntityIdsUserCanAccessToLocals', () => {
@@ -19,8 +20,9 @@ describe('middleware/entityUserPermissions', () => {
       next = sinon.stub();
     });
 
-    it('sets locals.entitiesUserCanAccess with all entites user can access via whitelist', async () => {
-      const entites = [{
+    it('sets locals.entitiesUserCanAccess with all entities user can access via whitelist', async () => {
+      transitionReadinessData.getThemeEntities = sinon.stub();
+      const entities = [{
         publicId: 'entity 01',
         id: 1,
         children: []
@@ -31,7 +33,7 @@ describe('middleware/entityUserPermissions', () => {
         children: []
       }];
 
-      Entity.findAll.resolves(entites);
+      Entity.findAll.resolves(entities);
 
       Role.findAll.resolves([{
         name: "all",
@@ -76,11 +78,11 @@ describe('middleware/entityUserPermissions', () => {
       });
 
       sinon.assert.called(next);
-      expect(res.locals.entitiesUserCanAccess).to.eql(entites);
+      expect(res.locals.entitiesUserCanAccess).to.eql(entities);
     });
 
-    it('sets locals.entitiesUserCanAccess with all entites user can access via blacklist', async () => {
-      const entites = [{
+    it('sets locals.entitiesUserCanAccess with all entities user can access via blacklist', async () => {
+      const entities = [{
         publicId: 'entity 01',
         id: 1,
         children: []
@@ -91,7 +93,7 @@ describe('middleware/entityUserPermissions', () => {
         children: []
       }];
 
-      Entity.findAll.resolves(entites);
+      Entity.findAll.resolves(entities);
 
       Role.findAll.resolves([{
         name: "all",
@@ -141,7 +143,7 @@ describe('middleware/entityUserPermissions', () => {
       });
 
       sinon.assert.called(next);
-      expect(res.locals.entitiesUserCanAccess).to.eql([entites[0]]);
+      expect(res.locals.entitiesUserCanAccess).to.eql([entities[0]]);
     });
   });
 });
