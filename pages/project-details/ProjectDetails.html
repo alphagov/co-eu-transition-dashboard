@@ -20,7 +20,6 @@
 {% set fieldGroups = getProjectGroups() | await %}
 
 {% block beforeContent %}
-{% include "feedback.njk" %}
 {{ govukBackLink({
   text: "Back",
   href: "#",
