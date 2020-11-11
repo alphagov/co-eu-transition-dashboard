@@ -1,0 +1,37 @@
+{% extends "template.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% block beforeContent %}
+  {% include "navigation.njk" %}
+  {% if not successMode %}
+    {{ 
+      govukBackLink({
+        text: "Back",
+        href: "#",
+        attributes: {
+          onclick: "history.go(-1); return false;"
+        }
+    }) 
+    }}
+  {% endif %}
+{% endblock %}
+
+{% block pageTitle %}Search transition readiness{% endblock %}
+{% set measures = getMeasures() %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <ol>
+      {% for measure in measures %}
+        <li>{{ measure.id }} - {{measure.theme}} - {{measure.name}} - {{measure.link}} - {{measure.RAYGStatus}}</li>
+      {% endfor %}
+    </ol>
+ </div>
+</div>
+
+{% endblock %}
