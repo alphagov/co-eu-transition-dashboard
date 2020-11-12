@@ -19,7 +19,7 @@ if (redisUrl) {
 
   const set = async (key, value) => {
     // set cache to expire at 5PM of that day, when called before 5PM, else set to 5PM of next day
-    const expiresAt = (moment().hour() > 17)? moment().add(1, 'd').set('h', 17).set('m', 0) : moment().set('h', 17).set('m', 0);
+    const expiresAt = (moment().hour() >= 17)? moment().add(1, 'd').set('h', 17).set('m', 0) : moment().set('h', 17).set('m', 0);
     client.set(key, value);
     client.expireat(key, expiresAt.unix());
   };
