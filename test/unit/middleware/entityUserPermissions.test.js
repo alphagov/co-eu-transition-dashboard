@@ -1,7 +1,6 @@
 const Entity = require('models/entity');
 const { expect, sinon } = require('test/unit/util/chai');
 const entityUserPermissions = require('middleware/entityUserPermissions');
-const User = require('models/user');
 const Role = require('models/role');
 const RoleEntity = require('models/roleEntity');
 const RoleEntityBlacklist = require('models/roleEntityBlacklist');

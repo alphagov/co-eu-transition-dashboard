@@ -278,8 +278,10 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       if(project) {
         mapProjectToEntity(milestoneFieldDefinitions, projectFieldDefinitions, entity, project);
         entity.isLastExpandable = true;
+      /* 
       } else {
-        console.log(`Cannot find Project ${entity.publicId}`);
+        console.log(`Cannot find Project ${entity.publicId} (either deleted or missing milestones)`);
+      */
       }
     } else if (entity.categoryId === milestonesCategory.id) {
       for (const project of projects) {

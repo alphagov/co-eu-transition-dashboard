@@ -1,10 +1,8 @@
 const Entity = require('models/entity');
-const User = require('models/user');
 const UserRole = require('models/userRole');
 const Role = require('models/role');
 const RoleEntity = require('models/roleEntity');
 const RoleEntityBlacklist = require('models/roleEntityBlacklist');
-const EntityParent = require('models/entityParent');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 
 function getFlatEntityTree(entity,allEntityMap) {
@@ -59,7 +57,7 @@ async function entitiesUserCanAccess(user) {
 
   let whitelist = [];
   if (user.canViewAllData) {
-    console.log("Allowing user to view all data");
+    //console.log("Allowing user to view all data");
     whitelist = await Entity.findAll({
       attributes: ['publicId', 'id'],
       include: {
