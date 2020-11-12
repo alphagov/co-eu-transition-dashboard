@@ -96,6 +96,7 @@ class MeasureGroup extends Page {
     for (const group of groups) {
       const measureToSave = Object.assign({}, group, {
         groupDescription: data.groupDescription,
+        name: data.groupDescription,
         value: data.value
       });
 
