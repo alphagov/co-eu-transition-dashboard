@@ -73,31 +73,10 @@ const mapProjectToEntity = (milestoneFieldDefinitions, projectFieldDefinitions, 
     entityFieldMap[projectFieldEntry.projectField.name] = projectFieldEntry.value
   });
 
-  /*
-  entityFieldMap.children = project.milestones.map(milestone => {
-    const milestoneFieldMap = {
-      name: milestone.description,
-      publicId: milestone.uid,
-      deliveryConfidence: milestone.deliveryConfidence,
-      categoryId: entityFieldMap.categoryId,
-      date: milestone.date,
-      complete: milestone.complete,
-    };
-
-    milestone.milestoneFieldEntries.forEach(milestoneFieldEntry => {
-      milestoneFieldMap[milestoneFieldEntry.milestoneField.name] = milestoneFieldEntry.value
-    });
-
-    milestoneFieldMap.category = entityFieldMap.category;
-
-    return milestoneFieldMap;
-  });
-
   entityFieldMap.children = entityFieldMap.children
     .sort((a, b) => {
       return moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf();
     });
-  */
 }
 
 const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project, milestone) => {
@@ -226,7 +205,7 @@ const filterEntitiesByCategoryId = (pageUrl, req, entities, categoryIds) => {
   }
 }
 
-const mapProjectsToEntities = async (entitesInHierarchy) => {
+const mapProjectsToEntities = async (entitiesInHierarchy) => {
   const projectsCategory = await Category.findOne({
     where: { name: 'Project' }
   });
@@ -261,7 +240,7 @@ const mapProjectsToEntities = async (entitesInHierarchy) => {
       milestoneUids.push(entity.publicId);
     }
   }
-  for (const child of entitesInHierarchy.children) {
+  for (const child of entitiesInHierarchy.children) {
     getProjectUid(child);
   }
 
@@ -313,8 +292,8 @@ const mapProjectsToEntities = async (entitesInHierarchy) => {
     }
   };
 
-  mapProjectsToEntites(entitesInHierarchy);
-  //console.log(JSON.stringify(entitesInHierarchy, null, '\t'));
+  mapProjectsToEntites(entitiesInHierarchy);
+  //console.log(JSON.stringify(entitiesInHierarchy, null, '\t'));
 }
 
 const sortById = (entity, property) => {
@@ -483,8 +462,7 @@ const getAllEntities = async () => {
 function whitelistEntityArrayChildren(array,whitelistMap) {
   let resultArray = [];
   for (const entity of array) {
-    // Milestones don't have entity id's currently
-    if (whitelistMap[entity.id] || !entity.id) {
+    if (whitelistMap[entity.id]) {
       if (entity.children) {
         entity.children = whitelistEntityArrayChildren(entity.children,whitelistMap);
       }
@@ -531,11 +509,11 @@ const createEntityHierarchy = async (entitiesUserCanAccess,category) => {
 
     heirarchy = [];
     for(const topLevelEntity of topLevelEntites) {
-      const entitesMapped = mapEntityChildren(allEntities, topLevelEntity);
-      if(entitesMapped && entitesMapped.children && entitesMapped.children.length) {
-        await mapProjectsToEntities(entitesMapped);
+      const entitiesMapped = mapEntityChildren(allEntities, topLevelEntity);
+      if(entitiesMapped && entitiesMapped.children && entitiesMapped.children.length) {
+        await mapProjectsToEntities(entitiesMapped);
       }
-      heirarchy.push(entitesMapped)
+      heirarchy.push(entitiesMapped)
     }
 
     await cache.set(`cache-transition-overview`, JSON.stringify(heirarchy));
@@ -560,7 +538,7 @@ const createEntityHierarchyForTheme = async (entitiesUserCanAccess,topLevelEntit
   if (!topLevelEntityMapped) {
     const allEntities = await getAllEntities();
     if(!allEntities.length) {
-      throw new Error('No entited found in database');
+      throw new Error('No entities found in database');
     }
 
     const topLevelEntity = allEntities.find(entity => entity.publicId === topLevelEntityPublicId);
@@ -644,7 +622,7 @@ const getSubOutcomeStatementsAndDatas = async (pageUrl, req, topLevelEntity) => 
 
     entities = await constructTopLevelCategories();
 
-    // sort all entites into respective categories i.e. Empirical, Comms, HMG Delivery
+    // sort all entities into respective categories i.e. Empirical, Comms, HMG Delivery
     entities.forEach(entity => {
       const topLevelEntityClone = cloneDeep(topLevelEntity);
       filterEntitiesByCategoryId(pageUrl, req, topLevelEntityClone.children, entity.filterCategoryIds);
