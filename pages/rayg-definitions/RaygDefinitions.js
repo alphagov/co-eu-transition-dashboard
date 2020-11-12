@@ -1,6 +1,7 @@
 const Page = require('core/pages/page');
 const { paths } = require('config');
 const authentication = require('services/authentication');
+const { ipWhiteList } = require('middleware/ipWhitelist');
 
 class RaygDefinitions extends Page {
   get url() {
@@ -9,7 +10,8 @@ class RaygDefinitions extends Page {
 
   get middleware() {
     return [
-      ...authentication.protect(['viewer'])
+      ipWhiteList,
+      ...authentication.protect(['viewer', 'static', 'devolved_administrations'])
     ];
   }
 }

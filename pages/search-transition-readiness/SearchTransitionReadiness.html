@@ -19,19 +19,18 @@
   {% endif %}
 {% endblock %}
 
-{% block pageTitle %}Create new user{% endblock %}
-{% set roles = getRoles() | await %}
-{% set departments = getDepartments() | await %}
+{% block pageTitle %}Search transition readiness{% endblock %}
+{% set measures = getMeasures() %}
 
 {% block content %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    {% if successMode %}
-      {% include "admin/user-management/create-user/partials/success.html" %}
-    {% else %}
-      {% include "admin/user-management/create-user/partials/form.html" %}
-    {% endif %}
+    <ol>
+      {% for measure in measures %}
+        <li>{{ measure.id }} - {{measure.theme}} - {{measure.name}} - {{measure.link}} - {{measure.RAYGStatus}}</li>
+      {% endfor %}
+    </ol>
  </div>
 </div>
 

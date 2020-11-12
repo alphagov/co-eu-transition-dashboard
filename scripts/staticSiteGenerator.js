@@ -66,7 +66,7 @@ const options = commandLineArgs(optionDefinitions);
 options.dir = path.resolve(options.dir) || path.resolve(__dirname, '..', 'dist');
 options.email = options.email || config.credentials.staticExportUser.email;
 options.password = options.password || config.credentials.staticExportUser.password;
-options.loginUrl = options.loginUrl || `${options.url}/login`;
+options.loginUrl = options.loginUrl || `${options.url}login`;
 options.test = options.test || false;
 
 // Logs into a given url with params email and password and returns the cookies set by server
@@ -85,20 +85,7 @@ const getAuthedCookie = async (url) => {
   return get(response, 'headers["set-cookie"]');
 };
 
-const removeTemporaryDirectory = dir => {
-  logger.info(`Creating temporary directory ${options.dir}`);
-  return new Promise((resolve, reject) => {
-    fs.rmdir(dir, { recursive: true }, (err) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve();
-    });
-  });
-};
-
 const exportStaticSite = async () => {
-  await removeTemporaryDirectory(options.dir);
   const cookie = await getAuthedCookie(options.loginUrl);
 
   // no strings to replace yet
@@ -115,6 +102,7 @@ const exportStaticSite = async () => {
         Cookie: cookie
       }
     },
+    requestConcurrency: 10,
     plugins: [
       new Reporting(options.url),
       new StringReplace(stringsReplaceMap),

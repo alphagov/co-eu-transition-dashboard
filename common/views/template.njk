@@ -64,7 +64,6 @@
         Transition Readiness Dashboard
       </a>
       {% if req.isAuthenticated() and not req.user.isStatic %}
-        <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide logout link">Menu</button>
         <nav>
           <ul id="navigation" class="govuk-header__navigation " aria-label="Logout Link">
             <li class="govuk-header__navigation-item logout-item">
@@ -78,14 +77,11 @@
     </div>
   </div>
 </header>
+{% include "feedback.njk" %}
 {% endblock %}
 
 {% block beforeContent %}
-  <div>
   {% include "navigation.njk" %}
-  </div>
-  {% include "feedback.njk" %}
-
 {% endblock %}
 
 {% block main %}
