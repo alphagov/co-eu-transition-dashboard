@@ -4,22 +4,27 @@
 }
 
 .statement {
+    display: block;
     background-color: #f3f2f1;
     padding: 10px 5px 5px 10px;
     margin-bottom: 2px;
-    display: block;
-}
+    position: relative;
+  }
 
-.statement-link, .statement-desc {
+.statement--link {
     text-decoration: none;
     color: #0b0c0c;
-    display: block;
-    line-height: 1.11111;
-	margin-top: 0;
-	margin-bottom: 10px;
     &:visited {
-		color: #0b0c0c;
-	}
+        color: #0b0c0c;
+    }
+    &:before {
+        content: '';
+        bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+    }
 }
 
 .statement:not(.active-statement):hover {
@@ -32,7 +37,7 @@
 }
 
 .arrow {
-    padding-right: 3%;
+    padding-right: 2%;
     float: right;
 }
 
@@ -272,7 +277,7 @@
     padding: 50px 15%;
     width: 100%;
     text-align: center;
-    color: #d8d8d8;
+    color: #b1b4b6;
     box-sizing: border-box;
 }
 

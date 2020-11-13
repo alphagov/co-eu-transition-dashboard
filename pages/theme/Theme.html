@@ -1,5 +1,6 @@
 {% extends "template.njk" %}
 {% from "readiness-accordion.njk" import buildOutcomeMeasures %}
+{% from "attribute.njk" import ariaCurrent %}
 
 {% set data = data() | await %}
 {% set activeStatement = '' %}
@@ -19,17 +20,17 @@
   <p class="govuk-body-s"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">View RAYG definitions and how they are calculated</a></p>
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'hide-statement' if req.params.statement }}" id="column-statements">
-  {% for topOutcome in data.topLevelOutcomeStatements %}
-    <div class="statement {{ topOutcome.color }} {{ 'active-statement' if topOutcome.active }}">
-    {% if topOutcome.active %} 
-    {% set activeStatement = topOutcome.name %} 
-    {% set activeColor = topOutcome.color %} 
-    <img src="/assets/images/arrow.png" class="arrow" alt="Arrow" aria-hidden="true">
-    {% endif %}
-        <a href="{{ topOutcome.link }}" class="govuk-link govuk-body govuk-!-font-weight-bold statement-link">{{ topOutcome.name }}</a>
-        <p class="govuk-body govuk-!-font-size-16 statement-desc">{{ topOutcome.description }}</p>
-    </div>
-  {% endfor %}
+    {% for topOutcome in data.topLevelOutcomeStatements %}
+      <div class="statement {{ topOutcome.color }} {{ 'active-statement' if topOutcome.active }}" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>
+      {% if topOutcome.active %} 
+        {% set activeStatement = topOutcome.name %} 
+        {% set activeColor = topOutcome.color %} 
+        <img src="/assets/images/arrow.png" class="arrow" alt="Arrow" aria-hidden="true">
+      {% endif %}
+        <a href="{{ topOutcome.link }}" class="govuk-body govuk-!-font-weight-bold govuk-link statement--link">{{ topOutcome.name }}</a>
+        <p class="govuk-body-s govuk-!-margin-top-3">{{ topOutcome.description }}</p>
+      </div>
+    {% endfor %}
   </div>
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'show-statement' if req.params.statement and not req.params.selectedPublicId }}" id="column-sub-statements">
@@ -38,7 +39,7 @@
     <h3 class="govuk-heading-m theme-{{ activeColor }} theme-name {{ 'show-statement' if req.params.statement }}" style="display: none;">{{ activeStatement }}</h3>
 
     {% if data.subOutcomeStatementsAndDatas | length > 0 %}
-      <div class="readiness-accordion-wrapper" >
+      <div class="readiness-accordion-wrapper">
         {{ buildOutcomeMeasures(data.subOutcomeStatementsAndDatas, 1, req.params.statement) }}
       </div>
     {% else %}
@@ -54,7 +55,7 @@
   {% elseif data.iframeUrl.error %}
     <p class="govuk-body govuk-!-font-weight-bold tableu-message">There has been an error accessing this data, please contact The Transition Taskforce Dashboard Team</p>
   {% else %}
-    <iframe title="Graphical Display" src="{{ data.iframeUrl.url }}" class="theme-tableu"></iframe>
+    <iframe title="Graphical display of Measure" src="{{ data.iframeUrl.url }}" class="theme-tableu"></iframe>
   {% endif %}
   </div>
 
