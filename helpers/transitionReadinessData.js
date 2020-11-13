@@ -73,10 +73,12 @@ const mapProjectToEntity = (milestoneFieldDefinitions, projectFieldDefinitions, 
     entityFieldMap[projectFieldEntry.projectField.name] = projectFieldEntry.value
   });
 
-  entityFieldMap.children = entityFieldMap.children
-    .sort((a, b) => {
-      return moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf();
-    });
+  if (entityFieldMap.children) {
+    entityFieldMap.children = entityFieldMap.children
+      .sort((a, b) => {
+        return moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf();
+      });
+  }
 }
 
 const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project, milestone) => {
