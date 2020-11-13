@@ -135,6 +135,7 @@ describe('pages/data-entry-entity/measure-group/MeasureGroup', () => {
   describe('#updateGroup', () => {
     const data = {
       groupDescription: 'some desc',
+      name: 'some desc',
       value: 1
     };
     const entity = { id: 1 };

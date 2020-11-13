@@ -108,11 +108,13 @@
 	font-weight: 400;
 	font-size: 16px;
 	line-height: 1.11111;
+	word-break: break-word;
+	hyphens: auto;
 }
 
-.overview-card--title,
+.overview-card--link,
 .overview-card--metric {
-		color: #0b0c0c;
+	color: #0b0c0c;
 	font-family: "GDS Transport",Arial,sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -122,9 +124,16 @@
 	line-height: 1.11111;
 	margin-top: 0;
 	margin-bottom: 10px;
+	display: block;
+	text-decoration: none;
+
+	&:visited {
+		color: #0b0c0c;
+	}
 }
 
-.risk-col .overview-card .overview-card--title {
+
+.risk-col .overview-card .overview-card--link {
 	text-transform: uppercase;
 }
 
@@ -133,7 +142,7 @@
 }
 
 .risk-col .overview-card.inactive,
-.risk-col .overview-card.inactive .overview-card--title {
+.risk-col .overview-card.inactive .overview-card--link {
 	color: #B1B4B6;
 }
 
