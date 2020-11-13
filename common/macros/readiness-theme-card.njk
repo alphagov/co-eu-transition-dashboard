@@ -1,8 +1,8 @@
 {% macro readinessThemeCard(item) %}
   <div class="overview-card {{ item.color if item.active else "grey inactive" }}  ">
     <div class="overview-card--inner">
-      <a class="overview-card--link" href="{{ item.link if item.active else "#" }}"> 
-        <p class="overview-card--title">{{ item.name }}</p>
+      <a class="overview-card--link govuk-link" href="{{ item.link if item.active else "#" }}"> 
+        {{ item.name }}
       </a>
       <p>{{ item.description }}</p>
     </div>
