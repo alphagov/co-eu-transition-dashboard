@@ -2,6 +2,7 @@ const { expect, sinon } = require('test/unit/util/chai');
 const { paths } = require('config');
 const authentication = require('services/authentication');
 const { ipWhiteList } = require('middleware/ipWhitelist');
+const entityUserPermissions = require('middleware/entityUserPermissions');
 
 let page = {};
 let res = {};
@@ -30,7 +31,8 @@ describe('pages/readiness-overview/ReadinessOverview', () => {
     it('only viewer and static roles can access this page', () => {
       expect(page.middleware).to.eql([
         ipWhiteList,
-        ...authentication.protect(['viewer', 'static'])
+        ...authentication.protect(['viewer', 'static']),
+        entityUserPermissions.assignEntityIdsUserCanAccessToLocals
       ]);
 
       sinon.assert.calledWith(authentication.protect, ['viewer', 'static']);

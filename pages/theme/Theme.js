@@ -4,6 +4,7 @@ const authentication = require('services/authentication');
 const config = require('config');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 const { ipWhiteList } = require('middleware/ipWhitelist');
+const entityUserPermissions = require('middleware/entityUserPermissions');
 
 class Theme extends Page {
   static get isEnabled() {
@@ -25,12 +26,17 @@ class Theme extends Page {
   get middleware() {
     return [
       ipWhiteList,
-      ...authentication.protect(['viewer', 'static', 'devolved_administrations'])
+      ...authentication.protect(['viewer', 'static', 'devolved_administrations']),
+      entityUserPermissions.assignEntityIdsUserCanAccessToLocals
     ];
   }
 
   async data() {
-    return transitionReadinessData.themeDetail(this.url, this.req);
+    const data = await transitionReadinessData.themeDetail(this.res.locals.entitiesUserCanAccess,this.url, this.req);
+    if (!data) {
+      throw `Cannot fetch data for ${this.req.params.theme}`;
+    }
+    return data;
   }
 }
 

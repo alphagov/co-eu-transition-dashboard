@@ -5,6 +5,7 @@ const groupBy = require('lodash/groupBy');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 const HeadlineMeasures = require('models/headlineMeasures');
 const { ipWhiteList } = require('middleware/ipWhitelist');
+const entityUserPermissions = require('middleware/entityUserPermissions');
 
 class ReadinessOverview extends Page {
   get url() {
@@ -14,7 +15,8 @@ class ReadinessOverview extends Page {
   get middleware() {
     return [
       ipWhiteList,
-      ...authentication.protect(['viewer', 'static', 'devolved_administrations'])
+      ...authentication.protect(['viewer', 'static', 'devolved_administrations']),
+      entityUserPermissions.assignEntityIdsUserCanAccessToLocals
     ];
   }
 
@@ -22,7 +24,7 @@ class ReadinessOverview extends Page {
     const headlinePublicIds = await HeadlineMeasures.findAll({
       order: ['priority']
     });
-    const data = await transitionReadinessData.overview(paths.transitionReadinessThemeDetail, headlinePublicIds.map(entity => entity.entityPublicId));
+    const data = await transitionReadinessData.overview(this.res.locals.entitiesUserCanAccess,paths.transitionReadinessThemeDetail, headlinePublicIds.map(entity => entity.entityPublicId));
 
     data.allThemes.forEach(entity => {
       entity.link = `${paths.transitionReadinessThemeDetail}/${entity.publicId}`;
