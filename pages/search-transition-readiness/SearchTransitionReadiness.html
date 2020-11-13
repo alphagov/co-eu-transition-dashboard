@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block pageTitle %}Search transition readiness{% endblock %}
-{% set measures = getMeasures() %}
+{% set measures = getMeasures() | await %}
 
 {% block content %}
 
@@ -28,7 +28,7 @@
   <div class="govuk-grid-column-two-thirds">
     <ol>
       {% for measure in measures %}
-        <li>{{ measure.id }} - {{measure.theme}} - {{measure.name}} - {{measure.link}} - {{measure.RAYGStatus}}</li>
+        <li>{{ measure.id }} - {{measure.theme}} - {{measure.name}} - {{measure.link}} - {{measure.color}}</li>
       {% endfor %}
     </ol>
  </div>

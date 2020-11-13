@@ -73,10 +73,12 @@ const mapProjectToEntity = (milestoneFieldDefinitions, projectFieldDefinitions, 
     entityFieldMap[projectFieldEntry.projectField.name] = projectFieldEntry.value
   });
 
-  entityFieldMap.children = entityFieldMap.children
-    .sort((a, b) => {
-      return moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf();
-    });
+  if (entityFieldMap.children) {
+    entityFieldMap.children = entityFieldMap.children
+      .sort((a, b) => {
+        return moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf();
+      });
+  }
 }
 
 const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project, milestone) => {
@@ -648,13 +650,26 @@ const getSubOutcomeStatementsAndDatas = async (pageUrl, req, topLevelEntity) => 
   return entities;
 }
 
-const getThemeEntities = async (entitiesUserCanAccess) => {
-  const themeCategory = await Category.findOne({
+const getThemeCategory = async () => {
+  return Category.findOne({
     where: { name: 'Theme' }
   });
+}
 
-  // No need to await, just return the promise
+const getThemeEntities = async (entitiesUserCanAccess) => {
+  const themeCategory = await getThemeCategory();
   return createEntityHierarchy(entitiesUserCanAccess,themeCategory);
+}
+
+const getThemesHierarchy = async (entitiesUserCanAccess) => {
+  const allThemes = await getThemeEntities(entitiesUserCanAccess);
+
+  allThemes.forEach(entity => {
+    groupById(entity);
+    applyRagRollups(entity);
+  });
+
+  return allThemes;
 }
 
 const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
@@ -779,7 +794,6 @@ const findEntity = (item, entity) => {
   return item;
 }
 
-
 const findTopLevelOutcomeStatementFromEntity = (statementCategory, allThemes, publicId) => {
   const entity = allThemes.reduce(findEntity, { publicId, found: false });
 
@@ -794,37 +808,10 @@ const findTopLevelOutcomeStatementFromEntity = (statementCategory, allThemes, pu
 };
 
 const overview = async (entitiesUserCanAccess, transitionReadinessThemeDetailLink, headlinePublicIds) => {
-  const themeCategory = await Category.findOne({
-    where: { name: 'Theme' }
-  });
-
-  const statementCategory = await Category.findOne({
-    where: { name: 'Statement' }
-  });
-
-  const allThemes = await createEntityHierarchy(entitiesUserCanAccess,themeCategory);
-
-  allThemes.forEach(entity => {
-    groupById(entity);
-    applyRagRollups(entity);
-  });
+  const allThemes = await getThemesHierarchy(entitiesUserCanAccess);  
 
   // set headline Entity link
-  let headlineEntites = [];
-  for (const publicId of headlinePublicIds) {
-    const entity = allThemes.reduce(findEntity, { publicId, found: false });
-
-    if (entity.found) {
-      const statement = findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, publicId);
-      const theme = statement.parents.find(parent => parent.categoryId == themeCategory.id);
-      const themeDetail = allThemes.reduce(findEntity, { publicId: theme.publicId, found: false });
-
-      entity.theme = themeDetail.name;
-      entity.link = `${transitionReadinessThemeDetailLink}/${theme.publicId}/${statement.publicId}/${entity.publicId}`;
-
-      headlineEntites.push(entity);
-    }
-  }
+  let headlineEntites = await measuresWithLink(allThemes, headlinePublicIds, transitionReadinessThemeDetailLink);
 
   allThemes.forEach(entity => {
     delete entity.entityChildren;
@@ -838,10 +825,34 @@ const overview = async (entitiesUserCanAccess, transitionReadinessThemeDetailLin
   }
 }
 
+const measuresWithLink = async (allThemes, publicIds, transitionReadinessThemeDetailLink) => {
+  // set headline Entity link
+  const themeCategory = await getThemeCategory();
+  const statementCategory = await Category.findOne({
+    where: { name: 'Statement' }
+  });
+  let measureEntities = [];
+  for (const publicId of publicIds) {
+    const entity = allThemes.reduce(findEntity, { publicId, found: false });
 
+    if (entity.found) {
+      const statement = findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, publicId);
+      const theme = statement.parents.find(parent => parent.categoryId == themeCategory.id);
+      const themeDetail = allThemes.reduce(findEntity, { publicId: theme.publicId, found: false });
+
+      entity.theme = themeDetail.name;
+      entity.link = `${transitionReadinessThemeDetailLink}/${theme.publicId}/${statement.publicId}/${entity.publicId}`;
+
+      measureEntities.push(entity);
+    }
+  }
+  return measureEntities;
+}
 
 module.exports = {
   themeDetail,
   overview,
-  getThemeEntities
+  measuresWithLink,
+  getThemeEntities,
+  getThemesHierarchy
 };
