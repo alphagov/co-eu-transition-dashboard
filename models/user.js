@@ -21,6 +21,10 @@ class User extends Model {
     return this.roles.map(role => role.name).includes('static');
   }
 
+  get canViewAllData() {
+    return this.roles.map(role => role.name).includes('all_data');
+  }
+
   get skip2FA () {
     return this.roles.map(role => role.name).includes('skip_2fa');
   }
@@ -214,6 +218,8 @@ Department.belongsToMany(User, { through: DepartmentUser, foreignKey: 'departmen
 User.belongsToMany(Role, { through: UserRole, foreignKey: 'userId' });
 
 User.belongsToMany(Entity, { through: EntityUser, foreignKey: 'userId' });
+User.hasMany(EntityUser, { as: "userEntities", foreignKey: 'userId' });
+
 Entity.belongsToMany(User, { through: EntityUser, foreignKey: 'entityId' });
 
 User.hasMany(UserMetric, { as: "userMetrics", foreignKey: 'userId' });
