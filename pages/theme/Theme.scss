@@ -7,15 +7,33 @@
     background-color: #f3f2f1;
     padding: 10px 5px 5px 10px;
     margin-bottom: 2px;
+    display: block;
 }
 
-.statement:hover, .active-statement {
-    background-color: white;
-	background: url(/assets/images/arrow.png) 96% 10px no-repeat white;
-}
-
-.statement-link {
+.statement-link, .statement-desc {
     text-decoration: none;
+    color: #0b0c0c;
+    display: block;
+    line-height: 1.11111;
+	margin-top: 0;
+	margin-bottom: 10px;
+    &:visited {
+		color: #0b0c0c;
+	}
+}
+
+.statement:not(.active-statement):hover {
+    background-color: white;
+    background: url(/assets/images/arrow.png) 96% 10px no-repeat white;
+}
+
+.active-statement {
+    background-color: white;
+}
+
+.arrow {
+    padding-right: 3%;
+    float: right;
 }
 
 .no-horizontal-padding {
@@ -67,10 +85,10 @@
         }
     }
 
-    .govuk-accordion__section-button:focus {
-        box-shadow: none;
-        background-color: transparent;
-    }
+    // .govuk-accordion__section-button:focus {
+    //     box-shadow: none;
+    //     background-color: transparent;
+    // }
 
     .govuk-accordion {
         margin-bottom: 0;

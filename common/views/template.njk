@@ -107,5 +107,6 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
   <script type="text/javascript" src="/assets/main.js"></script>
+  <script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=Array.prototype.includes%2CArray.prototype.forEach"></script>
   {% block afterScript %}{% endblock %}
 {% endblock %}

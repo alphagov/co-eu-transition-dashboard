@@ -20,13 +20,15 @@
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'hide-statement' if req.params.statement }}" id="column-statements">
   {% for topOutcome in data.topLevelOutcomeStatements %}
-  <a href="{{ topOutcome.link }}" class="statement-link">
     <div class="statement {{ topOutcome.color }} {{ 'active-statement' if topOutcome.active }}">
-    {% if topOutcome.active %} {% set activeStatement = topOutcome.name %} {% set activeColor = topOutcome.color %} {% endif %}
-        <h2 class="govuk-heading-s">{{ topOutcome.name }}</h2>
-        <p class="govuk-body govuk-!-font-size-16">{{ topOutcome.description }}</p>
+    {% if topOutcome.active %} 
+    {% set activeStatement = topOutcome.name %} 
+    {% set activeColor = topOutcome.color %} 
+    <img src="/assets/images/arrow.png" class="arrow" alt="Arrow" aria-hidden="true">
+    {% endif %}
+        <a href="{{ topOutcome.link }}" class="govuk-link govuk-body govuk-!-font-weight-bold statement-link">{{ topOutcome.name }}</a>
+        <p class="govuk-body govuk-!-font-size-16 statement-desc">{{ topOutcome.description }}</p>
     </div>
-   </a>
   {% endfor %}
   </div>
 
@@ -52,7 +54,7 @@
   {% elseif data.iframeUrl.error %}
     <p class="govuk-body govuk-!-font-weight-bold tableu-message">There has been an error accessing this data, please contact The Transition Taskforce Dashboard Team</p>
   {% else %}
-    <iframe src="{{ data.iframeUrl.url }}" class="theme-tableu"></iframe>
+    <iframe title="Graphical Display" src="{{ data.iframeUrl.url }}" class="theme-tableu"></iframe>
   {% endif %}
   </div>
 
