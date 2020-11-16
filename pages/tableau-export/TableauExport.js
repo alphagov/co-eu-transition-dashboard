@@ -61,18 +61,18 @@ class TableauExport extends Page {
   }
 
   async entitiesRoleCanAccess(roleName) {
-    const publicRole = await Role.findOne({
+    const role = await Role.findOne({
       where: {
         name: roleName
       },
       include: ['roleEntities', 'roleEntityBlacklists']
     });
 
-    if(!publicRole) {
+    if(!role) {
       throw new Error(`Cannot find role: ${roleName}`);
     }
 
-    const entities = await entityUserPermissions.entitiesRoleCanAccess(publicRole);
+    const entities = await entityUserPermissions.entitiesRoleCanAccess(role);
     return entities.map(entity => entity.id);
   }
 
