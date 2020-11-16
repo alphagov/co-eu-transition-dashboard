@@ -17,16 +17,9 @@ class SearchTransitionReadiness extends Page {
       entityUserPermissions.assignEntityIdsUserCanAccessToLocals
     ];
   }
- 
+
   async getMeasures() {
-    const measureEntities = await measures.getMeasuresWhichUserHasAccess(this.res.locals.entitiesUserCanAccess);
-    return measureEntities.map(measure => ({
-      id: measure.id, 
-      theme: measure.theme, 
-      name: measure.name,
-      link: measure.link, 
-      color: measure.color
-    }))
+    return await measures.getMeasuresWhichUserHasAccess(this.res.locals.entitiesUserCanAccess);
   }
 }
 
