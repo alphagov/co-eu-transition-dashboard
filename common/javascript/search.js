@@ -11,7 +11,7 @@ const liveSearchEnabled = false;
 
 function Search (options) {
   this.options = options;
-};
+}
 
 Search.prototype.init = function() {
   // Check for search and table element
@@ -29,7 +29,7 @@ Search.prototype.init = function() {
 
 const helper = {
   getUrlQueryParameter: name => {
-    const regexp = new RegExp('[\?&]' + name + '=([^&#]*)');
+    const regexp = new RegExp('[\?&]' + name + '=([^&#]*)'); // eslint-disable-line no-useless-escape
     const results = regexp.exec(window.location.href);
     if (results && results.length) {
       return decodeURI(results[1]);
