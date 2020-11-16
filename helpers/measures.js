@@ -213,7 +213,7 @@ const groupMeasures = (measures) => {
   }, []);
 
   return measureGroups;
-} 
+}
 
 module.exports = {
   applyLabelToEntities,
