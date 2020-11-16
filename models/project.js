@@ -163,7 +163,7 @@ class Project extends Model {
       options.lock = transaction.LOCK
     }
 
-    const projects = await sequelize.query(`SELECT uid FROM project WHERE department_name='${departmentName}' ORDER BY uid DESC LIMIT 1 FOR UPDATE`, options);
+    const projects = await sequelize.query(`SELECT uid FROM project WHERE department_name='${departmentName}' AND uid REGEXP '^[A-Za-z]+-[0-9]+$' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE`, options);
 
     if(!projects || !projects.length) {
       return `${departmentName}-01`;
