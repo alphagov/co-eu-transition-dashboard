@@ -5,7 +5,7 @@
 {% set activeStatement = '' %}
 {% set activeColor = '' %}
 
-{% block pageTitle %}Theme{% endblock %}
+{% block pageTitle %}{{ data.theme.name }} - {{ super() }}{% endblock %}
 
 {% block content %}
 

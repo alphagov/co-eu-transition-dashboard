@@ -12,6 +12,7 @@ const config = require('config');
 const logger = require('../services/logger');
 const commandLineArgs = require('command-line-args');
 const { SaveResourceToFileSystemPlugin } = require('website-scraper/lib/plugins');
+const isForkProcess = !!process.send;
 
 // A plugin to add logging to export process
 class Reporting {
@@ -63,7 +64,7 @@ const optionDefinitions = [
   { name: 'test', alias: 't', type: Boolean  } // add --test to only export first page
 ];
 const options = commandLineArgs(optionDefinitions);
-options.dir = path.resolve(options.dir) || path.resolve(__dirname, '..', 'dist');
+options.dir = options.dir && path.resolve(options.dir) || path.resolve(__dirname, '..', 'dist');
 options.email = options.email || config.credentials.staticExportUser.email;
 options.password = options.password || config.credentials.staticExportUser.password;
 options.loginUrl = options.loginUrl || `${options.url}login`;
@@ -86,29 +87,49 @@ const getAuthedCookie = async (url) => {
 };
 
 const exportStaticSite = async () => {
-  const cookie = await getAuthedCookie(options.loginUrl);
+  try {
+    const cookie = await getAuthedCookie(options.loginUrl);
+    if(!cookie) {
+      throw new Error('Error loging into application');
+    }
 
-  // no strings to replace yet
-  const stringsReplaceMap = {};
+    // no strings to replace yet
+    const stringsReplaceMap = {};
 
-  await scrape({
-    urls: [ options.url ],
-    directory: options.dir,
-    recursive: !options.test,
-    maxDepth: 50,
-    urlFilter: url => url.includes(options.url),
-    request: {
-      headers: {
-        Cookie: cookie
-      }
-    },
-    requestConcurrency: 10,
-    plugins: [
-      new Reporting(options.url),
-      new StringReplace(stringsReplaceMap),
-      new SaveResourceToFileSystemPlugin()
-    ]
-  });
+    await scrape({
+      urls: [ options.url ],
+      directory: options.dir,
+      recursive: !options.test,
+      maxDepth: 50,
+      urlFilter: url => url.includes(options.url),
+      request: {
+        headers: {
+          Cookie: cookie
+        }
+      },
+      plugins: [
+        new Reporting(options.url),
+        new StringReplace(stringsReplaceMap),
+        new SaveResourceToFileSystemPlugin()
+      ]
+    });
+  } catch (error) {
+    if(isForkProcess) {
+      process.send({ error: error.message });
+    }
+    throw error;
+  }
+
+  if(isForkProcess) {
+    process.send({});
+  }
 }
 
-exportStaticSite();
+if(isForkProcess) {
+  process.on('message', opts => {
+    Object.assign(options, opts);
+    exportStaticSite();
+  });
+} else {
+  exportStaticSite();
+}

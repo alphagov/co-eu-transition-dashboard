@@ -13,10 +13,21 @@
 @import 'pages/data-entry-entity/measure-edit/MeasureEdit.scss';
 @import 'pages/data-entry-entity/measure-list/MeasureList.scss';
 @import 'pages/data-entry-entity/measure-value/MeasureValue.scss';
+@import 'pages/search-transition-readiness/SearchTransitionReadiness.scss';
 @import './small-device.scss';
+
+.no-borders {
+  .govuk-table__header, .govuk-table__cell{
+    border-bottom: none;
+  }
+}
 
 .hidden {
   display: none;
+}
+
+.show {
+  display: inherit !important;
 }
 
 .rayg-status {
@@ -44,7 +55,7 @@
   }
 }
 
-//Header and width 
+//Header and width
 .govuk-width-container {
   max-width: 100%;
   overflow: hidden;
@@ -71,7 +82,7 @@
   border-color: #FA0738;
 }
 
-.govuk-header__content { 
+.govuk-header__content {
   width: 100%;
     nav {
       float: right;
@@ -123,7 +134,7 @@
     color: #000000;
  }
 
-  .govuk-header__navigation-item.child-item, 
+  .govuk-header__navigation-item.child-item,
   .govuk-header__navigation-item {
     margin-right: 25px;
     &:last-child {
