@@ -23,10 +23,14 @@ class SearchTransitionReadiness extends Page {
   }
  
   async getMeasures() {
-
     const measureEntities = await measures.getMeasuresWhichUserHasAccess(this.res.locals.entitiesUserCanAccess);
-
-    return measureEntities;
+    return measureEntities.map(measure => ({
+      id: measure.id, 
+      theme: measure.theme, 
+      name: measure.name,
+      link: measure.link, 
+      color: measure.color
+    }))
   }
 }
 

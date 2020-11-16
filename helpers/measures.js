@@ -233,7 +233,6 @@ const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
   const measuresPublicId = allThemes.reduce(findEntities, []);
   const measuresWithLink = await transitionReadinessData.measuresWithLink(allThemes, measuresPublicId, paths.transitionReadinessThemeDetail)
   return measuresWithLink;
-
 }
 
 module.exports = {
