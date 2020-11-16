@@ -41,7 +41,17 @@ const webpackSettings = () => {
           use: [
             {
               loader: 'babel-loader',
-              options: { presets: ['@babel/env'] }
+              options: { presets: [
+                [
+                  "@babel/preset-env", {
+                    useBuiltIns: 'usage',
+                    corejs: 3,
+                    targets: {
+                      browsers: '> 0.5%, IE 11, not dead',
+                    },
+                  }
+                ]
+              ] }
             }
           ]
         },
