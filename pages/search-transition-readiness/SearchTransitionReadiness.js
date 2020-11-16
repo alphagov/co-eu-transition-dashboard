@@ -17,10 +17,6 @@ class SearchTransitionReadiness extends Page {
       entityUserPermissions.assignEntityIdsUserCanAccessToLocals
     ];
   }
-
-  static get isEnabled() {
-    return true;
-  }
  
   async getMeasures() {
     const measureEntities = await measures.getMeasuresWhichUserHasAccess(this.res.locals.entitiesUserCanAccess);
