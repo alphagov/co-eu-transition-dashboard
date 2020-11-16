@@ -1,36 +1,69 @@
 {% extends "template.njk" %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
+{% set measures = getMeasures() | await %}
+
 {% block beforeContent %}
-  {% include "navigation.njk" %}
-  {% if not successMode %}
-    {{ 
-      govukBackLink({
-        text: "Back",
-        href: "#",
-        attributes: {
-          onclick: "history.go(-1); return false;"
-        }
-    }) 
-    }}
-  {% endif %}
+  {{
+    govukBackLink({
+      text: "Back",
+      href: "#",
+      attributes: {
+        onclick: "history.go(-1); return false;"
+      }
+    })
+  }}
 {% endblock %}
 
 {% block pageTitle %}Search transition readiness{% endblock %}
-{% set measures = getMeasures() | await %}
 
 {% block content %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <ol>
-      {% for measure in measures %}
-        <li>{{ measure.id }} - {{measure.theme}} - {{measure.name}} - {{measure.link}} - {{measure.color}}</li>
-      {% endfor %}
-    </ol>
+    <form method="GET" action="{{ url }}">
+      <div class="govuk-form-group">
+        <h1 class="govuk-label-wrapper govuk-!-margin-bottom-2">
+          <label class="govuk-label--l" for="term">Search measures</label>
+        </h1>
+        <div class="govuk-input__wrapper search" id="search">
+          <input class="govuk-input govuk-input--width-20 search-input" type="text" name="term">
+          <div class="clear-search">
+            <button class="clear-search-button hidden" type="button"><span class="clear-search-icon"></span></button>
+          </div>
+          <div class="govuk-input__suffix search-background" aria-hidden="true">
+            <button class="search-button" data-module="govuk-button"><span class="search-icon"></span></button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <table class="govuk-table" id="search-table">
+      <tbody class="govuk-table__body">
+        {% for measure in measures %}
+          <tr class="govuk-table__row searchable-row">
+            <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
+            <td class="govuk-table__cell govuk-!-width-full">
+              <table class="govuk-table no-borders govuk-!-margin-0">
+                <tbody class="govuk-table__body">
+                  <tr class="govuk-table__row">
+                    <td colspan="2" class="govuk-table__cell">
+                      <a href="{{ measure.link }}" class="govuk-link">{{ measure.name }}</a>
+                    </td>
+                  </tr>
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.id }}</td>
+                    <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.theme }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
  </div>
 </div>
 
