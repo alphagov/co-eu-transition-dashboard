@@ -19,7 +19,7 @@ class SearchTransitionReadiness extends Page {
   }
 
   async getMeasures() {
-    return await measures.getMeasuresWhichUserHasAccess(this.res.locals.entitiesUserCanAccess);
+    return measures.getMeasuresWhichUserHasAccess(this.res.locals.entitiesUserCanAccess);
   }
 }
 
