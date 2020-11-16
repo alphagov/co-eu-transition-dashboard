@@ -43,17 +43,17 @@
   <ul class="govuk-body govuk-!-font-size-16 outcome-measures">
     {% for item in items %}
       {% set raygColor = "item-complete" if item.complete == "Yes" else "item-" + item.color %}
-      <li class="outcome-measure__item {% if item.activeFrom %} item-disabled {% else %} {{ raygColor }} {% endif %} {% if item.active %} outcome-measure__item--active {% endif %}" {{ ariaCurrent(item.active) }}>
+      <li class="outcome-measure__item {% if item.activeFrom %} item-disabled {% else %} {{ raygColor }} {% endif %} {% if item.active %} outcome-measure__item--active {% endif %}">
       {% if item.activeFrom %}
-        <a href="{{ item.link }}" class="govuk-link outcome-measure__link placeholder-measure">
+        <a href="{{ item.link }}" class="govuk-link outcome-measure__link placeholder-measure" {{ ariaCurrent(item.active) }}>
         <p class="govuk-body govuk-!-font-weight-bold placeholder-title">DATA EXPECTED: {{ item.activeFrom | formatDate("DD/MM/YYYY") }}</p>
         {{ item.name }}</a>
       {% elseif item.commentsOnly == 'Yes' %}
-        <a href="{{ item.link }}" class="govuk-link outcome-measure__link comments-measure">
+        <a href="{{ item.link }}" class="govuk-link outcome-measure__link comments-measure" {{ ariaCurrent(item.active) }}>
         <p class="govuk-body govuk-!-font-weight-bold comments-title">COMMENTS ONLY</p>
           {{ item.name }}</a>
       {% else %}
-        <a href="{{ item.link }}" class="govuk-link outcome-measure__link">{{ item.name }}</a>
+        <a href="{{ item.link }}" class="govuk-link outcome-measure__link" {{ ariaCurrent(item.active) }}>{{ item.name }}</a>
       {% endif %}  
       </li>
     {% endfor %}
