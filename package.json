@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "NODE_PATH=. node server.js",
-    "dev": "NODE_PATH=. nodemon server.js",
+    "dev": "NODE_PATH=. nodemon --inspect server.js",
     "install": "bash build.sh",
     "test:single": "NODE_PATH=. FEATURE_2FA=true mocha $1 --opts 'test/unit/mocha.opts'",
     "test:lint": "eslint .",

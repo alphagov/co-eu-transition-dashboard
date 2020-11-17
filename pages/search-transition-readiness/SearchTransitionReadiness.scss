@@ -12,9 +12,13 @@
   position: relative;
   display: none;
 
+  .clear-search-container {
+    position: relative;
+  }
+
   .clear-search {
     position: absolute;
-    right: 83px;
+    right: 0;
     width: 33px;
     height: 40px;
     z-index: 1;
