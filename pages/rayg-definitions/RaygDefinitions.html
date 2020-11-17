@@ -12,7 +12,7 @@
 }) }}
 {% endblock %}
 
-{% block pageTitle %}RAYG Definitions{% endblock %}
+{% block pageTitle %}RAYG Definitions - {{ super() }}{% endblock %}
 
 {% block content %}
 
@@ -23,6 +23,7 @@
     <span class="govuk-caption-l">An explanation on how the various statuses are calculated and applied to themes, outcome statements and measures.</span></h1>
 
     <table class="govuk-table">
+    <caption class="govuk-table__caption">Status and definition</caption>
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header">Status</th>
@@ -31,33 +32,33 @@
     </thead>
     <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
-        <td class="govuk-table__cell"><span class='rayg-def red'></span></td>
+        <td class="govuk-table__cell" aria-label="red"><span class='rayg-def red'></span></td>
         <td class="govuk-table__cell">High risk</td>
         </tr>
         <tr class="govuk-table__row">
-        <td class="govuk-table__cell"><span class='rayg-def amber'></span></td>
+        <td class="govuk-table__cell" aria-label="amber"><span class='rayg-def amber'></span></td>
         <td class="govuk-table__cell">Medium risk</td>
         </tr>
         <tr class="govuk-table__row">
-        <td class="govuk-table__cell"><span class='rayg-def yellow'></span></td>
+        <td class="govuk-table__cell" aria-label="yellow"><span class='rayg-def yellow'></span></td>
         <td class="govuk-table__cell">Low risk</td>
         </tr>
         <tr class="govuk-table__row">
-        <td class="govuk-table__cell"><span class='rayg-def green'></span></td>
+        <td class="govuk-table__cell" aria-label="green"><span class='rayg-def green'></span></td>
         <td class="govuk-table__cell">Minimal/Low risk</td>
         </tr>
         <tr class="govuk-table__row">
-        <td class="govuk-table__cell"><span class='rayg-def blue'></span></td>
+        <td class="govuk-table__cell" aria-label="blue"><span class='rayg-def blue'></span></td>
         <td class="govuk-table__cell">Complete</td>
         </tr>
         <tr class="govuk-table__row">
-        <td class="govuk-table__cell"><span class='rayg-def grey'></span></td>
+        <td class="govuk-table__cell" aria-label="grey"><span class='rayg-def grey'></span></td>
         <td class="govuk-table__cell">Unassigned risk status</td>
         </tr>
     </tbody>
     </table>
 
-    <h3 class="govuk-heading-m">How RAYG statuses are calculated</h3>
+    <h2 class="govuk-heading-m">How RAYG statuses are calculated</h2>
 
     <p class="govuk-body">The RAYG status for a theme reflects an assessment by the Cabinet Office of the level of risk based on the data provided by departments and the ratings for the outcomes.</p>
 
