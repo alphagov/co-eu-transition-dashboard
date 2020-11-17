@@ -16,7 +16,7 @@ class Theme extends Page {
   }
 
   get searchUrl(){
-    return paths.transitionReadinessThemeDetail;
+    return paths.searchTransitionReadiness;
   }
 
   get pathToBind() {
