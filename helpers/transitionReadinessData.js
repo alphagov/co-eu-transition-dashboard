@@ -44,6 +44,7 @@ const getIframeUrl = async (req, entity) => {
     appendUrl = `?Comms%20ID=${entity.commsId}`;
     break;
   case 'Project':
+  case 'Milestone':
     workbook = 'HMG';
     view = 'Milestones';
     appendUrl = `?Milestone%20-%20uid=${entity.publicId}`;
