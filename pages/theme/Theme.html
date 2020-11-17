@@ -15,9 +15,9 @@
 <div class="govuk-grid-column-full">
 
   <a href="{{ config.paths.readinessOverview }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.theme }}" style="display: none;">Overview</a>
-  <div>
-    <h1 class="govuk-heading-l theme-{{ data.theme.color }} theme-name">{{ data.theme.name }}</h1>
-    <div>{{searchMeasures(searchUrl)}}</div>
+  <div class="govuk-grid-row">
+    <h1 class="govuk-heading-l govuk-grid-column-two-thirds theme-{{ data.theme.color }} theme-name">{{ data.theme.name }}</h1>
+    <div class="govuk-grid-column-one-third">{{searchMeasures(searchUrl)}}</div>
   <div>
   <p class="govuk-body-l">{{ data.theme.description }}</p>
   <p class="govuk-body-s"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">View RAYG definitions and how they are calculated</a></p>
