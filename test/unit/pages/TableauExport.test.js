@@ -4,6 +4,9 @@ const Entity = require('models/entity');
 const Category = require('models/category');
 const proxyquire = require('proxyquire');
 const Milestone = require('models/milestone');
+const entityUserPermissions = require('middleware/entityUserPermissions');
+const Role = require('models/role');
+const CategoryField = require('models/categoryField');
 
 let page = {};
 let res = {
@@ -24,6 +27,8 @@ describe('pages/tableau-export/TableauExport', () => {
       'services/dao': daoStub
     });
 
+    req = { query: {} };
+
     page = new TableauExport('some path', req, res);
   });
 
@@ -36,6 +41,17 @@ describe('pages/tableau-export/TableauExport', () => {
   describe('#pathToBind', () => {
     it('returns correct url', () => {
       expect(page.pathToBind).to.eql(`${paths.tableauExport}/:type/:mode?`);
+    });
+  });
+
+  describe('#restrictExportByRole', () => {
+    it('returns role if supplied in query string', () => {
+      page.req = { query: { role: 'static' } };
+      expect(page.restrictExportByRole).to.eql('static');
+    });
+
+    it('returns undefined if not supplied in query string', () => {
+      expect(page.restrictExportByRole).to.not.be.ok;
     });
   });
 
@@ -79,6 +95,41 @@ describe('pages/tableau-export/TableauExport', () => {
     });
   });
 
+  describe('#entitiesRoleCanAccess', () => {
+    const entities = [{ id: 1, publicId: 'public-id-1' }];
+    const publicRole = { id: 1, name: 'static' };
+
+    beforeEach(() => {
+      Role.findOne.returns(publicRole);
+      sinon.stub(entityUserPermissions, 'entitiesRoleCanAccess').returns(entities);
+    });
+
+    afterEach(() => {
+      entityUserPermissions.entitiesRoleCanAccess.restore();
+    });
+
+    it('returns ids of entities role can access', async () => {
+      const role = 'static';
+      const entityIds = await page.entitiesRoleCanAccess(role);
+
+      expect(entityIds).to.eql(entities.map(entity => entity.id));
+      sinon.assert.calledWith(entityUserPermissions.entitiesRoleCanAccess, publicRole);
+    });
+
+    it('throws error if cannot find role', async () => {
+      Role.findOne.returns();
+
+      let error;
+      try{
+        await page.entitiesRoleCanAccess('some-role');
+      } catch(err) {
+        error = err;
+      }
+
+      expect(error.message).to.eql('Cannot find role: some-role');
+    });
+  });
+
   describe('#addParents', () => {
     it('add parents category name for each entity parent', async () => {
       const entityObject = {};
@@ -107,44 +158,79 @@ describe('pages/tableau-export/TableauExport', () => {
   });
 
   describe('#getEntitiesFlatStructure', () => {
-    it('gets entites with a flat structure', async () => {
-      sinon.stub(page, 'addParents').resolves();
+    const entites = [{
+      id: 1,
+      publicId: '1',
+      entityFieldEntries: [{
+        categoryFieldId: 1,
+        categoryField: {
+          displayName: 'Field 1',
+          type: 'string'
+        },
+        value: 'some name 1'
+      }],
+      parents: []
+    },{
+      id: 2,
+      publicId: '2',
+      entityFieldEntries: [{
+        categoryFieldId: 1,
+        categoryField: {
+          displayName: 'Field 1',
+          type: 'string'
+        },
+        value: 'some name 2'
+      }],
+      parents: []
+    }];
 
-      Entity.findAll.resolves([{
-        publicId: '1',
-        entityFieldEntries: [{
-          categoryField: {
-            displayName: 'name',
-            type: 'string'
-          },
-          value: 'some name'
-        }],
-        parents: []
-      },{
-        publicId: '1',
-        entityFieldEntries: [{
-          categoryField: {
-            displayName: 'name',
-            type: 'string'
-          },
-          value: 'some name'
-        }],
-        parents: []
+    beforeEach(() => {
+      Entity.findAll.resolves(entites);
+      CategoryField.findAll.resolves([{
+        id: 1,
+        displayName: 'Field 1',
+        type: 'string'
       }]);
+      sinon.stub(page, 'entitiesRoleCanAccess');
+      sinon.stub(page, 'addParents').resolves();
+    });
+
+    afterEach(() => {
+      page.entitiesRoleCanAccess.restore();
+      page.addParents.restore();
+    });
+
+    it('gets entites with a flat structure', async () => {
+      const entityObjects = await page.getEntitiesFlatStructure({ id: 1 });
+
+      expect(entityObjects).to.eql([
+        {
+          'Field 1': { value: 'some name 1', type: 'string' },
+          'Public ID': { value: '1', type: 'string' }
+        },
+        {
+          'Field 1': { value: 'some name 2', type: 'string' },
+          'Public ID': { value: '2', type: 'string' }
+        }
+      ]);
+    });
+
+    it('removes entities restriced by role', async () => {
+      req.query.role = 'static';
+
+      const entityIdsRoleCanAccess = [1];
+      page.entitiesRoleCanAccess.returns(entityIdsRoleCanAccess);
 
       const entityObjects = await page.getEntitiesFlatStructure({ id: 1 });
 
       expect(entityObjects).to.eql([
         {
-          'Field 1': { value: 'some name', type: 'string' },
-          'Public ID': { value: '1', type: 'string' }
-        },
-        {
-          'Field 1': { value: 'some name', type: 'string' },
+          'Field 1': { value: 'some name 1', type: 'string' },
           'Public ID': { value: '1', type: 'string' }
         }
       ]);
 
+      sinon.assert.calledWith(page.entitiesRoleCanAccess, req.query.role);
     });
   });
 

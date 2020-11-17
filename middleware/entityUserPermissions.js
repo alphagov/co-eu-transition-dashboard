@@ -67,7 +67,7 @@ async function entitiesUserCanAccess(user) {
       }
     });
   } else {
-    let roles = await Role.findAll({ 
+    let roles = await Role.findAll({
       include:[{
         model: UserRole,
         where: { userId: user.id }
@@ -95,4 +95,4 @@ const assignEntityIdsUserCanAccessToLocals = async (req, res, next) => {
   next();
 };
 
-module.exports = { assignEntityIdsUserCanAccessToLocals };
+module.exports = { assignEntityIdsUserCanAccessToLocals, entitiesRoleCanAccess };
