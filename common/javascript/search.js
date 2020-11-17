@@ -51,7 +51,8 @@ Search.prototype.getSearchArguments = function() {
   this.queryParameters = queryParameterNames.reduce((queryParameters, name) => {
     const queryParameterValue = helper.getUrlQueryParameter(name);
     if(queryParameterValue) {
-      queryParameters[name] = queryParameterValue;
+      // FORM with get method replaces spaces with +
+      queryParameters[name] = decodeURIComponent(queryParameterValue).replace(/[+]/g, ' ');
     }
     return queryParameters;
   }, {});

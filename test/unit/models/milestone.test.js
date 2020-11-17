@@ -206,7 +206,7 @@ describe('models/milestone', () => {
 
       const newId = await Milestone.getNextIDIncrement('MIL-01');
 
-      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM milestone WHERE project_uid='MIL-01' ORDER BY uid DESC LIMIT 1 FOR UPDATE", options);
+      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM milestone WHERE project_uid='MIL-01' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE", options);
 
       expect(newId).to.eql('MIL-01-06');
     });
@@ -220,7 +220,7 @@ describe('models/milestone', () => {
 
       const newId = await Milestone.getNextIDIncrement('MIL-01');
 
-      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM milestone WHERE project_uid='MIL-01' ORDER BY uid DESC LIMIT 1 FOR UPDATE", options);
+      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM milestone WHERE project_uid='MIL-01' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE", options);
 
       expect(newId).to.eql('MIL-01-01');
     });
@@ -238,7 +238,7 @@ describe('models/milestone', () => {
 
       const newId = await Milestone.getNextIDIncrement('MIL-01', options);
 
-      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM milestone WHERE project_uid='MIL-01' ORDER BY uid DESC LIMIT 1 FOR UPDATE", options);
+      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM milestone WHERE project_uid='MIL-01' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE", options);
 
       expect(newId).to.eql('MIL-01-01');
     });

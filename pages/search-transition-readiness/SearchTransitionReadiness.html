@@ -19,7 +19,6 @@
 
 {% block pageTitle %}Search transition readiness{% endblock %}
 
-
 {% block content %}
 
 <div class="govuk-grid-row">
@@ -30,9 +29,12 @@
           <label class="govuk-label--l" for="term">Search measures</label>
         </h1>
         <div class="govuk-input__wrapper search" id="search">
+
           <input class="govuk-input govuk-input--width-20 search-input" type="text" name="term">
-          <div class="clear-search">
-            <button class="clear-search-button hidden" type="button"><span class="clear-search-icon"></span></button>
+          <div class="clear-search-container">
+            <div class="clear-search">
+              <button class="clear-search-button hidden" type="button"><span class="clear-search-icon"></span></button>
+            </div>
           </div>
           <div class="govuk-input__suffix search-background" aria-hidden="true">
             <button class="search-button" data-module="govuk-button"><span class="search-icon"></span></button>
@@ -55,7 +57,7 @@
                     </td>
                   </tr>
                   <tr class="govuk-table__row">
-                    <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.id }}</td>
+                    <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.metricID }}</td>
                     <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.theme }}</td>
                   </tr>
                 </tbody>

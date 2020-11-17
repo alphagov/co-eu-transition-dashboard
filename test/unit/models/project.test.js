@@ -218,7 +218,7 @@ describe('models/project', () => {
 
       const newId = await Project.getNextIDIncrement('MIL');
 
-      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM project WHERE department_name='MIL' ORDER BY uid DESC LIMIT 1 FOR UPDATE", options);
+      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM project WHERE department_name='MIL' AND uid REGEXP '^[A-Za-z]+-[0-9]+$' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE", options);
 
       expect(newId).to.eql('MIL-02');
     });
@@ -232,7 +232,7 @@ describe('models/project', () => {
 
       const newId = await Project.getNextIDIncrement('PRO');
 
-      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM project WHERE department_name='PRO' ORDER BY uid DESC LIMIT 1 FOR UPDATE", options);
+      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM project WHERE department_name='PRO' AND uid REGEXP '^[A-Za-z]+-[0-9]+$' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE", options);
 
       expect(newId).to.eql('PRO-01');
     });
@@ -250,7 +250,7 @@ describe('models/project', () => {
 
       const newId = await Project.getNextIDIncrement('PRO', options);
 
-      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM project WHERE department_name='PRO' ORDER BY uid DESC LIMIT 1 FOR UPDATE", options);
+      sinon.assert.calledWith(sequelize.query, "SELECT uid FROM project WHERE department_name='PRO' AND uid REGEXP '^[A-Za-z]+-[0-9]+$' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE", options);
 
       expect(newId).to.eql('PRO-01');
     });

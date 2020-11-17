@@ -10,6 +10,8 @@ const parse = require('helpers/parse');
 const filterMetricsHelper = require('helpers/filterMetrics');
 const rayg = require('helpers/rayg');
 const Entity = require('models/entity');
+const transitionReadinessData = require('helpers/transitionReadinessData');
+const { paths } = require('config');
 const groupBy = require('lodash/groupBy');
 const get = require('lodash/get');
 
@@ -215,6 +217,24 @@ const groupMeasures = (measures) => {
   return measureGroups;
 }
 
+const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
+  const measureCategory  = await getCategory('Measure');
+
+  const allThemes = await transitionReadinessData.getThemesHierarchy(entitiesUserCanAccess);
+
+  const findEntities = (allEntites, entity) => {
+    if(entity.categoryId === measureCategory.id) {
+      allEntites.push(entity.publicId);
+    } else if(entity.children){
+      return entity.children.reduce(findEntities, allEntites);
+    }
+    return allEntites;
+  };
+  const measuresPublicId = allThemes.reduce(findEntities, []);
+  const measuresWithLink = await transitionReadinessData.measuresWithLink(allThemes, measuresPublicId, paths.transitionReadinessThemeDetail)
+  return measuresWithLink;
+}
+
 module.exports = {
   applyLabelToEntities,
   calculateUiInputs,
@@ -222,6 +242,7 @@ module.exports = {
   getCategory,
   getMeasureEntitiesFromGroup,
   getMeasureEntities,
+  getMeasuresWhichUserHasAccess,
   groupMeasures,
   validateFormData,
   validateEntities
