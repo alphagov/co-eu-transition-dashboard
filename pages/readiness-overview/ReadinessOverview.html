@@ -1,5 +1,6 @@
 {% extends "template.njk" %}
 {% from "readiness-theme-card.njk" import readinessThemeCard %}
+{% from "searchMeasures.njk" import searchMeasures %}
 
 {% set data = data() | await %}
 
@@ -13,6 +14,7 @@
 <div class="govuk-grid-row readiness-overview">
   <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-l">Transition Readiness Overview</h1>
+    {{searchMeasures(searchUrl)}}
     <p class="govuk-body-s"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">View RAYG definitions and how they are calculated</a></p>
     <div class="govuk-grid-row">
 

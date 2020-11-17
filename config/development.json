@@ -11,7 +11,7 @@
       "url": "redis://127.0.0.1:6379"
     },
     "mysql": {
-      "uri": "mysql://root:password@127.0.0.1:3306/dashboard",
+      "uri": "mysql://root:password123@127.0.0.1:3306/rdsbroker_deaae2e3_043d_47e4_9e33_1543ff5ad3a9",
       "sslCertificate": null,
       "charset": "utf8mb4"
     },
