@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // These will be removed from the session storage so the accordions will collapse rather than stay open.
 // We want to keep session storage on the readiness theme pages to prevent accordions closing on a page refresh
 const currentPage = document.getElementsByClassName('govuk-header__navigation-item--active');
-if(currentPage.length && currentPage[0].innerText !== 'Transition readiness'){
+if(!currentPage.length || currentPage[0].innerText !== 'Transition readiness'){
   sessionStorage.clear();
 }
 
