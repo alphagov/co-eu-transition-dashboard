@@ -3,7 +3,7 @@
 {% macro accordion(params) %}
   {% set id = params.id %}
   
-  <div class="govuk-accordion {%- if params.classes %} {{ params.classes }}{% endif -%}" data-module="readiness-accordion" id="{{ id }}"
+  <div class="govuk-accordion {%- if params.classes %} {{ params.classes }}{% endif -%} test" data-module="readiness-accordion" id="{{ id }}"
   {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>
     {% for item in params.items %}
       {% if item %}
@@ -30,7 +30,7 @@
               </div>
             {% endif %}
           </div>
-          <div id="{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-content" aria-labelledby="{{ id }}-heading-{{ loop.index }}">
+          <div id="{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-content" aria-labelledby="{{ id }}-content-{{ loop.index }}">
             {{ item.content | safe }}
           </div>
         </div>
