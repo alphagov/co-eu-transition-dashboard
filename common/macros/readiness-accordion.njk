@@ -30,7 +30,7 @@
               </div>
             {% endif %}
           </div>
-          <div id="{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-content" aria-labelledby="{{ id }}-content-{{ loop.index }}">
+          <div id="{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-content" aria-labelledby="accordion-default-{{ id }}-heading-{{ loop.index }}">
             {{ item.content | safe }}
           </div>
         </div>
