@@ -15,6 +15,10 @@ class Theme extends Page {
     return paths.transitionReadinessThemeDetail;
   }
 
+  get searchUrl(){
+    return paths.searchTransitionReadiness;
+  }
+
   get pathToBind() {
     return `${this.url}/:theme/:statement?/:selectedPublicId?`;
   }
