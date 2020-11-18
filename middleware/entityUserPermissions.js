@@ -5,34 +5,36 @@ const RoleEntity = require('models/roleEntity');
 const RoleEntityBlacklist = require('models/roleEntityBlacklist');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 
+async function entitiesRoleCanAccess(role) {
+  // Returns a promise, no need to await
+  return Entity.findAll({
+    attributes: ['publicId', 'id'],
+    include: {
+      model: RoleEntity,
+      where: {
+        roleId: role.id
+      }
+    }
+  });
+}
+
 async function entitiesUserCanAccess(user) {
   let whitelist = [];
   if (user.canViewAllData) {
     //console.log("Allowing user to view all data");
     whitelist = await Entity.findAll({
-      attributes: ['publicId', 'id'],
-      include: {
-        attributes: ['publicId', 'id'],
-        model: Entity,
-        as: 'children'
-      }
+      attributes: ['publicId', 'id']
     });
   } else {
     let roles = await Role.findAll({
-      include:[{
+      include: {
         model: UserRole,
         where: { userId: user.id }
-      },{
-        separate: true,
-        model: RoleEntity
-      },{
-        separate: true,
-        model: RoleEntityBlacklist
-      }]
+      }
     });
 
     for (const role of roles) {
-      whitelist = whitelist.concat(role.roleEntities);
+      whitelist = whitelist.concat(await entitiesRoleCanAccess(role));
     }
   }
 
