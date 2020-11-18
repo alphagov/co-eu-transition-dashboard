@@ -91,14 +91,19 @@
 {% endblock %}
 
 {% block footer %}
+
+{% set footerLinks = [] %}
+
+{% if not req.user.isStatic %}
+ {% set footerLinks = (footerLinks.push ({
+    href: config.paths.privacyNotice,
+    text: "Privacy Notice"
+  }), footerLinks) %}
+{% endif %}
+
 {{ govukFooter({
   meta: {
-    items: [
-      {
-        href: config.paths.privacyNotice,
-        text: "Privacy Notice"
-      }
-    ]
+    items: footerLinks
   }
 }) }}
 {% endblock %}
