@@ -3,7 +3,6 @@ const { expect, sinon } = require('test/unit/util/chai');
 const entityUserPermissions = require('middleware/entityUserPermissions');
 const Role = require('models/role');
 const RoleEntity = require('models/roleEntity');
-const RoleEntityBlacklist = require('models/roleEntityBlacklist');
 const UserRole = require('models/userRole');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 
