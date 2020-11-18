@@ -53,26 +53,19 @@ describe('middleware/entityUserPermissions', () => {
       await entityUserPermissions.assignEntityIdsUserCanAccessToLocals(req, res, next);
 
       sinon.assert.calledWith(Role.findAll, {
-        include: [{
+        include: {
           model: UserRole,
           where: { userId: req.user.id },
         },
-        {
-          model: RoleEntity,
-          separate: true
-        },
-        {
-          model: RoleEntityBlacklist,
-          separate: true 
-        }]
       });
 
       sinon.assert.calledWith(Entity.findAll, {
         attributes: ['publicId', 'id'],
         include: {
-          attributes: ['publicId', 'id'],
-          model: Entity,
-          as: 'children'
+          model: RoleEntity,
+          where: {
+            roleId: 1
+          }
         }
       });
 
@@ -92,7 +85,7 @@ describe('middleware/entityUserPermissions', () => {
         children: []
       }];
 
-      Entity.findAll.resolves(entities);
+      Entity.findAll.resolves([entities[0]]);
 
       Role.findAll.resolves([{
         name: "all",
@@ -101,16 +94,6 @@ describe('middleware/entityUserPermissions', () => {
           {
             roleId: 1,
             entityId: 1
-          },
-          {
-            roleId: 1,
-            entityId: 2
-          }
-        ],
-        roleEntityBlacklists: [
-          {
-            roleId: 1,
-            entityId: 2
           }
         ]
       }]);
@@ -118,26 +101,19 @@ describe('middleware/entityUserPermissions', () => {
       await entityUserPermissions.assignEntityIdsUserCanAccessToLocals(req, res, next);
 
       sinon.assert.calledWith(Role.findAll, {
-        include: [{
+        include: {
           model: UserRole,
           where: { userId: req.user.id },
-        },
-        {
-          model: RoleEntity,
-          separate: true
-        },
-        {
-          model: RoleEntityBlacklist,
-          separate: true 
-        }]
+        }
       });
 
       sinon.assert.calledWith(Entity.findAll, {
         attributes: ['publicId', 'id'],
         include: {
-          attributes: ['publicId', 'id'],
-          model: Entity,
-          as: 'children'
+          model: RoleEntity,
+          where: {
+            roleId: 1
+          }
         }
       });
 

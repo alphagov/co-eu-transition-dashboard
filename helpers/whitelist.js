@@ -2,7 +2,6 @@ const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const Category = require('models/category');
 const CategoryField = require('models/categoryField');
-const transitionReadinessData = require('helpers/transitionReadinessData');
 
 function getFlatEntityTree(entity,allEntityMap) {
   let entities = [entity];
@@ -34,30 +33,30 @@ async function getEntityMap() {
 async function getProjectEntities(projectUids) {
   return Entity.findAll({
     attributes: ['publicId', 'id'],
+    where: {
+      publicId: projectUids
+    },
+    include: {
+      model: Category,
       where: {
-        publicId: projectUids
-      },
-      include: {
-        model: Category,
-        where: {
-          name: 'Project'
-        }
+        name: 'Project'
       }
+    }
   });
 }
 
 async function getMilestoneEntities(milestoneUids) {
   return Entity.findAll({
     attributes: ['publicId', 'id'],
+    where: {
+      publicId: milestoneUids
+    },
+    include: {
+      model: Category,
       where: {
-        publicId: milestoneUids
-      },
-      include: {
-        model: Category,
-        where: {
-          name: 'Milestone'
-        }
+        name: 'Milestone'
       }
+    }
   });
 }
 

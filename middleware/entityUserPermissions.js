@@ -2,7 +2,6 @@ const Entity = require('models/entity');
 const UserRole = require('models/userRole');
 const Role = require('models/role');
 const RoleEntity = require('models/roleEntity');
-const RoleEntityBlacklist = require('models/roleEntityBlacklist');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 
 async function entitiesRoleCanAccess(role) {

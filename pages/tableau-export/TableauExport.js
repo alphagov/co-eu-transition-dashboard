@@ -72,7 +72,8 @@ class TableauExport extends Page {
       throw new Error(`Cannot find role: ${roleName}`);
     }
 
-    return role.roleEntities.map(entity => entity.id);
+    const entities = await entityUserPermissions.entitiesRoleCanAccess(role);
+    return entities.map(entity => entity.id);
   }
 
   async addParents(entity, entityFieldMap, replaceArraysWithNumberedKeyValues = true) {
