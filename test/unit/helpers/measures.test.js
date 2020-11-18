@@ -361,9 +361,6 @@ describe('helpers/measures', () => {
   });
 
   describe('#getMeasuresWhichUserHasAccess', () => {
-    const entitiesUserCanAccess = [{ entity: { dataValues: { publicId: 'm01', id: 600, children: [] } } },
-      { entity: { dataValues: { publicId: 'm02', id: 601, children: [] } } },
-      { entity: { dataValues: { publicId: 'm03', id: 602, children: [] } } }]
     const allThemes = [
       {
         id: 884,
@@ -407,8 +404,12 @@ describe('helpers/measures', () => {
         }]
       }
     ]
+    const entitiesUserCanAccess = [{ entity: { dataValues: { publicId: 'm01', id: 600, children: [] } } },
+      { entity: { dataValues: { publicId: 'm02', id: 601, children: [] } } },
+      { entity: { dataValues: { publicId: 'm03', id: 602, children: [] } } }]
+    
     const measuresPublicId = ['m01', 'm02', 'm03'];
-    const expectedMeasures = [{
+    const measuresWithLink = [{
       id: 600,
       publicId: 'm01',
       name: 'measure1',
@@ -450,12 +451,18 @@ describe('helpers/measures', () => {
 
 
     it('returns only those measures which user has access', async ()=>{
-      measuresWithLinkStub.resolves(expectedMeasures);
+      measuresWithLinkStub.resolves(measuresWithLink);
       getThemesHierarchyStub.resolves(allThemes);
 
-      const measuresWithLink = await measures.getMeasuresWhichUserHasAccess(entitiesUserCanAccess);
+      const expectedMeasures = {
+        measures: measuresWithLink,
+        themes: allThemes
+      }
 
-      expect(measuresWithLink).to.eql(expectedMeasures);
+      const measuresWhichUserHasAccess = await measures.getMeasuresWhichUserHasAccess(entitiesUserCanAccess);
+
+
+      expect(measuresWhichUserHasAccess).to.eql(expectedMeasures);
       sinon.assert.calledWith(getThemesHierarchyStub, entitiesUserCanAccess);
       sinon.assert.calledWith(measuresWithLinkStub, allThemes, measuresPublicId, paths.transitionReadinessThemeDetail);
     });

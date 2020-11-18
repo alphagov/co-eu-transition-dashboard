@@ -4,7 +4,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "searchMeasures.njk" import searchMeasures %}
 
-{% set measures = getMeasures() | await %}
+{% set data = getData() | await %}
 
 {% block beforeContent %}
   {{
@@ -30,7 +30,7 @@
     {{searchMeasures(url)}}
     <table class="govuk-table" id="search-table">
       <tbody class="govuk-table__body">
-        {% for measure in measures %}
+        {% for measure in data.measures %}
           <tr class="govuk-table__row searchable-row">
             <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
             <td class="govuk-table__cell govuk-!-width-full">

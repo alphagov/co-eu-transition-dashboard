@@ -42,30 +42,32 @@ describe('pages/search-transition-readiness/SearchTransitionReadiness.js', () =>
     });
   });
 
-  describe('#getMeasures', () =>{
-    const mockMeasures = [
-      {
-        id: 600, 
-        theme: 'B', 
-        name: 'Measure-01',
-        link: '/B/st1/Measure-01', 
-        color: 'red'
-      },  {
-        id: 601, 
-        theme: 'B', 
-        name: 'Measure-02',
-        link: '/B/st1/Measure-02', 
-        color: 'green'
-      }]
+  describe('#getData', () =>{
+    const mockData = {
+      themes: [{ id: 1, name: 'Border' }],
+      measures:[
+        {
+          id: 600, 
+          theme: 'B', 
+          name: 'Measure-01',
+          link: '/B/st1/Measure-01', 
+          color: 'red'
+        },  {
+          id: 601, 
+          theme: 'B', 
+          name: 'Measure-02',
+          link: '/B/st1/Measure-02', 
+          color: 'green'
+        }] }
     beforeEach(()=>{
-      sinon.stub(measures, 'getMeasuresWhichUserHasAccess').resolves(mockMeasures);
+      sinon.stub(measures, 'getMeasuresWhichUserHasAccess').resolves(mockData);
     })
     afterEach(()=>{
       measures.getMeasuresWhichUserHasAccess.restore();
     })
     it('returns list of measures', async()=> {
-      const measureEntities = await page.getMeasures();
-      expect(measureEntities).to.eql(mockMeasures);
+      const data = await page.getData();
+      expect(data).to.eql(mockData);
       sinon.assert.calledWith(measures.getMeasuresWhichUserHasAccess, ['e1', 'e2'])
     })
   })
