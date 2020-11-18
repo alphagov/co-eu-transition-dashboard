@@ -3,6 +3,8 @@ const sequelize = require('services/sequelize');
 const EntityParent = require('./entityParent');
 const EntityFieldEntry = require('./entityFieldEntry');
 const EntityFieldEntryAudit = require('./entityFieldEntryAudit');
+const RoleEntity = require('./roleEntity');
+const RoleEntityBlacklist = require('./roleEntityBlacklist');
 const pick = require('lodash/pick');
 const sprintf = require('sprintf-js').sprintf;
 
@@ -182,5 +184,10 @@ EntityFieldEntry.belongsTo(Entity, { foreignKey: 'entityId' });
 
 Entity.hasMany(EntityFieldEntryAudit, { foreignKey: 'entityId' });
 EntityFieldEntryAudit.belongsTo(Entity, { foreignKey: 'entityId' });
+
+Entity.hasMany(RoleEntity, { foreignKey: 'entityId' });
+Entity.hasMany(RoleEntityBlacklist, { foreignKey: 'entityId' });
+RoleEntity.belongsTo(Entity, { foreignKey: 'entityId' });
+RoleEntityBlacklist.belongsTo(Entity, { foreignKey: 'entityId' });
 
 module.exports = Entity;
