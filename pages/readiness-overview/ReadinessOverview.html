@@ -1,6 +1,6 @@
 {% extends "template.njk" %}
 {% from "readiness-theme-card.njk" import readinessThemeCard %}
-{% from "searchMeasures.njk" import searchMeasures %}
+{% from "searchMeasuresForm.njk" import searchMeasuresForm %}
 
 {% set data = data() | await %}
 
@@ -15,7 +15,7 @@
   <div class="govuk-grid-column-full">
     <div class="govuk-grid-row">
       <h1 class="govuk-heading-l govuk-grid-column-two-thirds">Transition Readiness Overview</h1>
-      <div class="govuk-grid-column-one-third">{{searchMeasures(searchUrl)}}</div>
+      <div class="govuk-grid-column-one-third">{{searchMeasuresForm(searchUrl)}}</div>
     </div>
     <p class="govuk-body-s"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">View RAYG definitions and how they are calculated</a></p>
     <div class="govuk-grid-row">

@@ -24,11 +24,13 @@ Search.prototype.init = function() {
   this.queryParameters ={
     terms : params.term.split(" "),
     themeFilters: (params.themeFilter) ? params.themeFilter.split(",") : [],
+    colorFilters: (params.colorFilter) ? params.colorFilter.split(",") : [],
   }
   this.setSearchInput(this.queryParameters.terms);
   this.setThemeFilters(this.queryParameters.themeFilters);
+  this.setColorFilters(this.queryParameters.colorFilters);
   this.hideShowClearButton();
-  this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters);
+  this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
   this.bindEvents();
 };
 
@@ -56,7 +58,7 @@ Search.prototype.setElements = function() {
 };
 
 Search.prototype.getSearchArguments = function() {
-  const queryParameterNames = ['term', 'themeFilter'];
+  const queryParameterNames = ['term', 'themeFilter', 'colorFilter'];
 
   const params = queryParameterNames.reduce((queryParameters, name) => {
     const queryParameterValue = helper.getUrlQueryParameter(name);
@@ -82,11 +84,20 @@ Search.prototype.setThemeFilters = function(themeFilters) {
   }
 };
 
+Search.prototype.setColorFilters = function(colorFilters) {
+  if(colorFilters.length>0) {
+    colorFilters.forEach(filter => {
+      const themeFilterElement = document.querySelector(`#colorFilter[value=${filter}]`);
+      themeFilterElement.setAttribute('checked', 'true')
+    });
+  }
+};
+
 Search.prototype.clearSearchTerm = function() {
   this.elements.$searchInput.value = "";
 };
 
-Search.prototype.filterTable = function(terms, themeFilters) {
+Search.prototype.filterTable = function(terms, themeFilters, colorFilters) {
   
   this.elements.$tableRows.forEach($row => {
     let rowText = $row.innerText || $row.textContent;
@@ -97,6 +108,11 @@ Search.prototype.filterTable = function(terms, themeFilters) {
     if (themeFilters.length > 0) {
       matchesQueryParmeters = matchesQueryParmeters && themeFilters.includes($row.getAttribute('data-theme'));
     } 
+
+    if (colorFilters.length > 0) {
+      matchesQueryParmeters = matchesQueryParmeters && colorFilters.includes($row.getAttribute('data-color'));
+    } 
+
     if(matchesQueryParmeters) {
       $row.classList.add("show");
     } else {

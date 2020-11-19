@@ -12,6 +12,14 @@
     {% endif %}
 {% endset -%}
 
+{% set statusFilters%}
+  {% if (data.colors) %}
+    {% for option in data.colors %}
+      {% include "search-transition-readiness/partials/colorFilters.njk" %}
+    {% endfor %}
+  {% endif %}
+{% endset -%}
+
 <h3 class="govuk-heading-s panelTitle">Filters</h3>
 {{ govukAccordion({
   id: "accordion-default",
@@ -29,7 +37,7 @@
         text: "Status"
       },
       content: {
-        html: "<p class='govuk-body'>This is the content for Writing well for specialists.</p>"
+        html: statusFilters
       }
     }
   ]
