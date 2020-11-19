@@ -69,11 +69,13 @@ Search.prototype.setSearchInput = function(value = "") {
 };
 
 Search.prototype.setThemeFilters = function(themeFilters) {
-  const filters = themeFilters.split(',');
-  filters.forEach(filter => {
-    const themeFilterElement = document.querySelector(`#themeFilter[value=${filter}]`);
-    themeFilterElement.setAttribute('checked', 'true')
-  });
+  if(themeFilters && themeFilters.length) {
+    const filters = themeFilters.split(',');
+    filters.forEach(filter => {
+      const themeFilterElement = document.querySelector(`#themeFilter[value=${filter}]`);
+      themeFilterElement.setAttribute('checked', 'true')
+    });
+  }
 };
 
 Search.prototype.clearSearchTerm = function() {
