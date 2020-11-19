@@ -20,11 +20,15 @@ Search.prototype.init = function() {
   }
 
   this.setElements();
-  this.getSearchArguments();
-  this.setSearchInput(this.queryParameters.term);
-  this.setThemeFilters(this.queryParameters.themeFilter);
+  const params = this.getSearchArguments();
+  this.queryParameters ={
+    terms : params.term.split(" "),
+    themeFilters: (params.themeFilter) ? params.themeFilter.split(",") : [],
+  }
+  this.setSearchInput(this.queryParameters.terms);
+  this.setThemeFilters(this.queryParameters.themeFilters);
   this.hideShowClearButton();
-  this.filterTable();
+  this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters);
   this.bindEvents();
 };
 
@@ -54,7 +58,7 @@ Search.prototype.setElements = function() {
 Search.prototype.getSearchArguments = function() {
   const queryParameterNames = ['term', 'themeFilter'];
 
-  this.queryParameters = queryParameterNames.reduce((queryParameters, name) => {
+  const params = queryParameterNames.reduce((queryParameters, name) => {
     const queryParameterValue = helper.getUrlQueryParameter(name);
     if(queryParameterValue) {
       // FORM with get method replaces spaces with +
@@ -62,16 +66,16 @@ Search.prototype.getSearchArguments = function() {
     }
     return queryParameters;
   }, {});
+  return params;
 };
 
-Search.prototype.setSearchInput = function(value = "") {
-  this.elements.$searchInput.value = value;
+Search.prototype.setSearchInput = function(terms) {
+  this.elements.$searchInput.value = terms.join(" ");
 };
 
 Search.prototype.setThemeFilters = function(themeFilters) {
-  if(themeFilters && themeFilters.length) {
-    const filters = themeFilters.split(',');
-    filters.forEach(filter => {
+  if(themeFilters.length>0) {
+    themeFilters.forEach(filter => {
       const themeFilterElement = document.querySelector(`#themeFilter[value=${filter}]`);
       themeFilterElement.setAttribute('checked', 'true')
     });
@@ -82,16 +86,17 @@ Search.prototype.clearSearchTerm = function() {
   this.elements.$searchInput.value = "";
 };
 
-Search.prototype.filterTable = function() {
-  const queryParameterValues = this.queryParameters.term.split(" ");
+Search.prototype.filterTable = function(terms, themeFilters) {
   
   this.elements.$tableRows.forEach($row => {
     let rowText = $row.innerText || $row.textContent;
     rowText = rowText.toLowerCase();
 
-    const matchesQueryParmeters = queryParameterValues
+    let matchesQueryParmeters = terms
       .every(queryParameterValue => rowText.includes(queryParameterValue.toLowerCase()));
-
+    if (themeFilters.length > 0) {
+      matchesQueryParmeters = matchesQueryParmeters && themeFilters.includes($row.getAttribute('data-theme'));
+    } 
     if(matchesQueryParmeters) {
       $row.classList.add("show");
     } else {
@@ -110,7 +115,7 @@ Search.prototype.hideShowClearButton = function() {
 
 Search.prototype.bindEvents = function() {
   this.elements.$clearSearch.addEventListener("click", () => {
-    this.queryParameters.term = "";
+    this.queryParameters.terms = "";
     this.setSearchInput();
     this.elements.$searchInput.focus();
     this.hideShowClearButton();
@@ -123,7 +128,7 @@ Search.prototype.bindEvents = function() {
   this.elements.$searchInput.addEventListener("keyup", () => {
     this.hideShowClearButton();
     if (liveSearchEnabled) {
-      this.queryParameters.term = this.elements.$searchInput.value;
+      this.queryParameters.terms = this.elements.$searchInput.value;
       this.filterTable();
     }
   });
