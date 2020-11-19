@@ -22,37 +22,48 @@
 
 {% block content %}
 
+<form method="GET" action="{{ url }}">
+
 <div class="govuk-grid-row">
+
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-label-wrapper govuk-!-margin-bottom-2">
             <label class="govuk-label--l" for="term">Search measures</label>
         </h1>
     {{searchMeasures(url)}}
-    <table class="govuk-table" id="search-table">
-      <tbody class="govuk-table__body">
-        {% for measure in data.measures %}
-          <tr class="govuk-table__row searchable-row">
-            <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
-            <td class="govuk-table__cell govuk-!-width-full">
-              <table class="govuk-table no-borders govuk-!-margin-0">
-                <tbody class="govuk-table__body">
-                  <tr class="govuk-table__row">
-                    <td colspan="2" class="govuk-table__cell">
-                      <a href="{{ measure.link }}" class="govuk-link">{{ measure.name }}</a>
-                    </td>
-                  </tr>
-                  <tr class="govuk-table__row">
-                    <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.metricID }}</td>
-                    <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.theme }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
- </div>
+  </div>
 </div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter filter">
+      {% include "search-transition-readiness/partials/filters.njk" %}
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+      <table class="govuk-table" id="search-table">
+        <tbody class="govuk-table__body">
+          {% for measure in data.measures %}
+            <tr class="govuk-table__row searchable-row">
+              <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
+              <td class="govuk-table__cell govuk-!-width-full">
+                <table class="govuk-table no-borders govuk-!-margin-0">
+                  <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                      <td colspan="2" class="govuk-table__cell">
+                        <a href="{{ measure.link }}" class="govuk-link">{{ measure.name }}</a>
+                      </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                      <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.metricID }}</td>
+                      <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.theme }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+</div>
+</form>
 
 {% endblock %}

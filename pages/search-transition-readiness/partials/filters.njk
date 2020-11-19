@@ -1,0 +1,36 @@
+{% from "govuk/components/accordion/macro.njk" import govukAccordion %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+
+{% set themeFilters  %}
+    {% if (data.themes) %}
+        {% for option in data.themes %}
+            {% if option.name !== null %}
+                {% include "search-transition-readiness/partials/themeFilters.njk" %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endset -%}
+
+<h3 class="govuk-heading-s panelTitle">Filters</h3>
+{{ govukAccordion({
+  id: "accordion-default",
+  items: [
+    {
+      heading: {
+        html: "Theme"
+      },
+      content: {
+        html: themeFilters
+      }
+    },
+    {
+      heading: {
+        text: "Status"
+      },
+      content: {
+        html: "<p class='govuk-body'>This is the content for Writing well for specialists.</p>"
+      }
+    }
+  ]
+}) }}
