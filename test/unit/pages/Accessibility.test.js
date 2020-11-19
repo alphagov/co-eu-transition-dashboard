@@ -1,6 +1,5 @@
-const { expect, sinon } = require('test/unit/util/chai');
+const { expect } = require('test/unit/util/chai');
 const { paths } = require('config');
-const authentication = require('services/authentication');
 
 let page = {};
 let res = {};
@@ -11,12 +10,6 @@ describe('pages/accessibility/Accessibility', () => {
     const PrivacyNotice = require('pages/accessibility/Accessibility');
 
     page = new PrivacyNotice('some path', req, res);
-
-    sinon.stub(authentication, 'protect').returns([]);
-  });
-
-  afterEach(() => {
-    authentication.protect.restore();
   });
 
   describe('#url', () => {
@@ -27,11 +20,7 @@ describe('pages/accessibility/Accessibility', () => {
 
   describe('#middleware', () => {
     it('only static users are allowed to access this page', () => {
-      expect(page.middleware).to.eql([
-        ...authentication.protect(['static'])
-      ]);
-
-      sinon.assert.calledWith(authentication.protect, ['static']);
+      expect(page.middleware).to.eql([]);
     });
   });
 });

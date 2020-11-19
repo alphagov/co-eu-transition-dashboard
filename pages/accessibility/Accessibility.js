@@ -1,17 +1,14 @@
 const Page = require('core/pages/page');
 const { paths } = require('config');
-const authentication = require('services/authentication');
 
 class Accessibility extends Page {
   get url() {
     return paths.accessibility;
   }
 
-  // Accessibility page is only for static users
+  // Accessibility page does not require user authentication
   get middleware() {
-    return [
-      ...authentication.protect(['static'])
-    ];
+    return [];
   }
 }
 
