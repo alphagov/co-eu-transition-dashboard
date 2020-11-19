@@ -3,7 +3,6 @@ const { expect, sinon } = require('test/unit/util/chai');
 const entityUserPermissions = require('middleware/entityUserPermissions');
 const Role = require('models/role');
 const RoleEntity = require('models/roleEntity');
-const RoleEntityBlacklist = require('models/roleEntityBlacklist');
 const UserRole = require('models/userRole');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 
@@ -53,26 +52,19 @@ describe('middleware/entityUserPermissions', () => {
       await entityUserPermissions.assignEntityIdsUserCanAccessToLocals(req, res, next);
 
       sinon.assert.calledWith(Role.findAll, {
-        include: [{
+        include: {
           model: UserRole,
           where: { userId: req.user.id },
         },
-        {
-          model: RoleEntity,
-          separate: true
-        },
-        {
-          model: RoleEntityBlacklist,
-          separate: true 
-        }]
       });
 
       sinon.assert.calledWith(Entity.findAll, {
         attributes: ['publicId', 'id'],
         include: {
-          attributes: ['publicId', 'id'],
-          model: Entity,
-          as: 'children'
+          model: RoleEntity,
+          where: {
+            roleId: 1
+          }
         }
       });
 
@@ -92,7 +84,7 @@ describe('middleware/entityUserPermissions', () => {
         children: []
       }];
 
-      Entity.findAll.resolves(entities);
+      Entity.findAll.resolves([entities[0]]);
 
       Role.findAll.resolves([{
         name: "all",
@@ -101,16 +93,6 @@ describe('middleware/entityUserPermissions', () => {
           {
             roleId: 1,
             entityId: 1
-          },
-          {
-            roleId: 1,
-            entityId: 2
-          }
-        ],
-        roleEntityBlacklists: [
-          {
-            roleId: 1,
-            entityId: 2
           }
         ]
       }]);
@@ -118,26 +100,19 @@ describe('middleware/entityUserPermissions', () => {
       await entityUserPermissions.assignEntityIdsUserCanAccessToLocals(req, res, next);
 
       sinon.assert.calledWith(Role.findAll, {
-        include: [{
+        include: {
           model: UserRole,
           where: { userId: req.user.id },
-        },
-        {
-          model: RoleEntity,
-          separate: true
-        },
-        {
-          model: RoleEntityBlacklist,
-          separate: true 
-        }]
+        }
       });
 
       sinon.assert.calledWith(Entity.findAll, {
         attributes: ['publicId', 'id'],
         include: {
-          attributes: ['publicId', 'id'],
-          model: Entity,
-          as: 'children'
+          model: RoleEntity,
+          where: {
+            roleId: 1
+          }
         }
       });
 

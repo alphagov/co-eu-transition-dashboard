@@ -12,6 +12,10 @@ class ReadinessOverview extends Page {
     return paths.readinessOverview;
   }
 
+  get searchUrl() {
+    return paths.searchTransitionReadiness
+  }
+
   get middleware() {
     return [
       ipWhiteList,
