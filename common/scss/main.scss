@@ -74,6 +74,14 @@
   font-weight: normal;
 }
 
+.govuk-header__link--service-name,
+.govuk-header__logotype-text,
+.logout-item {
+  background-color: black;
+}
+
+// li.govuk-header__navigation-item.logout-item
+
 .govuk-main-wrapper, .govuk-footer__meta {
   margin-left: 20px;
   margin-right: 20px;
