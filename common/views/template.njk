@@ -66,8 +66,8 @@
         Transition Readiness Dashboard
       </a>
       {% if req.isAuthenticated() and not req.user.isStatic %}
-        <nav>
-          <ul id="navigation" class="govuk-header__navigation " aria-label="Logout Link">
+        <nav aria-label="User Navigation">
+          <ul class="govuk-header__navigation " aria-label="Logout Link">
             <li class="govuk-header__navigation-item logout-item">
               <a class="govuk-header__link" href="{{ config.paths.authentication.logout }}">
                 Logout
@@ -78,8 +78,9 @@
       {% endif %}
     </div>
   </div>
+  {% include "feedback.njk" %}
 </header>
-{% include "feedback.njk" %}
+
 {% endblock %}
 
 {% block beforeContent %}
@@ -91,14 +92,19 @@
 {% endblock %}
 
 {% block footer %}
+
+{% set footerLinks = [] %}
+
+{% if not req.user.isStatic %}
+ {% set footerLinks = (footerLinks.push ({
+    href: config.paths.privacyNotice,
+    text: "Privacy Notice"
+  }), footerLinks) %}
+{% endif %}
+
 {{ govukFooter({
   meta: {
-    items: [
-      {
-        href: config.paths.privacyNotice,
-        text: "Privacy Notice"
-      }
-    ]
+    items: footerLinks
   }
 }) }}
 {% endblock %}

@@ -64,6 +64,10 @@
   margin-right: 0;
 }
 
+.govuk-header {
+  border-bottom: none;
+}
+
 .govuk-header__logo {
   margin-left: 25px;
   margin-bottom: 0;
@@ -74,6 +78,12 @@
   font-weight: normal;
 }
 
+.govuk-header__link--service-name,
+.govuk-header__logotype-text,
+.logout-item {
+  background-color: black;
+}
+
 .govuk-main-wrapper, .govuk-footer__meta {
   margin-left: 20px;
   margin-right: 20px;
@@ -81,6 +91,7 @@
 
 .govuk-header__container {
   border-color: #FA0738;
+  margin-bottom: 0;
 }
 
 .govuk-header__content {
@@ -100,6 +111,7 @@
 
 .govuk-phase-banner {
   border-bottom: 1px solid #f3f2f1;
+  background-color: #ffffff;
   .govuk-phase-banner__content {
     margin-left: 24px;
     margin-right: 24px;
@@ -141,6 +153,9 @@
     &:last-child {
       margin-right: 0px;
     }
+  }
+  .govuk-header__navigation-noPadding {
+    padding: 0;
   }
 }
 
