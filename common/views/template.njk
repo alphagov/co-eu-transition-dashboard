@@ -100,7 +100,12 @@
     href: config.paths.privacyNotice,
     text: "Privacy Notice"
   }), footerLinks) %}
-{% endif %}
+{% else %}
+ {% set footerLinks = (footerLinks.push ({
+    href: config.paths.accessibility,
+    text: "Accessibility"
+  }), footerLinks) %}
+{% endif %}  
 
 {{ govukFooter({
   meta: {
