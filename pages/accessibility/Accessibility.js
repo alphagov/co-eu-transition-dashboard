@@ -10,7 +10,7 @@ class Accessibility extends Page {
   // Accessibility page is only for static users
   get middleware() {
     return [
-    //   ...authentication.protect(['static'])
+      ...authentication.protect(['static'])
     ];
   }
 }
