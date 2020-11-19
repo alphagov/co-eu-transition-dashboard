@@ -25,11 +25,16 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-label-wrapper govuk-!-margin-bottom-2">
-            <label class="govuk-label--l" for="term">Search measures</label>
-        </h1>
-    {{searchMeasures(url)}}
+      <label class="govuk-label--l" for="term">Search measures</label>
+    </h1>
+    {{ searchMeasures(url, true) }}
     <table class="govuk-table" id="search-table">
       <tbody class="govuk-table__body">
+        <tr class="result-count hidden">
+          <td class="govuk-table__cell" colspan="2">
+            <p class="govuk-body govuk-!-margin-0 count"></p>
+          </td>
+        </tr>
         {% for measure in measures %}
           <tr class="govuk-table__row searchable-row">
             <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
@@ -37,13 +42,21 @@
               <table class="govuk-table no-borders govuk-!-margin-0">
                 <tbody class="govuk-table__body">
                   <tr class="govuk-table__row">
-                    <td colspan="2" class="govuk-table__cell">
+                    <td class="govuk-table__cell">
                       <a href="{{ measure.link }}" class="govuk-link">{{ measure.name }}</a>
                     </td>
                   </tr>
                   <tr class="govuk-table__row">
-                    <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.metricID }}</td>
-                    <td class="govuk-table__cell govuk-!-width-one-quarter">{{ measure.theme }}</td>
+                    <td class="govuk-table__cell">
+                      <table class="govuk-table no-borders govuk-!-margin-0 govuk-!-width-one-half">
+                        <tbody class="govuk-table__body">
+                          <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ measure.metricID }}</td>
+                            <td class="govuk-table__cell">{{ measure.theme }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
                   </tr>
                 </tbody>
               </table>
