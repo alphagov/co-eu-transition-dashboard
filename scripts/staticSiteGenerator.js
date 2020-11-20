@@ -93,11 +93,20 @@ const exportStaticSite = async () => {
       throw new Error('Error loging into application');
     }
 
+    const searchUrl = config.paths.searchTransitionReadiness.replace('/', '');
+
     // no strings to replace yet
-    const stringsReplaceMap = {};
+    const stringsReplaceMap = {
+      [searchUrl]: `${searchUrl}.html`
+    };
 
     await scrape({
-      urls: [ options.url ],
+      urls: [
+        options.url,
+        {
+          url: `${options.url}${searchUrl}`,
+          filename: `${searchUrl}.html`
+        }],
       directory: options.dir,
       recursive: !options.test,
       maxDepth: 50,

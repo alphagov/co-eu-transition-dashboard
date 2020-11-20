@@ -31,6 +31,7 @@ Search.prototype.init = function() {
   this.setColorFilters(this.queryParameters.colorFilters);
   this.hideShowClearButton();
   this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
+  this.updateResultCount();
   this.bindEvents();
 };
 
@@ -53,7 +54,8 @@ Search.prototype.setElements = function() {
   this.elements = {
     $searchInput: this.options.$search.querySelector('.search-input'),
     $clearSearch: this.options.$search.querySelector('.clear-search-button'),
-    $tableRows: this.options.$table.querySelectorAll('.searchable-row')
+    $tableRows: this.options.$table.querySelectorAll('.searchable-row'),
+    $resultCount: this.options.$table.querySelector('.result-count p.count'),
   };
 };
 
@@ -64,7 +66,7 @@ Search.prototype.getSearchArguments = function() {
     const queryParameterValue = helper.getUrlQueryParameter(name);
     if(queryParameterValue) {
       // FORM with get method replaces spaces with +
-      queryParameters[name] = decodeURIComponent(queryParameterValue).replace(/[+]/g, ' ');
+      queryParameters[name] = unescape(queryParameterValue).replace(/[+]/g, ' ');
     }
     return queryParameters;
   }, {});
@@ -72,7 +74,11 @@ Search.prototype.getSearchArguments = function() {
 };
 
 Search.prototype.setSearchInput = function(terms) {
-  this.elements.$searchInput.value = terms.join(" ");
+  if(terms) {
+    this.elements.$searchInput.value = terms.join(" ");
+  } else {
+    this.elements.$searchInput.value = "";
+  }
 };
 
 Search.prototype.setThemeFilters = function(themeFilters) {
@@ -93,12 +99,8 @@ Search.prototype.setColorFilters = function(colorFilters) {
   }
 };
 
-Search.prototype.clearSearchTerm = function() {
-  this.elements.$searchInput.value = "";
-};
-
+// Search.prototype.filterTable = function() {
 Search.prototype.filterTable = function(terms, themeFilters, colorFilters) {
-  
   this.elements.$tableRows.forEach($row => {
     let rowText = $row.innerText || $row.textContent;
     rowText = rowText.toLowerCase();
@@ -129,15 +131,26 @@ Search.prototype.hideShowClearButton = function() {
   }
 };
 
+Search.prototype.updateResultCount = function() {
+  let count = 0;
+  this.elements.$tableRows.forEach($row => {
+    if($row.classList.contains('show')) {
+      count ++;
+    }
+  });
+  this.elements.$resultCount.textContent = `${count} results`;
+};
+
 Search.prototype.bindEvents = function() {
   this.elements.$clearSearch.addEventListener("click", () => {
     this.queryParameters.terms = "";
-    this.setSearchInput();
+    this.setSearchInput(this.queryParameters.terms);
     this.elements.$searchInput.focus();
     this.hideShowClearButton();
 
     if (liveSearchEnabled) {
-      this.filterTable();
+      this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
+      this.updateResultCount();
     }
   });
 
@@ -146,6 +159,7 @@ Search.prototype.bindEvents = function() {
     if (liveSearchEnabled) {
       this.queryParameters.terms = this.elements.$searchInput.value;
       this.filterTable();
+      this.updateResultCount();
     }
   });
 };

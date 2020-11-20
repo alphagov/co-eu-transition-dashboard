@@ -1,7 +1,7 @@
 {% extends "template.njk" %}
 {% from "readiness-accordion.njk" import buildOutcomeMeasures %}
 {% from "attribute.njk" import ariaCurrent %}
-{% from "searchMeasuresForm.njk" import searchMeasuresForm %}
+{% from "searchMeasures.njk" import searchMeasuresForm %}
 
 {% set data = data() | await %}
 {% set activeStatement = '' %}

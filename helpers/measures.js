@@ -14,7 +14,7 @@ const transitionReadinessData = require('helpers/transitionReadinessData');
 const { paths } = require('config');
 const groupBy = require('lodash/groupBy');
 const get = require('lodash/get');
-
+const uniq = require('lodash/uniq');
 
 const applyLabelToEntities = (entities) => {
   entities.forEach(entity => {
@@ -230,7 +230,7 @@ const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
     }
     return allEntites;
   };
-  const measuresPublicId = allThemes.reduce(findEntities, []);
+  const measuresPublicId = uniq(allThemes.reduce(findEntities, []));
   const measuresWithLink = await transitionReadinessData.measuresWithLink(allThemes, measuresPublicId, paths.transitionReadinessThemeDetail)
   return { measures: measuresWithLink, themes: allThemes , colors: ['red', 'amber', 'yellow','green'] };
 }
