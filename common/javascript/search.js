@@ -27,6 +27,7 @@ Search.prototype.init = function() {
     colorFilters: (params.colorFilter) ? params.colorFilter.split(",") : [],
   }
   this.setSearchInput(this.queryParameters.terms);
+  this.setClearFiltersUrl(this.queryParameters.terms)
   this.setThemeFilters(this.queryParameters.themeFilters);
   this.setColorFilters(this.queryParameters.colorFilters);
   this.hideShowClearButton();
@@ -56,6 +57,7 @@ Search.prototype.setElements = function() {
     $clearSearch: this.options.$search.querySelector('.clear-search-button'),
     $tableRows: this.options.$table.querySelectorAll('.searchable-row'),
     $resultCount: this.options.$table.querySelector('.result-count p.count'),
+    $clearFilterBtn: this.options.$searchFilters.querySelector('.clear-filter'),
   };
 };
 
@@ -81,6 +83,12 @@ Search.prototype.setSearchInput = function(terms) {
   }
 };
 
+Search.prototype.setClearFiltersUrl = function(terms) {
+  if(terms) {
+    this.elements.$clearFilterBtn.href += `?term=${encodeURI(terms.join("+"))}`;
+  } 
+};
+
 Search.prototype.setThemeFilters = function(themeFilters) {
   if(themeFilters.length>0) {
     themeFilters.forEach(filter => {
@@ -99,8 +107,7 @@ Search.prototype.setColorFilters = function(colorFilters) {
   }
 };
 
-// Search.prototype.filterTable = function() {
-Search.prototype.filterTable = function(terms, themeFilters, colorFilters) {
+Search.prototype.filterTable = function(terms, themeFilters=[], colorFilters=[]) {
   this.elements.$tableRows.forEach($row => {
     let rowText = $row.innerText || $row.textContent;
     rowText = rowText.toLowerCase();
@@ -158,7 +165,7 @@ Search.prototype.bindEvents = function() {
     this.hideShowClearButton();
     if (liveSearchEnabled) {
       this.queryParameters.terms = this.elements.$searchInput.value;
-      this.filterTable();
+      this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
       this.updateResultCount();
     }
   });

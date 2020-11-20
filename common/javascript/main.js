@@ -24,10 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const $table = document.getElementById('search-table');
   const $search = document.getElementById('search');
+  const $searchFilters = document.getElementById('search-filters');
   if ($table && $search) {
     new Search({
       $search,
       $table,
+      $searchFilters,
     }).init();
   }
 

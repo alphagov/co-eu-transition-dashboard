@@ -32,8 +32,23 @@
     </div>
   </div>
   <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-quarter filter">
+      <div class="govuk-grid-column-one-quarter hidden" id="search-filters" >
         {% include "search-transition-readiness/partials/filters.njk" %}
+        <div class="govuk-grid-row actions">
+          {{ govukButton({
+                text: "Apply filters",
+                preventDoubleClick: true
+              }) 
+          }}
+          {{ govukButton({
+                text: "Clear all filters",
+                classes: "govuk-button--secondary clear-filter",
+                preventDoubleClick: true,
+                href: url,
+                type: "reset"
+              }) 
+          }}
+        </div>
       </div>
       <div class="govuk-grid-column-two-thirds">
         <table class="govuk-table" id="search-table">

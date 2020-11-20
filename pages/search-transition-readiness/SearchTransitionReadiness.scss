@@ -2,4 +2,13 @@
   .result-count {
     display: inherit;
   }
+  #search-filters {
+    display: block;
+  }
+}
+#search-filters {
+  .actions {
+    display: flex;
+    justify-content: space-evenly;
+  }
 }
