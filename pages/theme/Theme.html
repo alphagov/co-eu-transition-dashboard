@@ -1,5 +1,5 @@
 {% extends "template.njk" %}
-{% from "readiness-accordion.njk" import buildOutcomeMeasures %}
+{% from "readiness-accordion.njk" import buildOutcomeMeasures, projectDetails with context %}
 {% from "attribute.njk" import ariaCurrent %}
 {% from "searchMeasures.njk" import searchMeasures %}
 
@@ -56,6 +56,11 @@
   <div class="govuk-grid-column-one-half overflow-scroll {{ 'show-measure' if req.params.selectedPublicId }}" id="theme-tableu-placeholder">
   <a href="{{ themeUrl }}/{{ req.params.statement }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-measure' if req.params.selectedPublicId }}" style="display: none;">Back to {{ activeStatement }}</a>
 
+  {% if data.subOutcomeStatementsAndDatas | length > 0 %}
+    {% for item in data.subOutcomeStatementsAndDatas %}
+      {{ projectDetails(item) }}
+    {% endfor %}
+  {% endif %}
   {% if not data.iframeUrl.error and not data.iframeUrl.url %}
     <p class="govuk-body-s tableu-message">To view data, select a metric or measure</p>
   {% elseif data.iframeUrl.error %}
