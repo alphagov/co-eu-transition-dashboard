@@ -456,7 +456,8 @@ describe('helpers/measures', () => {
 
       const expectedMeasures = {
         measures: measuresWithLink,
-        themes: allThemes
+        themes: allThemes,
+        colors: ["red","amber","yellow","green"]
       }
 
       const measuresWhichUserHasAccess = await measures.getMeasuresWhichUserHasAccess(entitiesUserCanAccess);

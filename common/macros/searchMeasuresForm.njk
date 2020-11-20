@@ -1,7 +1,0 @@
-{% from "searchMeasures.njk" import searchMeasures %}
-
-{% macro searchMeasuresForm(url) %}
-    <form method="GET" action="{{ url }}">
-       {{searchMeasures}}
-    </form>
-{% endmacro %}
