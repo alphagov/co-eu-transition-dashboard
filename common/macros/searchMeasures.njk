@@ -1,5 +1,4 @@
-{% macro searchMeasures(url, clearTextButton = false) %}
-<form method="GET" action="{{ url }}">
+{% macro searchMeasures(clearTextButton = false) %}
     <div class="govuk-form-group">
         <div class="govuk-input__wrapper search" id="search">
             <input class="govuk-input govuk-input--width-20 search-input" type="text" name="term" title="Type search term here" placeholder="Search Measures">
@@ -13,5 +12,10 @@
             </div>
         </div>
     </div>
-</form>
+{% endmacro %}
+
+{% macro searchMeasuresForm(url, clearTextButton = false) %}
+    <form method="GET" action="{{ url }}">
+       {{searchMeasures(clearTextButton)}}
+    </form>
 {% endmacro %}
