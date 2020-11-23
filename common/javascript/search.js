@@ -91,7 +91,7 @@ Search.prototype.setClearFiltersUrl = function(terms) {
 Search.prototype.setThemeFilters = function(themeFilters) {
   if(themeFilters.length>0) {
     themeFilters.forEach(filter => {
-      const themeFilterElement = document.querySelector(`#themeFilter[value=${filter}]`);
+      const themeFilterElement = document.querySelector(`#themeFilter-${filter}`);
       themeFilterElement.setAttribute('checked', 'true')
     });
   }
@@ -100,7 +100,7 @@ Search.prototype.setThemeFilters = function(themeFilters) {
 Search.prototype.setColorFilters = function(colorFilters) {
   if(colorFilters.length>0) {
     colorFilters.forEach(filter => {
-      const themeFilterElement = document.querySelector(`#colorFilter[value=${filter}]`);
+      const themeFilterElement = document.querySelector(`#colorFilter-${filter}`);
       themeFilterElement.setAttribute('checked', 'true')
     });
   }
