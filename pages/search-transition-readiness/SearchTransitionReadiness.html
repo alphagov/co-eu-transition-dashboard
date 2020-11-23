@@ -4,7 +4,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "searchMeasures.njk" import searchMeasures %}
 
-{% set measures = getMeasures() | await %}
+{% set data = getData() | await %}
 
 {% block beforeContent %}
   {{
@@ -22,50 +22,74 @@
 
 {% block content %}
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-label-wrapper govuk-!-margin-bottom-2">
-      <label class="govuk-label--l" for="term">Search measures</label>
-    </h1>
-    {{ searchMeasures(url, true) }}
-    <table class="govuk-table" id="search-table">
-      <tbody class="govuk-table__body">
-        <tr class="result-count hidden">
-          <td class="govuk-table__cell" colspan="2">
-            <p class="govuk-body govuk-!-margin-0 count"></p>
-          </td>
-        </tr>
-        {% for measure in measures %}
-          <tr class="govuk-table__row searchable-row">
-            <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
-            <td class="govuk-table__cell govuk-!-width-full">
-              <table class="govuk-table no-borders govuk-!-margin-0">
-                <tbody class="govuk-table__body">
-                  <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                      <a href="{{ measure.link }}" class="govuk-link">{{ measure.name }}</a>
-                    </td>
-                  </tr>
-                  <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                      <table class="govuk-table no-borders govuk-!-margin-0 govuk-!-width-one-half">
-                        <tbody class="govuk-table__body">
-                          <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">{{ measure.metricID }}</td>
-                            <td class="govuk-table__cell">{{ measure.theme }}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
- </div>
-</div>
+<form method="GET" action="{{ url }}">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+              <label class="govuk-label--l" for="term">Search measures</label>
+          </h1>
+      {{ searchMeasures(true) }}
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-quarter hidden" id="search-filters" >
+        {% include "search-transition-readiness/partials/filters.njk" %}
+        <div class="govuk-grid-row actions">
+          {{ govukButton({
+                text: "Apply filters",
+                preventDoubleClick: true
+              }) 
+          }}
+          {{ govukButton({
+                text: "Clear all filters",
+                classes: "govuk-button--secondary clear-filter",
+                preventDoubleClick: true,
+                href: url,
+                type: "reset"
+              }) 
+          }}
+        </div>
+      </div>
+      <div class="govuk-grid-column-two-thirds">
+        <table class="govuk-table" id="search-table">
+          <tbody class="govuk-table__body">
+            <tr class="result-count hidden">
+              <td class="govuk-table__cell" colspan="2">
+                <p class="govuk-body govuk-!-margin-0 count"></p>
+              </td>
+            </tr>
+            {% for measure in data.measures %}
+              <tr class="govuk-table__row searchable-row" data-theme="{{ measure.theme }}" data-color="{{ measure.color }}">
+                <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
+                <td class="govuk-table__cell govuk-!-width-full">
+                  <table class="govuk-table no-borders govuk-!-margin-0">
+                    <tbody class="govuk-table__body">
+                      <tr class="govuk-table__row">
+                        <td colspan="2" class="govuk-table__cell">
+                          <a href="{{ measure.link }}" class="govuk-link">{{ measure.name }}</a>
+                        </td>
+                      </tr>
+                      <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                          <table class="govuk-table no-borders govuk-!-margin-0 govuk-!-width-one-half">
+                            <tbody class="govuk-table__body">
+                              <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">{{ measure.metricID }}</td>
+                                <td class="govuk-table__cell">{{ measure.theme }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  </div>
+</form>
 
 {% endblock %}

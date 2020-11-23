@@ -20,21 +20,33 @@ Search.prototype.init = function() {
   }
 
   this.setElements();
-  this.getSearchArguments();
-  this.setSearchInput(this.queryParameters.term);
+  const params = this.getSearchArguments();
+  this.queryParameters ={
+    terms : params.term.split(" "),
+    themeFilters: (params.themeFilter) ? params.themeFilter.split(",") : [],
+    colorFilters: (params.colorFilter) ? params.colorFilter.split(",") : [],
+  }
+  this.setSearchInput(this.queryParameters.terms);
+  this.setClearFiltersUrl(this.queryParameters.terms)
+  this.setThemeFilters(this.queryParameters.themeFilters);
+  this.setColorFilters(this.queryParameters.colorFilters);
   this.hideShowClearButton();
-  this.filterTable();
+  this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
   this.updateResultCount();
   this.bindEvents();
 };
 
 const helper = {
   getUrlQueryParameter: name => {
-    const regexp = new RegExp('[\?&]' + name + '=([^&#]*)'); // eslint-disable-line no-useless-escape
-    const results = regexp.exec(window.location.href);
-    if (results && results.length) {
-      return decodeURI(results[1]);
+    const regexp = `[\?&]${name}=([^&#]*)`; // eslint-disable-line no-useless-escape
+    const params = Array.from(window.location.href.matchAll(regexp));
+    let paramValues = [];
+    if (params && params.length) {
+      paramValues = params.map(param => {
+        return decodeURI(param[1])
+      })
     }
+    return paramValues;
   }
 };
 
@@ -44,13 +56,14 @@ Search.prototype.setElements = function() {
     $clearSearch: this.options.$search.querySelector('.clear-search-button'),
     $tableRows: this.options.$table.querySelectorAll('.searchable-row'),
     $resultCount: this.options.$table.querySelector('.result-count p.count'),
+    $clearFilterBtn: this.options.$searchFilters.querySelector('.clear-filter'),
   };
 };
 
 Search.prototype.getSearchArguments = function() {
-  const queryParameterNames = ['term'];
+  const queryParameterNames = ['term', 'themeFilter', 'colorFilter'];
 
-  this.queryParameters = queryParameterNames.reduce((queryParameters, name) => {
+  const params = queryParameterNames.reduce((queryParameters, name) => {
     const queryParameterValue = helper.getUrlQueryParameter(name);
     if(queryParameterValue) {
       // FORM with get method replaces spaces with +
@@ -58,21 +71,55 @@ Search.prototype.getSearchArguments = function() {
     }
     return queryParameters;
   }, {});
+  return params;
 };
 
-Search.prototype.setSearchInput = function(value = "") {
-  this.elements.$searchInput.value = value;
+Search.prototype.setSearchInput = function(terms) {
+  if(terms) {
+    this.elements.$searchInput.value = terms.join(" ");
+  } else {
+    this.elements.$searchInput.value = "";
+  }
 };
 
-Search.prototype.filterTable = function() {
-  const queryParameterValues = Object.values(this.queryParameters);
+Search.prototype.setClearFiltersUrl = function(terms) {
+  if(terms) {
+    this.elements.$clearFilterBtn.href += `?term=${encodeURI(terms.join("+"))}`;
+  } 
+};
 
+Search.prototype.setThemeFilters = function(themeFilters) {
+  if(themeFilters.length>0) {
+    themeFilters.forEach(filter => {
+      const themeFilterElement = document.querySelector(`#themeFilter[value=${filter}]`);
+      themeFilterElement.setAttribute('checked', 'true')
+    });
+  }
+};
+
+Search.prototype.setColorFilters = function(colorFilters) {
+  if(colorFilters.length>0) {
+    colorFilters.forEach(filter => {
+      const themeFilterElement = document.querySelector(`#colorFilter[value=${filter}]`);
+      themeFilterElement.setAttribute('checked', 'true')
+    });
+  }
+};
+
+Search.prototype.filterTable = function(terms, themeFilters=[], colorFilters=[]) {
   this.elements.$tableRows.forEach($row => {
     let rowText = $row.innerText || $row.textContent;
     rowText = rowText.toLowerCase();
 
-    const matchesQueryParmeters = queryParameterValues
+    let matchesQueryParmeters = terms
       .every(queryParameterValue => rowText.includes(queryParameterValue.toLowerCase()));
+    if (themeFilters.length > 0) {
+      matchesQueryParmeters = matchesQueryParmeters && themeFilters.includes($row.getAttribute('data-theme'));
+    } 
+
+    if (colorFilters.length > 0) {
+      matchesQueryParmeters = matchesQueryParmeters && colorFilters.includes($row.getAttribute('data-color'));
+    } 
 
     if(matchesQueryParmeters) {
       $row.classList.add("show");
@@ -102,13 +149,13 @@ Search.prototype.updateResultCount = function() {
 
 Search.prototype.bindEvents = function() {
   this.elements.$clearSearch.addEventListener("click", () => {
-    this.queryParameters.term = "";
-    this.setSearchInput();
+    this.queryParameters.terms = "";
+    this.setSearchInput(this.queryParameters.terms);
     this.elements.$searchInput.focus();
     this.hideShowClearButton();
 
     if (liveSearchEnabled) {
-      this.filterTable();
+      this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
       this.updateResultCount();
     }
   });
@@ -116,8 +163,8 @@ Search.prototype.bindEvents = function() {
   this.elements.$searchInput.addEventListener("keyup", () => {
     this.hideShowClearButton();
     if (liveSearchEnabled) {
-      this.queryParameters.term = this.elements.$searchInput.value;
-      this.filterTable();
+      this.queryParameters.terms = this.elements.$searchInput.value;
+      this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
       this.updateResultCount();
     }
   });

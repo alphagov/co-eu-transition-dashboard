@@ -1,7 +1,7 @@
 {% extends "template.njk" %}
 {% from "readiness-accordion.njk" import buildOutcomeMeasures, projectDetails with context %}
 {% from "attribute.njk" import ariaCurrent %}
-{% from "searchMeasures.njk" import searchMeasures %}
+{% from "searchMeasures.njk" import searchMeasuresForm %}
 
 {% set data = data() | await %}
 {% set activeStatement = '' %}
@@ -18,7 +18,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-l govuk-grid-column-two-thirds theme-{{ data.theme.color }} theme-name">{{ data.theme.name }}</h1>
-      <div class="govuk-grid-column-one-third">{{searchMeasures(searchUrl)}}</div>
+      <div class="govuk-grid-column-one-third">{{searchMeasuresForm(searchUrl)}}</div>
     <div> 
   <div>
   <p class="govuk-body-l">{{ data.theme.description }}</p>
