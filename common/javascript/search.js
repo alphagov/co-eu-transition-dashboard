@@ -45,7 +45,6 @@ const helper = {
       paramValues = params.map(param => {
         return decodeURI(param[1])
       })
-      // return decodeURI(results[1]);
     }
     return paramValues;
   }

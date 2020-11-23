@@ -72,16 +72,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // The expanded state of individual instances of the accordion component persists across page loads using sessionStorage.
 // These will be removed from the session storage so the accordions will collapse rather than stay open.
 // We want to keep session storage on the readiness theme and search transition pages to prevent accordions closing on a page refresh
-let clearSessionStorage = true;
 const currentPage = document.getElementsByClassName('govuk-header__navigation-item--active');
-if(currentPage && currentPage.length > 0 && currentPage[0].innerText === 'Transition readiness'){
-  clearSessionStorage = false;
-}
-const pageHeading = document.getElementsByTagName('h1');
-if(pageHeading.length > 0 && pageHeading[0].innerText === 'Search measures') {
-  clearSessionStorage = false;
-}
+const isTransitionReadinessPage = currentPage && currentPage.length > 0 && currentPage[0].innerText === 'Transition readiness';
 
-if (clearSessionStorage) {
+const pageHeading = document.getElementsByTagName('h1');
+const isSearchMeasuresPage = pageHeading.length > 0 && pageHeading[0].innerText === 'Search measures'
+
+if(isTransitionReadinessPage || isSearchMeasuresPage){
   sessionStorage.clear();
 }
