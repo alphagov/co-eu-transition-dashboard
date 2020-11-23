@@ -18,7 +18,10 @@
           <div class="govuk-accordion__section-header section-header-{{ item.level }}">
             <h2 class="govuk-accordion__section-heading govuk-heading-s">
 
-              <button type="button" id="accordion-default-{{ id }}-heading-{{ loop.index }}" aria-controls="accordion-default-{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-button" aria-expanded="{{ expanded }}">
+              {% if item.meta.category.name == 'Project' %}
+                {% set dataAttribute %}data-project-details-id="project-information-{{ item.meta.id }}"{% endset %}
+              {% endif %}
+              <button type="button" id="accordion-default-{{ id }}-heading-{{ loop.index }}" aria-controls="accordion-default-{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-button" aria-expanded="{{ expanded }}" {{ dataAttribute | safe }}>
                 {{ heading }}
                 {% if item.level > 1 %} ({{ childCount }}){% endif %}
                 <span class="govuk-accordion__icon" aria-hidden="true"></span>
@@ -83,4 +86,21 @@
     classes: 'accordion-level-' + level,
     items: outcomeMeasuresData
   }) }}
+{% endmacro %}
+
+{% macro projectDetails(item) %}
+  {% if item.category.name == 'Project' %}
+    <div class="govuk-!-padding-left-2 hidden" id="project-information-{{ item.id }}">
+      <h3 class="govuk-heading-m">{{ item.name }}</h3>
+      <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ item.hmgConfidence }}">{{ item.hmgConfidence }}</span></p>
+      <p class="govuk-body">{{ item.description }}</p>
+      {% if req.user.roles | includes(['management']) %}
+        <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', item.publicId | urlencode) }}">View project</a>
+      {% endif %}
+    </div>
+  {% elseif item.children %}
+    {% for child in item.children %}
+      {{ projectDetails(child) }}
+    {% endfor %}
+  {% endif %}
 {% endmacro %}
