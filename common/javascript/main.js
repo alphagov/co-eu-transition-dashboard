@@ -78,6 +78,6 @@ const isTransitionReadinessPage = currentPage && currentPage.length > 0 && curre
 const pageHeading = document.getElementsByTagName('h1');
 const isSearchMeasuresPage = pageHeading.length > 0 && pageHeading[0].innerText === 'Search measures'
 
-if(isTransitionReadinessPage || isSearchMeasuresPage){
+if(!isTransitionReadinessPage && !isSearchMeasuresPage){
   sessionStorage.clear();
 }
