@@ -110,7 +110,8 @@
     }
   },
   "locks": {
-    "upcomingMilestonesNotifications": "upcoming milestones notifications"
+    "upcomingMilestonesNotifications": "upcoming milestones notifications",
+    "dailyUpdatesNotifications": "daily updates notifications"
   },
   "ipWhiteList": {},
   "credentials": {
