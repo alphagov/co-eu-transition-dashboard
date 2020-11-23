@@ -1,0 +1,14 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+
+{{ govukCheckboxes({
+    name: "colorFilter",
+    items: [
+      {
+        value: option,
+        text: option,
+        checked: false
+      }
+    ]
+  }) 
+}}
