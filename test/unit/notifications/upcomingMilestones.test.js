@@ -5,7 +5,7 @@ const Role = require("models/role");
 const proxyquire = require('proxyquire');
 const config = require('config');
 const moment = require('moment');
-const sequelize = require('services/sequelize');
+const locks = require('helpers/locks');
 
 let sendEmailStub = sinon.stub();
 let getAllDataStub = sinon.stub();
@@ -32,7 +32,7 @@ const upcomingMilestones = proxyquire('notifications/upcomingMilestones', {
 describe('notifications/upcomingMilestones', () => {
   describe('#getProjectsDueInNextTwoDays', () => {
     it('gets all projects that have milestones due in two days time that are not complete', async () => {
-      await upcomingMilestones.getProjectsDueInNextTwoDays();
+      await upcomingMilestones.upcomingMilestonesNotifications.getProjectsDueInNextTwoDays();
 
       const search = {
         date: {
@@ -56,7 +56,7 @@ describe('notifications/upcomingMilestones', () => {
         departmentName: 'Bar'
       }];
 
-      const departments = upcomingMilestones.groupProjectsByDepartment(projects);
+      const departments = upcomingMilestones.upcomingMilestonesNotifications.groupProjectsByDepartment(projects);
 
       const expected = {
         'Foo': [{
@@ -75,7 +75,7 @@ describe('notifications/upcomingMilestones', () => {
     it('finds users with upload permissions for a given department', async () => {
 
       const departmentName = 'some-department';
-      await upcomingMilestones.getUsers(departmentName);
+      await upcomingMilestones.upcomingMilestonesNotifications.getUsers(departmentName);
 
       sinon.assert.calledWith(User.findAll, {
         include: [{
@@ -88,7 +88,7 @@ describe('notifications/upcomingMilestones', () => {
           required: true,
           where: {
             name: 'uploader'
-          } 
+          }
         }]
       });
     });
@@ -119,7 +119,7 @@ describe('notifications/upcomingMilestones', () => {
         `${projectsByDepartment['department1'][0].title} - ${projectsByDepartment['department1'][0].milestones[0].uid}`
       ];
 
-      await upcomingMilestones.sendEmails(projectsByDepartment);
+      await upcomingMilestones.upcomingMilestonesNotifications.sendEmails(projectsByDepartment);
 
       sinon.assert.calledWith(sendEmailStub, config.notify.missedMilestonesKey,
         users[0].email,
@@ -147,48 +147,63 @@ describe('notifications/upcomingMilestones', () => {
     });
   });
 
-  describe('#setLock', () => {
-    it('should set lock with a uuid', async () => {
-      const guid = await upcomingMilestones.setLock();
-      const options = {
-        replacements: [ guid, config.locks.upcomingMilestonesNotifications ]
-      };
-      sinon.assert.calledWith(sequelize.query, `UPDATE dashboard_locks SET guid=? WHERE name=? AND guid IS NULL`, options)
-    })
-  });
+  describe('#notifyupcomingMilestones.upcomingMilestonesNotifications', () => {
+    const projects = [{ id: 1 }];
+    const projectsByDepartment = [{ name: 'dept 1', projects }];
+    const summary = 'some summary';
 
-  describe('#getLock', () => {
-    it('should return false if guid does not match', async () => {
-      const guid = 'some guid';
-      sequelize.query.resolves([[], []]);
+    beforeEach(() => {
+      sinon.stub(upcomingMilestones.upcomingMilestonesNotifications, 'getProjectsDueInNextTwoDays').returns(projects);
+      sinon.stub(upcomingMilestones.upcomingMilestonesNotifications, 'groupProjectsByDepartment').returns(projectsByDepartment);
+      sinon.stub(upcomingMilestones.upcomingMilestonesNotifications, 'sendEmails').returns(summary);
+      sinon.stub(upcomingMilestones.upcomingMilestonesNotifications, 'sendSummaryNotification');
 
-      const response = await upcomingMilestones.getLock(guid);
-
-      expect(response).to.not.be.ok;
+      sinon.stub(locks, 'setLock');
+      sinon.stub(locks, 'getLock');
+      sinon.stub(locks, 'clearLock');
     });
 
-    it('should return true if guid does match', async () => {
-      const guid = 'some guid';
-      sequelize.query.resolves([[{}], [{}]]);
+    afterEach(() => {
+      upcomingMilestones.upcomingMilestonesNotifications.getProjectsDueInNextTwoDays.restore();
+      upcomingMilestones.upcomingMilestonesNotifications.sendSummaryNotification.restore();
+      upcomingMilestones.upcomingMilestonesNotifications.groupProjectsByDepartment.restore();
+      upcomingMilestones.upcomingMilestonesNotifications.sendEmails.restore();
 
-      const response = await upcomingMilestones.getLock(guid);
-
-      expect(response).to.be.ok;
-
-      const options = {
-        replacements: [ guid, config.locks.upcomingMilestonesNotifications ]
-      };
-      sinon.assert.calledWith(sequelize.query, 'SELECT * FROM dashboard_locks WHERE guid=? AND name=?', options)
+      locks.setLock.restore();
+      locks.getLock.restore();
+      locks.clearLock.restore();
     });
-  });
 
-  describe('#clearLock', () => {
-    it('should clear the lock', async () => {
-      await upcomingMilestones.clearLock();
-      const options = {
-        replacements: [ config.locks.upcomingMilestonesNotifications ]
-      };
-      sinon.assert.calledWith(sequelize.query, `UPDATE dashboard_locks SET guid=NULL WHERE name=?`, options)
+    it('orchastrates notify Upcoming Milestones', async () => {
+      locks.setLock.returns('some-id');
+      locks.getLock.returns(true);
+
+      await upcomingMilestones.notifyUpcomingMilestones();
+
+      sinon.assert.calledWith(locks.setLock, config.locks.upcomingMilestonesNotifications);
+      sinon.assert.calledWith(locks.getLock, 'some-id', config.locks.upcomingMilestonesNotifications);
+      sinon.assert.calledWith(locks.clearLock, config.locks.upcomingMilestonesNotifications);
+
+      sinon.assert.calledOnce(upcomingMilestones.upcomingMilestonesNotifications.getProjectsDueInNextTwoDays);
+      sinon.assert.calledWith(upcomingMilestones.upcomingMilestonesNotifications.groupProjectsByDepartment, projects);
+      sinon.assert.calledWith(upcomingMilestones.upcomingMilestonesNotifications.sendEmails, projectsByDepartment);
+      sinon.assert.calledWith(upcomingMilestones.upcomingMilestonesNotifications.sendSummaryNotification, summary);
+    });
+
+    it('does not run if lock exists', async () => {
+      locks.setLock.returns('some-id');
+      locks.getLock.returns(false);
+
+      await upcomingMilestones.notifyUpcomingMilestones();
+
+      sinon.assert.calledWith(locks.setLock, config.locks.upcomingMilestonesNotifications);
+      sinon.assert.calledWith(locks.getLock, 'some-id', config.locks.upcomingMilestonesNotifications);
+      sinon.assert.calledWith(locks.clearLock, config.locks.upcomingMilestonesNotifications);
+
+      sinon.assert.notCalled(upcomingMilestones.upcomingMilestonesNotifications.getProjectsDueInNextTwoDays);
+      sinon.assert.notCalled(upcomingMilestones.upcomingMilestonesNotifications.groupProjectsByDepartment);
+      sinon.assert.notCalled(upcomingMilestones.upcomingMilestonesNotifications.sendEmails);
+      sinon.assert.notCalled(upcomingMilestones.upcomingMilestonesNotifications.sendSummaryNotification);
     });
   });
 
@@ -199,7 +214,7 @@ describe('notifications/upcomingMilestones', () => {
         errors: ['errors 1', 'errors 2']
       };
 
-      await upcomingMilestones.sendSummaryNotification(summary);
+      await upcomingMilestones.upcomingMilestonesNotifications.sendSummaryNotification(summary);
 
       sinon.assert.calledWith(sendEmailStub,
         config.notify.summaryNotificationKey,
@@ -215,6 +230,3 @@ describe('notifications/upcomingMilestones', () => {
     });
   });
 });
-
-
-
