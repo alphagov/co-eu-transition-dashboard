@@ -76,8 +76,10 @@ const currentPage = document.getElementsByClassName('govuk-header__navigation-it
 const isTransitionReadinessPage = currentPage && currentPage.length > 0 && currentPage[0].innerText === 'Transition readiness';
 
 const pageHeading = document.getElementsByTagName('h1');
-const isSearchMeasuresPage = pageHeading.length > 0 && pageHeading[0].innerText === 'Search measures'
+const isSearchMeasuresPage = pageHeading.length > 0 && pageHeading[0].innerText === 'Search measures';
 
-if(!isTransitionReadinessPage && !isSearchMeasuresPage){
+const projectDetailsPage = !!document.getElementById('project-details');
+
+if(!isTransitionReadinessPage && !isSearchMeasuresPage && !projectDetailsPage){
   sessionStorage.clear();
 }
