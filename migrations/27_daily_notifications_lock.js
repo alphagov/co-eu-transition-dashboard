@@ -1,6 +1,4 @@
-const { services } = require('config');
 const logger = require('services/logger');
-const Sequelize = require('sequelize');
 const config = require('config');
 
 const up = async (query) => {
@@ -11,7 +9,7 @@ const up = async (query) => {
 
 const down = async (query) => {
   try {
-    await query.destroy({ where: { name: config.locks.dailyUpdatesNotifications }});
+    await query.destroy({ where: { name: config.locks.dailyUpdatesNotifications } });
   } catch (error) {
     logger.error(`Error rolling back ${error}`);
   }
