@@ -5,6 +5,8 @@ const notifyServices =require('services/notify');
 const proxyquire = require('proxyquire');
 const Project = require('models/project');
 const Milestone = require('models/milestone');
+const locks = require('helpers/locks');
+const config = require('config');
 
 let dailyUpdates = {};
 let fnStub = sinon.stub();
@@ -89,8 +91,7 @@ const projects = ["p1 - project1", "p2 - project2"];
 const milestones = ["p1 - m1 - milestone1", "p2 - m2 - milestone2"];
 
 describe('notifications/dailyUpdates', () => {
-  
-  let getCategoryStub ;
+  let getCategoryStub;
 
   before(() => {
     notify['dailyUpdates'] =  {
@@ -110,17 +111,24 @@ describe('notifications/dailyUpdates', () => {
     fnStub.returns();
     Project.findAll.resolves(mockUpdatedProjects);
     Milestone.findAll.resolves(mockUpdatedMilestones);
-  })
+
+    sinon.stub(locks, 'setLock').returns('some-id');
+    sinon.stub(locks, 'getLock').returns(true);
+    sinon.stub(locks, 'clearLock');
+  });
 
   afterEach(()=>{
     measures.getCategory.restore();
     measures.getMeasureEntities.restore();
     notifyServices.sendDailyUpdatesEmail.restore();
-  })
+
+    locks.setLock.restore();
+    locks.getLock.restore();
+    locks.clearLock.restore();
+  });
 
   describe('#notifyDailyUpdates', () => {
     it('gets updated measures and calls notify', async () => {
-
       await dailyUpdates.notifyDailyUpdates();
 
       sinon.assert.calledWith(notifyServices.sendDailyUpdatesEmail, {
@@ -129,10 +137,22 @@ describe('notifications/dailyUpdates', () => {
         projects,
         milestones
       });
-    })
+
+      sinon.assert.calledWith(locks.setLock, config.locks.dailyUpdatesNotifications);
+      sinon.assert.calledWith(locks.getLock, 'some-id', config.locks.dailyUpdatesNotifications);
+      sinon.assert.calledWith(locks.clearLock, config.locks.dailyUpdatesNotifications);
+    });
+
+    it('does not run if lock exists', async () => {
+      locks.getLock.returns(false);
+
+      await dailyUpdates.notifyDailyUpdates();
+
+      sinon.assert.notCalled(notifyServices.sendDailyUpdatesEmail);
+
+      sinon.assert.calledWith(locks.setLock, config.locks.dailyUpdatesNotifications);
+      sinon.assert.calledWith(locks.getLock, 'some-id', config.locks.dailyUpdatesNotifications);
+      sinon.assert.calledWith(locks.clearLock, config.locks.dailyUpdatesNotifications);
+    });
   });
-
 });
-
-
-
