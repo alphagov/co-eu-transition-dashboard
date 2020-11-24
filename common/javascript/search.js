@@ -92,6 +92,7 @@ Search.prototype.setThemeFilters = function(themeFilters) {
   if(themeFilters.length>0) {
     themeFilters.forEach(filter => {
       const themeFilterElement = document.querySelector(`#themeFilter-${filter}`);
+      const themeFilterElement = document.querySelector('#' + CSS.escape(`themeFilter-${filter}`));
       themeFilterElement.setAttribute('checked', 'true')
     });
   }
