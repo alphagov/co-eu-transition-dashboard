@@ -255,27 +255,31 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
     complete: ['Yes', 'No'] // Only include milestones that are completed Yes or No ( dont include decommissioned milestones )
   });
 
-  const mapProjectsToEntites = (entity) => {
+  const mapAllEntities = (entity) => {
     if(entity.children) {
       let toDelete = [];
       for (let i=0;i< entity.children.length;i++) {
-        if (!mapProjectsToEntites(entity.children[i])) {
+        if (!mapAllEntities(entity.children[i])) {
+          console.log(`Registering ${i} for deletion`);
           toDelete.push(i);
         }
       }
       // Make sure we're deleting from the array in reverse order
       toDelete.sort( (a,b) => {
-        return (b-a);
+        return (a-b);
       });
       for (let i=toDelete.length - 1;i>=0;i--) {
-        // console.log(`Pruning ${entity.children[toDelete[i]].publicId}`);
+        console.log(`Pruning ${toDelete[i]} of ${entity.children.length}`);
+        console.log(`Which is ${entity.children[toDelete[i]].publicId}`);
         entity.children.splice(toDelete[i],1);
       }
     }
 
-
-    if (entity.categoryId === projectsCategory.id && !entity.children) {
-      return false;
+    if (entity.categoryId === projectsCategory.id) {
+      if (!entity.children || entity.children.length === 0) {
+        console.log(`Should be deleting ${entity.publicId}`);
+        return false;
+      }
     }
 
     if(entity.categoryId === projectsCategory.id) {
@@ -306,7 +310,7 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
     return true;
   };
 
-  mapProjectsToEntites(entitiesInHierarchy);
+  mapAllEntities(entitiesInHierarchy);
   //console.log(JSON.stringify(entitiesInHierarchy, null, '\t'));
 }
 
