@@ -83,10 +83,9 @@ const mapProjectToEntity = (milestoneFieldDefinitions, projectFieldDefinitions, 
 }
 
 const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project, milestone) => {
-  entityFieldMap.name = `${project.departmentName} - ${project.title}`;
+  entityFieldMap.name = milestone.description;
   entityFieldMap.hmgConfidence = project.hmgConfidence;
 
-  entityFieldMap.name = milestone.description;
   entityFieldMap.deliveryConfidence = milestone.deliveryConfidence;
   entityFieldMap.date = milestone.date;
   entityFieldMap.complete = milestone.complete;
@@ -258,22 +257,21 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
 
   const mapProjectsToEntites = (entity) => {
     if(entity.children) {
-      entity.children.forEach(mapProjectsToEntites);
-
-      // remove projects without milestones
-      entity.children = entity.children.filter(entity => {
-        const isProject = entity.categoryId === projectsCategory.id;
-        if(isProject) {
-          if (entity.children && entity.children.length) {
-            // console.log(`Adding project ${entity.publicId}`);
-            return true;
-          } else {
-            // console.log(`Removing project ${entity.publicId} due to missing milestones`);
-            return false;
-          }
+      let toDelete = [];
+      for (let i=0;i< entity.children.length;i++) {
+        if (!mapProjectsToEntites(entity.children[i])) {
+          toDelete.push(i);
         }
-        return true;
-      });
+      }
+      for (let i=toDelete.length - 1;i>=0;i--) {
+        // console.log(`Pruning ${entity.children[toDelete[i]].publicId}`);
+        entity.children.splice(toDelete[i],1);
+      }
+    }
+
+
+    if (entity.categoryId === projectsCategory.id && !entity.children) {
+      return false;
     }
 
     if(entity.categoryId === projectsCategory.id) {
@@ -287,14 +285,21 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       */
       }
     } else if (entity.categoryId === milestonesCategory.id) {
+      let foundEntity = false;
       for (const project of projects) {
         const milestone = project.milestones.find(milestone => milestone.uid === entity.publicId);
         if (milestone) {
+          foundEntity = true;
           mapMilestoneToEntity(milestoneFieldDefinitions, entity, project, milestone);
           break;
         }
       }
+      if (!foundEntity) {
+        return false;
+      }
     }
+
+    return true;
   };
 
   mapProjectsToEntites(entitiesInHierarchy);
