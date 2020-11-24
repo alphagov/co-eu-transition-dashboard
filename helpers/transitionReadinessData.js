@@ -260,7 +260,6 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       let toDelete = [];
       for (let i=0;i< entity.children.length;i++) {
         if (!mapAllEntities(entity.children[i])) {
-          console.log(`Registering ${i} for deletion`);
           toDelete.push(i);
         }
       }
@@ -269,15 +268,12 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
         return (a-b);
       });
       for (let i=toDelete.length - 1;i>=0;i--) {
-        console.log(`Pruning ${toDelete[i]} of ${entity.children.length}`);
-        console.log(`Which is ${entity.children[toDelete[i]].publicId}`);
         entity.children.splice(toDelete[i],1);
       }
     }
 
     if (entity.categoryId === projectsCategory.id) {
       if (!entity.children || entity.children.length === 0) {
-        console.log(`Should be deleting ${entity.publicId}`);
         return false;
       }
     }
