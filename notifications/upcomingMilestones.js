@@ -36,7 +36,7 @@ upcomingMilestonesNotifications.groupProjectsByDepartment = projects => {
 };
 
 upcomingMilestonesNotifications.getUsers = async (departmentName) => {
-  return await User.findAll({
+  return User.findAll({
     include: [{
       model: Department,
       where: {
