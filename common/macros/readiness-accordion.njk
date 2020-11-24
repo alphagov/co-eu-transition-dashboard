@@ -2,7 +2,7 @@
 
 {% macro accordion(params) %}
   {% set id = params.id %}
-  
+
   <div class="govuk-accordion {%- if params.classes %} {{ params.classes }}{% endif -%}" data-module="readiness-accordion" id="{{ id }}"
   {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>
     {% for item in params.items %}
@@ -57,7 +57,7 @@
           {{ item.name }}</a>
       {% else %}
         <a href="{{ item.link }}" class="govuk-link outcome-measure__link" {{ ariaCurrent(item.active) }}>{{ item.name }}</a>
-      {% endif %}  
+      {% endif %}
       </li>
     {% endfor %}
   </ul>
@@ -90,7 +90,7 @@
 
 {% macro projectDetails(item) %}
   {% if item.category.name == 'Project' %}
-    <div class="govuk-!-padding-left-2 hidden" id="project-information-{{ item.id }}">
+    <div class="govuk-!-padding-left-2 hidden project-information" id="project-information-{{ item.id }}">
       <h3 class="govuk-heading-m">{{ item.name }}</h3>
       <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ item.hmgConfidence }}">{{ item.hmgConfidence }}</span></p>
       <p class="govuk-body">{{ item.description }}</p>
