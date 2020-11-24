@@ -25,12 +25,14 @@ const token = req => {
   return null;
 };
 
-const restoreData = (req, res) => {
+const restoreData = (req, res, clearCookieOnFail = true) => {
   if (req && req.cookies['jwt']) {
     try {
       return jwt.verify(req.cookies['jwt'], config.cookie.secret);
     } catch (error) {
-      clearCookie(res)
+      if (clearCookieOnFail) {
+        clearCookie(res);
+      }
       return {};
     }
   } else {
