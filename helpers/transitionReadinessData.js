@@ -263,6 +263,10 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
           toDelete.push(i);
         }
       }
+      // Make sure we're deleting from the array in reverse order
+      toDelete.sort( (a,b) => {
+        return (b-a);
+      });
       for (let i=toDelete.length - 1;i>=0;i--) {
         // console.log(`Pruning ${entity.children[toDelete[i]].publicId}`);
         entity.children.splice(toDelete[i],1);
