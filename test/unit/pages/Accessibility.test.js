@@ -1,5 +1,6 @@
 const { expect } = require('test/unit/util/chai');
 const { paths } = require('config');
+const restoreUserIfAuthenticated = require('middleware/restoreUserIfAuthenticated');
 
 let page = {};
 let res = {};
@@ -20,7 +21,7 @@ describe('pages/accessibility/Accessibility', () => {
 
   describe('#middleware', () => {
     it('only static users are allowed to access this page', () => {
-      expect(page.middleware).to.eql([]);
+      expect(page.middleware).to.eql([ restoreUserIfAuthenticated ]);
     });
   });
 });
