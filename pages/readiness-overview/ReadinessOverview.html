@@ -1,6 +1,7 @@
 {% extends "template.njk" %}
 {% from "readiness-theme-card.njk" import readinessThemeCard %}
 {% from "searchMeasures.njk" import searchMeasuresForm %}
+{% from "status.njk" import currentStatus %}
 
 {% set data = data() | await %}
 
@@ -17,23 +18,25 @@
       <h1 class="govuk-heading-l govuk-grid-column-two-thirds">Transition Readiness Overview</h1>
       <div class="govuk-grid-column-one-third">{{searchMeasuresForm(searchUrl)}}</div>
     </div>
+    <span class="govuk-caption-m govuk-!-margin-bottom-2">Last updated on {{ getLastUpdatedAt() | await }}</span>
     <p class="govuk-body-s"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
     <div class="govuk-grid-row">
 
-      <div class="govuk-grid-column-one-quarter no-padding-right">
+      <div class="govuk-grid-column-one-quarter">
         <h2 class="govuk-heading-m govuk-!-margin-bottom-2" id="headline-figures">Headline<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
         <span class="govuk-caption-m">A set of measures that are of high significance in terms of the readiness.</span>
 
         <div class="overview-card-holder headline-figure top-statements">
           {% for item in data.headlineMeasures %}
-            <div class="overview-card {{ item.color }}">
+            <div class="overview-card">
               <div class="overview-card--inner">
                 <a href="{{ item.link }}" class="overview-card--link govuk-link">{{ item.name }} </a>
                 <span class="overview-card--tag-theme govuk-heading-s">{{ item.theme }}</span>
                 <p class="overview-card--metric">{{ item.description }}</p>
-                                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                <a href="{{ item.link }}" class="overview-card--link govuk-link">Data visualisation</a>
+                {{ currentStatus(item.color) }}
               </div>
+                <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-top-3">
+                <a href="{{ item.link }}" class="overview-card--link govuk-link">Data visualisation</a>
             </div>
           {% endfor %}
         </div>
@@ -46,8 +49,7 @@
         <div class="govuk-grid-row">
 
           {# High risk column #}
-          <div class="govuk-grid-column-one-quarter no-padding-right risk-col">
-            <h3 class="govuk-heading-s govuk-!-font-weight-regular">High Risk</h3>
+          <div class="govuk-grid-column-one-quarter risk-col">
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.red %}
                 {{ readinessThemeCard(item) }}
@@ -56,8 +58,7 @@
           </div>
 
           {# Medium risk column #}
-          <div class="govuk-grid-column-one-quarter no-padding-right risk-col">
-            <h3 class="govuk-heading-s govuk-!-font-weight-regular">Medium Risk</h3>
+          <div class="govuk-grid-column-one-quarter risk-col">
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.amber %}
                 {{ readinessThemeCard(item) }}
@@ -66,8 +67,7 @@
           </div>
 
            {# Low risk column #}
-          <div class="govuk-grid-column-one-quarter no-padding-right risk-col">
-            <h3 class="govuk-heading-s govuk-!-font-weight-regular">Low Risk</h3>
+          <div class="govuk-grid-column-one-quarter risk-col">
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.yellow %}
                 {{ readinessThemeCard(item) }}
@@ -76,8 +76,7 @@
           </div>
 
            {# Minimal risk column #}
-          <div class="govuk-grid-column-one-quarter no-padding-right risk-col">
-            <h3 class="govuk-heading-s govuk-!-font-weight-regular">Minimal/No Risk</h3>
+          <div class="govuk-grid-column-one-quarter risk-col">
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.green %}
                 {{ readinessThemeCard(item) }}
