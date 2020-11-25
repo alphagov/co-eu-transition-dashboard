@@ -25,7 +25,7 @@ describe('helpers/utils', () => {
           b: undefined,
           c: null,
           d: '',
-          e: ['a', ''],
+          e: ['a', '', 0, '0'],
           f: 0
         }, {
           a: undefined,
@@ -33,7 +33,7 @@ describe('helpers/utils', () => {
         }
       ];
 
-      expect(utils.removeNulls(test)).to.eql([{ a: 'a', e: ['a'], f: 0 }, { b: [1] }]);
+      expect(utils.removeNulls(test)).to.eql([{ a: 'a', e: ['a', 0, '0'], f: 0 }, { b: [1] }]);
     });
   });
 });
