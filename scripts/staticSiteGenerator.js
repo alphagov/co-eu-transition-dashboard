@@ -97,7 +97,7 @@ const exportStaticSite = async () => {
 
     // no strings to replace yet
     const stringsReplaceMap = {
-      [searchUrl]: `${searchUrl}.html`
+      [`action="${searchUrl}"`]: `action="${searchUrl}.html"`
     };
 
     await scrape({
