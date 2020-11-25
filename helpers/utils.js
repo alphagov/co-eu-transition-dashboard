@@ -16,8 +16,6 @@ const removeNulls = (obj, maxDepth, currentDepth = -1) => {
         }
       } else if (obj[i] === null || obj[i] === undefined || (typeof obj[i] === "string" && !obj[i].length)) {
         obj.splice(i,1);
-      } else if (!isNaN(obj[i])) {
-        obj[i] = parseInt(obj[i]);
       }
     }
     if(!obj.length) {
