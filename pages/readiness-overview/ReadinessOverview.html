@@ -17,11 +17,12 @@
       <h1 class="govuk-heading-l govuk-grid-column-two-thirds">Transition Readiness Overview</h1>
       <div class="govuk-grid-column-one-third">{{searchMeasuresForm(searchUrl)}}</div>
     </div>
-    <p class="govuk-body-s"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">View RAYG definitions and how they are calculated</a></p>
+    <p class="govuk-body-s"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
     <div class="govuk-grid-row">
 
       <div class="govuk-grid-column-one-quarter no-padding-right">
-        <h2 class="govuk-heading-m" id="headline-figures">Headline figures<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-2" id="headline-figures">Headline<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
+        <span class="govuk-caption-m">A set of measures that are of high significance in terms of the readiness.</span>
 
         <div class="overview-card-holder headline-figure top-statements">
           {% for item in data.headlineMeasures %}
@@ -30,6 +31,8 @@
                 <a href="{{ item.link }}" class="overview-card--link govuk-link">{{ item.name }} </a>
                 <span class="overview-card--tag-theme govuk-heading-s">{{ item.theme }}</span>
                 <p class="overview-card--metric">{{ item.description }}</p>
+                                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                <a href="{{ item.link }}" class="overview-card--link govuk-link">Data visualisation</a>
               </div>
             </div>
           {% endfor %}
@@ -37,7 +40,8 @@
       </div>
 
       <div class="govuk-grid-column-three-quarters">
-        <h2 class="govuk-heading-m" id="themes"><a class="govuk-link govuk-!-margin-right-6 overview-link" style="display:none" href="#headline-figures">Headline figures</a>Themes</h2>
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-2" id="themes"><a class="govuk-link govuk-!-margin-right-6 overview-link" style="display:none" href="#headline-figures">Headline figures</a>Themes</h2>
+        <span class="govuk-caption-m">Themes are a set of predefined groupings that share common characteristics. Each theme and it's corresponding measures and metrics is defined by it's element of risk in regards to readiness.</span>
 
         <div class="govuk-grid-row">
 
