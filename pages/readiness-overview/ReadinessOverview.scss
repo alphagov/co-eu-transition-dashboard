@@ -49,7 +49,7 @@
 .overview-card--inner {
 	margin-left: 0;
 	display: inline-block;
-	padding: 16px 16px 4px;
+	padding: 16px 16px 12px;
 	font-family: "GDS Transport",Arial,sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -93,13 +93,12 @@
 .risk-col .overview-card.inactive,
 .risk-col .overview-card.inactive .overview-card--link,
 .risk-col .overview-card.inactive .overview-card--metric {
-	color: #B1B4B6;
+	color: #505a5f;
+	cursor: not-allowed;
 }
 
-.risk-col .overview-card.inactive:hover {
-	a {
-		cursor: not-allowed;
-	}
+.risk-col .overview-card.inactive .overview-card--link {
+	pointer-events: none;
 }
 
 .overview-card--tag-theme {
