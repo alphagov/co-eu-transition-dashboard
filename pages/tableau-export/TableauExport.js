@@ -13,6 +13,8 @@ const moment = require('moment');
 const cloneDeep = require('lodash/cloneDeep');
 const authentication = require('services/authentication');
 const { tableauIpWhiteList } = require('middleware/ipWhitelist');
+const entityUserPermissions = require('middleware/entityUserPermissions');
+const Role = require('models/role');
 
 class TableauExport extends Page {
   get url() {
@@ -28,6 +30,10 @@ class TableauExport extends Page {
 
   get pathToBind() {
     return `${this.url}/:type/:mode?`;
+  }
+
+  get restrictExportByRole() {
+    return this.req.query.role;
   }
 
   get exportingMeasures() {
@@ -52,6 +58,22 @@ class TableauExport extends Page {
 
   get isValidPageType() {
     return this.exportingMeasures || this.exportingProjects || this.exportingCommunications;
+  }
+
+  async entitiesRoleCanAccess(roleName) {
+    const role = await Role.findOne({
+      where: {
+        name: roleName
+      },
+      include: ['roleEntities', 'roleEntityBlacklists']
+    });
+
+    if(!role) {
+      throw new Error(`Cannot find role: ${roleName}`);
+    }
+
+    const entities = await entityUserPermissions.entitiesRoleCanAccess(role);
+    return entities.map(entity => entity.id);
   }
 
   async addParents(entity, entityFieldMap, replaceArraysWithNumberedKeyValues = true) {
@@ -112,7 +134,7 @@ class TableauExport extends Page {
   }
 
   async getEntitiesFlatStructure(startingCategory) {
-    const entities = await Entity.findAll({
+    let entities = await Entity.findAll({
       where: {
         categoryId: startingCategory.id
       },
@@ -134,6 +156,12 @@ class TableauExport extends Page {
         categoryId: startingCategory.id
       }
     });
+
+    if(this.restrictExportByRole) {
+      // remove any entities role cannot access
+      const entityIdsRoleCanAccess = await this.entitiesRoleCanAccess(this.restrictExportByRole);
+      entities = entities.filter(entity => entityIdsRoleCanAccess.includes(entity.id));
+    }
 
     const entityFieldMaps = [];
 

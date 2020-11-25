@@ -1,6 +1,8 @@
+{% from "attribute.njk" import ariaCurrent %}
+
 {% macro accordion(params) %}
   {% set id = params.id %}
-  
+
   <div class="govuk-accordion {%- if params.classes %} {{ params.classes }}{% endif -%}" data-module="readiness-accordion" id="{{ id }}"
   {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>
     {% for item in params.items %}
@@ -16,7 +18,10 @@
           <div class="govuk-accordion__section-header section-header-{{ item.level }}">
             <h2 class="govuk-accordion__section-heading govuk-heading-s">
 
-              <button type="button" id="accordion-default-{{ id }}-heading-{{ loop.index }}" aria-controls="accordion-default-{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-button" aria-expanded="{{ expanded }}">
+              {% if item.meta.category.name == 'Project' %}
+                {% set dataAttribute %}data-project-details-id="project-information-{{ item.meta.id }}"{% endset %}
+              {% endif %}
+              <button type="button" id="accordion-default-{{ id }}-heading-{{ loop.index }}" aria-controls="accordion-default-{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-button" aria-expanded="{{ expanded }}" {{ dataAttribute | safe }}>
                 {{ heading }}
                 {% if item.level > 1 %} ({{ childCount }}){% endif %}
                 <span class="govuk-accordion__icon" aria-hidden="true"></span>
@@ -28,7 +33,7 @@
               </div>
             {% endif %}
           </div>
-          <div id="{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-content" aria-labelledby="{{ id }}-heading-{{ loop.index }}">
+          <div id="{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-content" aria-labelledby="accordion-default-{{ id }}-heading-{{ loop.index }}">
             {{ item.content | safe }}
           </div>
         </div>
@@ -43,16 +48,16 @@
       {% set raygColor = "item-complete" if item.complete == "Yes" else "item-" + item.color %}
       <li class="outcome-measure__item {% if item.activeFrom %} item-disabled {% else %} {{ raygColor }} {% endif %} {% if item.active %} outcome-measure__item--active {% endif %}">
       {% if item.activeFrom %}
-        <a href="{{ item.link }}" class="outcome-measure__link placeholder-measure">
+        <a href="{{ item.link }}" class="govuk-link outcome-measure__link placeholder-measure" {{ ariaCurrent(item.active) }}>
         <p class="govuk-body govuk-!-font-weight-bold placeholder-title">DATA EXPECTED: {{ item.activeFrom | formatDate("DD/MM/YYYY") }}</p>
         {{ item.name }}</a>
       {% elseif item.commentsOnly == 'Yes' %}
-        <a href="{{ item.link }}" class="outcome-measure__link comments-measure">
+        <a href="{{ item.link }}" class="govuk-link outcome-measure__link comments-measure" {{ ariaCurrent(item.active) }}>
         <p class="govuk-body govuk-!-font-weight-bold comments-title">COMMENTS ONLY</p>
           {{ item.name }}</a>
       {% else %}
-        <a href="{{ item.link }}" class="outcome-measure__link">{{ item.name }}</a>
-      {% endif %}  
+        <a href="{{ item.link }}" class="govuk-link outcome-measure__link" {{ ariaCurrent(item.active) }}>{{ item.name }}</a>
+      {% endif %}
       </li>
     {% endfor %}
   </ul>
@@ -81,4 +86,21 @@
     classes: 'accordion-level-' + level,
     items: outcomeMeasuresData
   }) }}
+{% endmacro %}
+
+{% macro projectDetails(item) %}
+  {% if item.category.name == 'Project' %}
+    <div class="govuk-!-padding-left-2 hidden project-information" id="project-information-{{ item.id }}">
+      <h3 class="govuk-heading-m">{{ item.name }}</h3>
+      <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ item.hmgConfidence }}">{{ item.hmgConfidence }}</span></p>
+      <p class="govuk-body">{{ item.description }}</p>
+      {% if req.user.roles | includes(['management']) %}
+        <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', item.publicId | urlencode) }}">View project</a>
+      {% endif %}
+    </div>
+  {% elseif item.children %}
+    {% for child in item.children %}
+      {{ projectDetails(child) }}
+    {% endfor %}
+  {% endif %}
 {% endmacro %}

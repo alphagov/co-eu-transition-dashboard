@@ -86,7 +86,7 @@
       html: "<span>" + project.fields.get('deliveryTheme').value | default('N/A') | escape + "</span>" }),
     projectValue) %}
 
-<div class="govuk-grid-row">
+<div class="govuk-grid-row" id="project-details">
   <div class="govuk-grid-column-three-quarters">
     <h1 class="govuk-heading-l project-name">{{ project.title }}</h1>
     <span class="govuk-caption-l dept-name">{{ project.department_name }}</span>

@@ -87,7 +87,8 @@
     "readinessOverview": "/readiness-overview",
     "transitionReadinessThemeDetail": "/transition-readiness-detail",
     "raygDefinitions": "/rayg-definitions",
-    "searchTransitionReadiness": "/search-transition-readiness"
+    "searchTransitionReadiness": "/search-transition-readiness",
+    "accessibility": "/accessibility"
   },
   "features": {
     "twoFactorAuth": true,
@@ -109,7 +110,8 @@
     }
   },
   "locks": {
-    "upcomingMilestonesNotifications": "upcoming milestones notifications"
+    "upcomingMilestonesNotifications": "upcoming milestones notifications",
+    "dailyUpdatesNotifications": "daily updates notifications"
   },
   "ipWhiteList": {},
   "credentials": {

@@ -83,10 +83,9 @@ const mapProjectToEntity = (milestoneFieldDefinitions, projectFieldDefinitions, 
 }
 
 const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project, milestone) => {
-  entityFieldMap.name = `${project.departmentName} - ${project.title}`;
+  entityFieldMap.name = milestone.description;
   entityFieldMap.hmgConfidence = project.hmgConfidence;
 
-  entityFieldMap.name = milestone.description;
   entityFieldMap.deliveryConfidence = milestone.deliveryConfidence;
   entityFieldMap.date = milestone.date;
   entityFieldMap.complete = milestone.complete;
@@ -256,24 +255,27 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
     complete: ['Yes', 'No'] // Only include milestones that are completed Yes or No ( dont include decommissioned milestones )
   });
 
-  const mapProjectsToEntites = (entity) => {
+  const mapAllEntities = (entity) => {
     if(entity.children) {
-      entity.children.forEach(mapProjectsToEntites);
-
-      // remove projects without milestones
-      entity.children = entity.children.filter(entity => {
-        const isProject = entity.categoryId === projectsCategory.id;
-        if(isProject) {
-          if (entity.children && entity.children.length) {
-            // console.log(`Adding project ${entity.publicId}`);
-            return true;
-          } else {
-            // console.log(`Removing project ${entity.publicId} due to missing milestones`);
-            return false;
-          }
+      let toDelete = [];
+      for (let i=0;i< entity.children.length;i++) {
+        if (!mapAllEntities(entity.children[i])) {
+          toDelete.push(i);
         }
-        return true;
+      }
+      // Make sure we're deleting from the array in reverse order
+      toDelete.sort( (a,b) => {
+        return (a-b);
       });
+      for (let i=toDelete.length - 1;i>=0;i--) {
+        entity.children.splice(toDelete[i],1);
+      }
+    }
+
+    if (entity.categoryId === projectsCategory.id) {
+      if (!entity.children || entity.children.length === 0) {
+        return false;
+      }
     }
 
     if(entity.categoryId === projectsCategory.id) {
@@ -281,23 +283,30 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       if(project) {
         mapProjectToEntity(milestoneFieldDefinitions, projectFieldDefinitions, entity, project);
         entity.isLastExpandable = true;
-      /* 
+      /*
       } else {
         console.log(`Cannot find Project ${entity.publicId} (either deleted or missing milestones)`);
       */
       }
     } else if (entity.categoryId === milestonesCategory.id) {
+      let foundEntity = false;
       for (const project of projects) {
         const milestone = project.milestones.find(milestone => milestone.uid === entity.publicId);
         if (milestone) {
+          foundEntity = true;
           mapMilestoneToEntity(milestoneFieldDefinitions, entity, project, milestone);
           break;
         }
       }
+      if (!foundEntity) {
+        return false;
+      }
     }
+
+    return true;
   };
 
-  mapProjectsToEntites(entitiesInHierarchy);
+  mapAllEntities(entitiesInHierarchy);
   //console.log(JSON.stringify(entitiesInHierarchy, null, '\t'));
 }
 
@@ -651,13 +660,26 @@ const getSubOutcomeStatementsAndDatas = async (pageUrl, req, topLevelEntity) => 
   return entities;
 }
 
-const getThemeEntities = async (entitiesUserCanAccess) => {
-  const themeCategory = await Category.findOne({
+const getThemeCategory = async () => {
+  return Category.findOne({
     where: { name: 'Theme' }
   });
+}
 
-  // No need to await, just return the promise
+const getThemeEntities = async (entitiesUserCanAccess) => {
+  const themeCategory = await getThemeCategory();
   return createEntityHierarchy(entitiesUserCanAccess,themeCategory);
+}
+
+const getThemesHierarchy = async (entitiesUserCanAccess) => {
+  const allThemes = await getThemeEntities(entitiesUserCanAccess);
+
+  allThemes.forEach(entity => {
+    groupById(entity);
+    applyRagRollups(entity);
+  });
+
+  return allThemes;
 }
 
 const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
@@ -782,7 +804,6 @@ const findEntity = (item, entity) => {
   return item;
 }
 
-
 const findTopLevelOutcomeStatementFromEntity = (statementCategory, allThemes, publicId) => {
   const entity = allThemes.reduce(findEntity, { publicId, found: false });
 
@@ -797,37 +818,10 @@ const findTopLevelOutcomeStatementFromEntity = (statementCategory, allThemes, pu
 };
 
 const overview = async (entitiesUserCanAccess, transitionReadinessThemeDetailLink, headlinePublicIds) => {
-  const themeCategory = await Category.findOne({
-    where: { name: 'Theme' }
-  });
-
-  const statementCategory = await Category.findOne({
-    where: { name: 'Statement' }
-  });
-
-  const allThemes = await createEntityHierarchy(entitiesUserCanAccess,themeCategory);
-
-  allThemes.forEach(entity => {
-    groupById(entity);
-    applyRagRollups(entity);
-  });
+  const allThemes = await getThemesHierarchy(entitiesUserCanAccess);
 
   // set headline Entity link
-  let headlineEntites = [];
-  for (const publicId of headlinePublicIds) {
-    const entity = allThemes.reduce(findEntity, { publicId, found: false });
-
-    if (entity.found) {
-      const statement = findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, publicId);
-      const theme = statement.parents.find(parent => parent.categoryId == themeCategory.id);
-      const themeDetail = allThemes.reduce(findEntity, { publicId: theme.publicId, found: false });
-
-      entity.theme = themeDetail.name;
-      entity.link = `${transitionReadinessThemeDetailLink}/${theme.publicId}/${statement.publicId}/${entity.publicId}`;
-
-      headlineEntites.push(entity);
-    }
-  }
+  let headlineEntites = await measuresWithLink(allThemes, headlinePublicIds, transitionReadinessThemeDetailLink);
 
   allThemes.forEach(entity => {
     delete entity.entityChildren;
@@ -841,10 +835,34 @@ const overview = async (entitiesUserCanAccess, transitionReadinessThemeDetailLin
   }
 }
 
+const measuresWithLink = async (allThemes, publicIds, transitionReadinessThemeDetailLink) => {
+  // set headline Entity link
+  const themeCategory = await getThemeCategory();
+  const statementCategory = await Category.findOne({
+    where: { name: 'Statement' }
+  });
+  let measureEntities = [];
+  for (const publicId of publicIds) {
+    const entity = allThemes.reduce(findEntity, { publicId, found: false });
 
+    if (entity.found) {
+      const statement = findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, publicId);
+      const theme = statement.parents.find(parent => parent.categoryId == themeCategory.id);
+      const themeDetail = allThemes.reduce(findEntity, { publicId: theme.publicId, found: false });
+
+      entity.theme = themeDetail.name;
+      entity.link = `${transitionReadinessThemeDetailLink}/${theme.publicId}/${statement.publicId}/${entity.publicId}`;
+
+      measureEntities.push(entity);
+    }
+  }
+  return measureEntities;
+}
 
 module.exports = {
   themeDetail,
   overview,
-  getThemeEntities
+  measuresWithLink,
+  getThemeEntities,
+  getThemesHierarchy
 };

@@ -1,0 +1,25 @@
+.js-enabled {
+  .result-count {
+    display: inherit;
+  }
+  #search-filters {
+    display: block;
+  }
+  .govuk-checkboxes__label{
+    text-transform:capitalize;
+  }
+}
+#search-filters {
+  .actions {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .govuk-accordion__section--expanded{
+    max-height: 300px;
+    overflow-y: scroll;
+  }
+
+  .govuk-checkboxes__label{
+    text-transform:capitalize;
+  }
+}

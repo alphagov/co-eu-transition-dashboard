@@ -65,6 +65,31 @@ ReadinessAccordion.prototype.onSectionToggle = function (section) {
   const expanded = this.isExpanded(section)
   this.setExpanded(!expanded, section)
   this.storeState(section)
+  this.hideShowProjectDetails(!expanded, section);
+}
+
+// Set section attributes when opened/closed
+ReadinessAccordion.prototype.hideShowProjectDetails = function (expanded, section) {
+  const button = section.querySelector('.' + this.sectionButtonClass)
+  const projectDetailsId = button.getAttribute('data-project-details-id');
+
+  const tableauMessageOrIframe = document.querySelector('.tableu-message, .theme-tableu');
+  const projectDetailsView = document.getElementById(projectDetailsId);
+  const projectInformationOpen = document.querySelector('.project-information:not(.hidden)');
+
+  if(projectDetailsView){
+    if(expanded) {
+      projectDetailsView.classList.remove('hidden');
+      tableauMessageOrIframe.classList.add('hidden');
+
+      if(projectInformationOpen) {
+        projectInformationOpen.classList.add('hidden');
+      }
+    } else {
+      projectDetailsView.classList.add('hidden');
+      tableauMessageOrIframe.classList.remove('hidden');
+    }
+  }
 }
 
 // Set section attributes when opened/closed
@@ -134,7 +159,7 @@ ReadinessAccordion.prototype.setInitialState = function (section) {
 
     if (button) {
       const contentId = button.getAttribute('aria-controls')
-      
+
       let contentState = contentId ? window.sessionStorage.getItem(contentId) : null
 
       if (contentState !== null) {

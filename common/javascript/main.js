@@ -7,6 +7,7 @@ import groupDisplay from './group-display';
 import fieldOrder from './field-order';
 import ReadinessAccordion from './readiness-accordion';
 import ClearOrRestoreScroll from './readiness-scroll';
+import Search from './search';
 import sortTable from './sort-table';
 
 window.TRANSITIONDELIVERYDASHBOARD = {
@@ -20,6 +21,17 @@ window.TRANSITIONDELIVERYDASHBOARD = {
 
 document.addEventListener('DOMContentLoaded', function() {
   govukFrontend.initAll();
+
+  const $table = document.getElementById('search-table');
+  const $search = document.getElementById('search');
+  const $searchFilters = document.getElementById('search-filters');
+  if ($table && $search) {
+    new Search({
+      $search,
+      $table,
+      $searchFilters,
+    }).init();
+  }
 
   var $readinessAccordions = document.querySelectorAll('[data-module="readiness-accordion"]')
 
@@ -51,12 +63,23 @@ document.addEventListener('DOMContentLoaded', function() {
     return daysToDate;
   }
 
-  document.getElementById('countdown').innerHTML = countDownTime(); 
+  const coundDownElement = document.getElementById('countdown');
+  if(coundDownElement) {
+    coundDownElement.innerHTML = countDownTime();
+  }
 });
 
 // The expanded state of individual instances of the accordion component persists across page loads using sessionStorage.
 // These will be removed from the session storage so the accordions will collapse rather than stay open.
-// We want to keep session storage on the readiness theme pages to prevent accordions closing on a page refresh 
-if (!window.location.pathname.includes('/transition-readiness-detail/')) {
+// We want to keep session storage on the readiness theme and search transition pages to prevent accordions closing on a page refresh
+const currentPage = document.getElementsByClassName('govuk-header__navigation-item--active');
+const isTransitionReadinessPage = currentPage && currentPage.length > 0 && currentPage[0].innerText === 'Transition readiness';
+
+const pageHeading = document.getElementsByTagName('h1');
+const isSearchMeasuresPage = pageHeading.length > 0 && pageHeading[0].innerText === 'Search measures';
+
+const projectDetailsPage = !!document.getElementById('project-details');
+
+if(!isTransitionReadinessPage && !isSearchMeasuresPage && !projectDetailsPage){
   sessionStorage.clear();
 }

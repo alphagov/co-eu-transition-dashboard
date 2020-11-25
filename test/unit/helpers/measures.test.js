@@ -1,11 +1,13 @@
 const { expect, sinon } = require('test/unit/util/chai');
 const Category = require('models/category');
 const EntityFieldEntry = require('models/entityFieldEntry');
-const measures = require('helpers/measures')
+const measures = require('helpers/measures');
 const parse = require('helpers/parse');
 const validation = require('helpers/validation');
 const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
+const transitionReadinessData = require('helpers/transitionReadinessData');
+const { paths } = require('config');
 
 describe('helpers/measures', () => {
   describe('#applyLabelToEntities', () => {
@@ -358,5 +360,112 @@ describe('helpers/measures', () => {
     })
   });
 
+  describe('#getMeasuresWhichUserHasAccess', () => {
+    const allThemes = [
+      {
+        id: 884,
+        publicId: 'B',
+        categoryId: 1,
+        children: [{
+          id: 700,
+          publicId: 'st-01',
+          categoryId: 2,
+          children: [{
+            id: 701,
+            publicId: 'st-01-01',
+            categoryId: 2,
+            children: [{
+              id: 600,
+              publicId: 'm01',
+              categoryId: 3,
+              name: 'measure1',
+            }]
+          }]
+        }]
+      }, {
+        id: 885,
+        publicId: 'B1',
+        categoryId: 1,
+        children: [{
+          id: 702,
+          publicId: 'st1-01',
+          categoryId: 2,
+          children: [{
+            id: 601,
+            publicId: 'm02',
+            categoryId: 3,
+            name: 'measure2',
+          },{
+            id: 602,
+            publicId: 'm03',
+            categoryId: 3,
+            name: 'measure3',
+          }]
+        }]
+      }
+    ]
+    const entitiesUserCanAccess = [{ entity: { dataValues: { publicId: 'm01', id: 600, children: [] } } },
+      { entity: { dataValues: { publicId: 'm02', id: 601, children: [] } } },
+      { entity: { dataValues: { publicId: 'm03', id: 602, children: [] } } }]
+    
+    const measuresPublicId = ['m01', 'm02', 'm03'];
+    const measuresWithLink = [{
+      id: 600,
+      publicId: 'm01',
+      name: 'measure1',
+      color: 'green',
+      found: true,
+      theme: 'Borders',
+      link: '/transition-readiness-detail/B/st-01/measure1'
+    }, {
+      id: 601,
+      publicId: 'm02',
+      name: 'measure2',
+      color: 'green',
+      found: true,
+      theme: 'Borders',
+      link: '/transition-readiness-detail/B/st1-01/measure2'
+    },{
+      id: 602,
+      publicId: 'm03',
+      name: 'measure3',
+      color: 'green',
+      found: true,
+      theme: 'Borders',
+      link: '/transition-readiness-detail/B/st1-01/measure3'
+    }]
+    let measuresWithLinkStub ;
+    let getThemesHierarchyStub;
+    const measureCategory = { id: 3 };
 
+
+    beforeEach(() => {
+      Category.findOne.resolves(measureCategory);
+      measuresWithLinkStub = sinon.stub(transitionReadinessData, 'measuresWithLink');
+      getThemesHierarchyStub = sinon.stub(transitionReadinessData, 'getThemesHierarchy');
+    });
+
+    afterEach(() => {
+      transitionReadinessData.measuresWithLink.restore();
+    });
+
+
+    it('returns only those measures which user has access', async ()=>{
+      measuresWithLinkStub.resolves(measuresWithLink);
+      getThemesHierarchyStub.resolves(allThemes);
+
+      const expectedMeasures = {
+        measures: measuresWithLink,
+        themes: allThemes,
+        colors: ["red","amber","yellow","green"]
+      }
+
+      const measuresWhichUserHasAccess = await measures.getMeasuresWhichUserHasAccess(entitiesUserCanAccess);
+
+
+      expect(measuresWhichUserHasAccess).to.eql(expectedMeasures);
+      sinon.assert.calledWith(getThemesHierarchyStub, entitiesUserCanAccess);
+      sinon.assert.calledWith(measuresWithLinkStub, allThemes, measuresPublicId, paths.transitionReadinessThemeDetail);
+    });
+  });
 });
