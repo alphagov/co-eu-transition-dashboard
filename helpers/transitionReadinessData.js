@@ -83,10 +83,9 @@ const mapProjectToEntity = (milestoneFieldDefinitions, projectFieldDefinitions, 
 }
 
 const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project, milestone) => {
-  entityFieldMap.name = `${project.departmentName} - ${project.title}`;
+  entityFieldMap.name = milestone.description;
   entityFieldMap.hmgConfidence = project.hmgConfidence;
 
-  entityFieldMap.name = milestone.description;
   entityFieldMap.deliveryConfidence = milestone.deliveryConfidence;
   entityFieldMap.date = milestone.date;
   entityFieldMap.complete = milestone.complete;
@@ -256,24 +255,27 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
     complete: ['Yes', 'No'] // Only include milestones that are completed Yes or No ( dont include decommissioned milestones )
   });
 
-  const mapProjectsToEntites = (entity) => {
+  const mapAllEntities = (entity) => {
     if(entity.children) {
-      entity.children.forEach(mapProjectsToEntites);
-
-      // remove projects without milestones
-      entity.children = entity.children.filter(entity => {
-        const isProject = entity.categoryId === projectsCategory.id;
-        if(isProject) {
-          if (entity.children && entity.children.length) {
-            // console.log(`Adding project ${entity.publicId}`);
-            return true;
-          } else {
-            // console.log(`Removing project ${entity.publicId} due to missing milestones`);
-            return false;
-          }
+      let toDelete = [];
+      for (let i=0;i< entity.children.length;i++) {
+        if (!mapAllEntities(entity.children[i])) {
+          toDelete.push(i);
         }
-        return true;
+      }
+      // Make sure we're deleting from the array in reverse order
+      toDelete.sort( (a,b) => {
+        return (a-b);
       });
+      for (let i=toDelete.length - 1;i>=0;i--) {
+        entity.children.splice(toDelete[i],1);
+      }
+    }
+
+    if (entity.categoryId === projectsCategory.id) {
+      if (!entity.children || entity.children.length === 0) {
+        return false;
+      }
     }
 
     if(entity.categoryId === projectsCategory.id) {
@@ -287,17 +289,24 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       */
       }
     } else if (entity.categoryId === milestonesCategory.id) {
+      let foundEntity = false;
       for (const project of projects) {
         const milestone = project.milestones.find(milestone => milestone.uid === entity.publicId);
         if (milestone) {
+          foundEntity = true;
           mapMilestoneToEntity(milestoneFieldDefinitions, entity, project, milestone);
           break;
         }
       }
+      if (!foundEntity) {
+        return false;
+      }
     }
+
+    return true;
   };
 
-  mapProjectsToEntites(entitiesInHierarchy);
+  mapAllEntities(entitiesInHierarchy);
   //console.log(JSON.stringify(entitiesInHierarchy, null, '\t'));
 }
 
