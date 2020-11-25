@@ -89,11 +89,9 @@ class StaticExports extends Page {
         if(options.error) {
           return reject(new Error(options.error));
         }
-        logger.info('Export complete');
         resolve();
       });
 
-      logger.info('Starting export');
       forked.send({
         url: config.serviceUrl,
         loginUrl: `${config.serviceUrl}login`,
@@ -150,6 +148,7 @@ class StaticExports extends Page {
     const exportUid = uuidv4();
 
     try {
+      logger.info('Starting export');
       await this.generateStaticSiteExport(exportUid);
       await this.compressStaticSiteExport(exportUid);
       const url = await this.uploadCompressedStaticSiteExportToS3(exportUid);
@@ -157,6 +156,7 @@ class StaticExports extends Page {
       staticExport.status = 'complete';
       staticExport.url = url;
       await staticExport.save();
+      logger.info('Export complete');
     } catch (error) {
       logger.error(error);
       staticExport.status = 'error';
