@@ -10,7 +10,9 @@
 {% elseif color == 'yellow' %}
     <img src="/assets/images/lowrisk-icon.png" class="rayg-img" alt="Low risk"/><p class="{{ style }}">LOW RISK</p>
 {% elseif color == 'green' %}
-    <img src="/assets/images/low-norisk-icon.png" class="rayg-img" alt="Minimal/no risk"/><p class="{{ style }}">MINIMAL/NO RISK</p>  
+    <img src="/assets/images/low-norisk-icon.png" class="rayg-img" alt="Minimal/no risk"/><p class="{{ style }}">MINIMAL/NO RISK</p>
+{% elseif color == 'grey' %}
+    <img src="/assets/images/unknownrisk-icon.png" class="rayg-img" alt="Unknown risk"/><p class="{{ style }}">UNKNOWN RISK</p>  
 {% endif %}
 
 {% endmacro %}
