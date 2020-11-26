@@ -47,7 +47,7 @@ describe('pages/readiness-overview/ReadinessOverview', () => {
 
     it('calls sequelize.query with correct query and returns date', async () => {
       const date = await page.getLastUpdatedAt();
-      expect(date).to.eql('Wednesday, November 11th 2020, 11:52am');
+      expect(date).to.eql('Wednesday 11 November 2020 at 11:52am');
 
       sinon.assert.calledWith(sequelize.query, `
       SELECT MAX(updated_at) AS updated_at

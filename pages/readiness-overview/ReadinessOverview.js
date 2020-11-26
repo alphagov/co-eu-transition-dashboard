@@ -48,7 +48,7 @@ class ReadinessOverview extends Page {
     const [result] = await sequelize.query(`
       SELECT MAX(updated_at) AS updated_at
       FROM entity`);
-    return moment(result[0].updated_at).format("dddd, MMMM Do YYYY, h:mma");
+    return moment(result[0].updated_at).format("dddd D MMMM YYYY [at] h:mma");
   }
 }
 
