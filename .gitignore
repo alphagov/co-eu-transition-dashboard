@@ -55,3 +55,4 @@ npm-debug.log
 .Trashes
 ehthumbs.db
 Thumbs.dbnode_modules
+package-lock.json
