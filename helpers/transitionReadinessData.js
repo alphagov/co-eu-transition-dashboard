@@ -115,7 +115,9 @@ const applyRagRollups = (entity) => {
       }
 
       entity.color = color;
-      entity.children.forEach(applyRagRollups);
+      if (entity.children) {
+        entity.children.forEach(applyRagRollups);
+      }
       return color;
 
     // entity is a milestone
@@ -251,8 +253,7 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
   }
 
   const projects = await dao.getAllData(undefined, {
-    uid: projectUids,
-    complete: ['Yes', 'No'] // Only include milestones that are completed Yes or No ( dont include decommissioned milestones )
+    uid: projectUids
   });
 
   const mapAllEntities = (entity) => {
@@ -261,6 +262,12 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       for (let i=0;i< entity.children.length;i++) {
         if (!mapAllEntities(entity.children[i])) {
           toDelete.push(i);
+        }
+        // Only include milestones where complete is Yes or No ( dont include decommissioned milestones )
+        if(entity.categoryId === projectsCategory.id) {
+          if(!['Yes', 'No'].includes(entity.children[i].complete)) {
+            toDelete.push(i);
+          }
         }
       }
       // Make sure we're deleting from the array in reverse order
@@ -273,8 +280,8 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
     }
 
     if (entity.categoryId === projectsCategory.id) {
-      if (!entity.children || entity.children.length === 0) {
-        return false;
+      if (entity.children && entity.children.length === 0) {
+        delete entity.children;
       }
     }
 
