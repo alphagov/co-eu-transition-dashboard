@@ -1,7 +1,7 @@
 {% from "status.njk" import currentStatus %}
 
 {% macro readinessThemeCard(item) %}
-  <div class="overview-card {{ item.color if item.active else "inactive" }}">
+  <div class="overview-card {{ "inactive" if not item.active }}">
     <div class="overview-card--inner">
       <a class="overview-card--link govuk-link" href="{{ item.link if item.active else "#" }}"> 
         {{ item.name }}
