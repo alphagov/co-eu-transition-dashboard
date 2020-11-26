@@ -157,7 +157,6 @@ describe('pages/missed-milestones/MissedMilestones', () => {
       expect(departmentsWithMissedMilestones[0].departments[0].totalMilestonesMissed).to.eql(6);
       expect(departmentsWithMissedMilestones[0].totalMilestones).to.eql(1);
     });
-    
   });
 
   describe('#totalMilestones', () => {
