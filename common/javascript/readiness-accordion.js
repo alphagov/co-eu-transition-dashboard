@@ -32,6 +32,11 @@ function ReadinessAccordion ($module) {
   this.sectionSummaryClass = 'govuk-accordion__section-summary'
   this.sectionButtonClass = 'govuk-accordion__section-button'
   this.sectionExpandedClass = 'govuk-accordion__section--expanded'
+  this.sectionNoChildrenClass = 'no-children'
+  this.tableauMessageClass = 'tableu-message'
+  this.tableauiFrameClass = 'theme-tableu'
+  this.projectInformationClass = 'project-information'
+  this.hiddenClass = 'hidden';
 }
 
 // Initialize component
@@ -62,32 +67,41 @@ ReadinessAccordion.prototype.initSectionHeaders = function () {
 
 // When section toggled, set and store state
 ReadinessAccordion.prototype.onSectionToggle = function (section) {
-  const expanded = this.isExpanded(section)
+
+  const expanded = this.isExpanded(section);
+  this.clearActiveAccordionsWithoutChildren();
   this.setExpanded(!expanded, section)
   this.storeState(section)
   this.hideShowProjectDetails(!expanded, section);
 }
 
+ReadinessAccordion.prototype.clearActiveAccordionsWithoutChildren = function () {
+  const activeAccordionsWithNoChildren = document.querySelector(`.${this.sectionExpandedClass}.${this.sectionNoChildrenClass}`);
+  if(activeAccordionsWithNoChildren) {
+    activeAccordionsWithNoChildren.classList.remove(this.sectionExpandedClass);
+  }
+}
+
 // Set section attributes when opened/closed
 ReadinessAccordion.prototype.hideShowProjectDetails = function (expanded, section) {
-  const button = section.querySelector('.' + this.sectionButtonClass)
+  const button = section.querySelector('.' + this.sectionButtonClass);
   const projectDetailsId = button.getAttribute('data-project-details-id');
 
-  const tableauMessageOrIframe = document.querySelector('.tableu-message, .theme-tableu');
+  const tableauMessageOrIframe = document.querySelector(`.${this.tableauMessageClass}, .${this.tableauiFrameClass}`);
   const projectDetailsView = document.getElementById(projectDetailsId);
-  const projectInformationOpen = document.querySelector('.project-information:not(.hidden)');
+  const projectInformationOpen = document.querySelector(`.${this.projectInformationClass}:not(.${this.hiddenClass})`);
 
   if(projectDetailsView){
     if(expanded) {
-      projectDetailsView.classList.remove('hidden');
-      tableauMessageOrIframe.classList.add('hidden');
+      projectDetailsView.classList.remove(this.hiddenClass);
+      tableauMessageOrIframe.classList.add(this.hiddenClass);
 
       if(projectInformationOpen) {
-        projectInformationOpen.classList.add('hidden');
+        projectInformationOpen.classList.add(this.hiddenClass);
       }
     } else {
-      projectDetailsView.classList.add('hidden');
-      tableauMessageOrIframe.classList.remove('hidden');
+      projectInformationOpen.classList.add(this.hiddenClass);
+      tableauMessageOrIframe.classList.remove(this.hiddenClass);
     }
   }
 }
@@ -129,7 +143,9 @@ const helper = {
 
 // Set the state of the accordions in sessionStorage
 ReadinessAccordion.prototype.storeState = function (section) {
-  if (this.browserSupportsSessionStorage) {
+  // do not save open state if accordion has no children
+  const hasChildren = !section.classList.contains(this.sectionNoChildrenClass);
+  if (this.browserSupportsSessionStorage && hasChildren) {
     const button = section.querySelector('.' + this.sectionButtonClass)
 
     if (button) {

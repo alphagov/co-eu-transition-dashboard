@@ -12,9 +12,10 @@
         {% set childCount = item.meta.children | length %}
         {% set heading = item.meta.name | safe %}
         {% set isLastExpandable =  "last-level-expandable" if item.meta.isLastExpandable %}
+        {% set noChildren =  "no-children" if not item.meta.children %}
         {% set expanded =  "govuk-accordion__section--expanded" if item.expanded or active %}
 
-        <div class="govuk-accordion__section section-{{ color }} govuk-accordion__section-{{ id }} {{ isLastExpandable }} {{ expanded }}">
+        <div class="govuk-accordion__section section-{{ color }} govuk-accordion__section-{{ id }} {{ isLastExpandable }} {{ expanded }} {{ noChildren }}">
           <div class="govuk-accordion__section-header section-header-{{ item.level }}">
             <h2 class="govuk-accordion__section-heading govuk-heading-s">
 
@@ -24,7 +25,11 @@
               <button type="button" id="accordion-default-{{ id }}-heading-{{ loop.index }}" aria-controls="accordion-default-{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-button" aria-expanded="{{ expanded }}" {{ dataAttribute | safe }}>
                 {{ heading }}
                 {% if item.level > 1 %} ({{ childCount }}){% endif %}
-                <span class="govuk-accordion__icon" aria-hidden="true"></span>
+                {% if not item.meta.children %}
+                  <span class="govuk-accordion__icon__arrow" aria-hidden="true"></span>
+                {% else %}
+                  <span class="govuk-accordion__icon" aria-hidden="true"></span>
+                {% endif %}
               </button>
             </h2>
             {% if item.summary.html or item.summary.text %}
@@ -33,9 +38,11 @@
               </div>
             {% endif %}
           </div>
-          <div id="{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-content" aria-labelledby="accordion-default-{{ id }}-heading-{{ loop.index }}">
-            {{ item.content | safe }}
-          </div>
+          {% if item.meta.children %}
+            <div id="{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-content" aria-labelledby="accordion-default-{{ id }}-heading-{{ loop.index }}">
+              {{ item.content | safe }}
+            </div>
+          {% endif %}
         </div>
       {% endif %}
     {% endfor %}
