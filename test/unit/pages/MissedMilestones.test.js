@@ -29,6 +29,14 @@ const departments = [{
   },{
     milestones: [{ id: 1, date: '06-06-2020' }, { id: 2, date: '25-08-2020' }, { id: 3, date: '04-04-2020' }]
   }]
+},{
+  id: 3,
+  name: 'BPDG',
+  projects: [{
+    milestones: [{ id: 1, date: '13-06-2020' }]
+  },{
+    milestones: [{ id: 1, date: '06-06-2020' }, { id: 2, date: '25-08-2020' }]
+  }]
 }];
 
 describe('pages/missed-milestones/MissedMilestones', () => {
@@ -140,7 +148,7 @@ describe('pages/missed-milestones/MissedMilestones', () => {
     });
 
     it('should return chart data when passed in department', () => {
-      expect(page.chartData(departments)).to.eql( { data: [6,4], labels: ['Dept2', 'Dept1'], meta: [ { totalMilestones: 5, totalMilestonesMissed: 6 }, { totalMilestones: 5, totalMilestonesMissed: 4 }] });
+      expect(page.chartData(departments.filter(department => department.name !== 'BPDG'))).to.eql( { data: [6,4], labels: ['Dept2', 'Dept1'], meta: [ { totalMilestones: 5, totalMilestonesMissed: 6 }, { totalMilestones: 5, totalMilestonesMissed: 4 }] });
     });
 
     it('should group milestones based on due date and department', () => {
@@ -150,6 +158,9 @@ describe('pages/missed-milestones/MissedMilestones', () => {
       expect(departmentsWithMissedMilestones[0].totalMilestones).to.eql(1);
     });
 
+    it('should not include BDPG department', () => {
+      expect(departmentsWithMissedMilestones.some(department => department.name === 'BDPG')).to.eql(false);
+    });
   });
 
   describe('#totalMilestones', () => {
