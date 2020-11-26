@@ -147,7 +147,7 @@ describe('pages/missed-milestones/MissedMilestones', () => {
       expect(chartData.departments[1].id).to.eql(1);
     });
 
-    it('should return chart data and exclude BPDG when passed in department', () => {
+    it('should return chart data and exclude BPDG when passed in departments', () => {
       expect(page.chartData(departments)).to.eql( { data: [6,4], labels: ['Dept2', 'Dept1'], meta: [ { totalMilestones: 5, totalMilestonesMissed: 6 }, { totalMilestones: 5, totalMilestonesMissed: 4 }] });
     });
 
@@ -157,6 +157,7 @@ describe('pages/missed-milestones/MissedMilestones', () => {
       expect(departmentsWithMissedMilestones[0].departments[0].totalMilestonesMissed).to.eql(6);
       expect(departmentsWithMissedMilestones[0].totalMilestones).to.eql(1);
     });
+    
   });
 
   describe('#totalMilestones', () => {
