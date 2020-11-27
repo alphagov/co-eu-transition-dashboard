@@ -67,7 +67,6 @@ ReadinessAccordion.prototype.initSectionHeaders = function () {
 
 // When section toggled, set and store state
 ReadinessAccordion.prototype.onSectionToggle = function (section) {
-
   const expanded = this.isExpanded(section);
   this.clearActiveAccordionsWithoutChildren();
   this.setExpanded(!expanded, section)
