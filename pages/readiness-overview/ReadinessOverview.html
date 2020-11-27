@@ -32,7 +32,7 @@
               <div class="overview-card--inner">    
                 <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ item.name }}</p>
                 <span class="overview-card--tag-theme govuk-heading-s govuk-!-margin-bottom-3">{{ item.theme }}</span>
-                {{ currentStatus(item.color) }}
+                {{ currentStatus(item.color, true) }}
               </div>
                 <hr class="govuk-section-break govuk-section-break--visible">
                 <a href="{{ item.link }}" class="overview-card--link govuk-link">Data visualisation</a>

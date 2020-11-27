@@ -2,6 +2,7 @@
 {% from "readiness-accordion.njk" import buildOutcomeMeasures, projectDetails with context %}
 {% from "attribute.njk" import ariaCurrent %}
 {% from "searchMeasures.njk" import searchMeasuresForm %}
+{% from "status.njk" import currentStatus %}
 
 {% set data = data() | await %}
 {% set activeStatement = '' %}
@@ -17,52 +18,59 @@
   <a href="{{ config.paths.readinessOverview }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.theme }}" style="display: none;">Overview</a>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-l govuk-grid-column-two-thirds theme-{{ data.theme.color }} theme-name">{{ data.theme.name }}</h1>
-      <div class="govuk-grid-column-one-third">{{searchMeasuresForm(searchUrl)}}</div>
+      <div class="govuk-grid-column-one-third no-horizontal-padding search-right">{{searchMeasuresForm(searchUrl)}}</div>
+              {{ currentStatus(topOutcome.color, false) }}
+
+      <h1 class="govuk-heading-l govuk-grid-column-two-thirds no-horizontal-padding govuk-!-margin-bottom-1">{{ data.theme.name }}</h1>
     <div> 
   <div>
   <p class="govuk-body-l">{{ data.theme.description }}</p>
-  <p class="govuk-body-s"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">View RAYG definitions and how they are calculated</a></p>
+  <p class="govuk-body-s govuk-!-margin-bottom-5"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'hide-statement' if req.params.statement }}" id="column-statements">
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcome statements</h2>
     {% for topOutcome in data.topLevelOutcomeStatements %}
-      <div class="statement {{ topOutcome.color }} {{ 'active-statement' if topOutcome.active }}">
+    <div class="overview-card {{ 'active-statement' if topOutcome.active }}">
+      <div class="overview-card--inner">   
       {% if topOutcome.active %} 
         {% set activeStatement = topOutcome.name %} 
         {% set activeColor = topOutcome.color %} 
-        <img src="/assets/images/arrow.png" class="arrow" alt="Arrow" aria-hidden="true">
       {% endif %}
-        <a href="{{ topOutcome.link }}" class="govuk-body govuk-!-font-weight-bold govuk-link statement--link" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>{{ topOutcome.name }}</a>
-        <p class="govuk-body-s govuk-!-margin-top-3">{{ topOutcome.description }}</p>
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ topOutcome.name }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-3">{{ topOutcome.description }}</p>
+        {{ currentStatus(topOutcome.color, true) }}
+        </div>
+        <hr class="govuk-section-break govuk-section-break--visible">
+        <a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>Data visualisation</a>
       </div>
     {% endfor %}
   </div>
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'show-statement' if req.params.statement and not req.params.selectedPublicId }}" id="column-sub-statements">
-    
     <a href="{{ themeUrl }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.statement }}" style="display: none;">Back to outcome statements</a>
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Data groupings and types</h2>
     {% if activeStatement %} 
-      <h3 class="govuk-heading-m theme-{{ activeColor }} theme-name {{ 'show-statement' if req.params.statement }}" style="display: none;">{{ activeStatement }}</h3>
+      <h3 class="govuk-heading-m govuk-!-font-weight-regular {{ 'show-statement' if req.params.statement }}" style="display: none;">{{ activeStatement }}</h3>
     {% endif %}
     {% if data.subOutcomeStatementsAndDatas | length > 0 %}
       <div class="readiness-accordion-wrapper">
         {{ buildOutcomeMeasures(data.subOutcomeStatementsAndDatas, 1, req.params.statement) }}
       </div>
     {% else %}
-      <p class="govuk-body-s tableu-message">To view data, select an outcome statement</p>
+      <p class="govuk-body-s tableu-message">To view data groupings and types, select an outcome statement</p>
     {% endif %}
   </div>
 
   <div class="govuk-grid-column-one-half overflow-scroll {{ 'show-measure' if req.params.selectedPublicId }}" id="theme-tableu-placeholder">
   <a href="{{ themeUrl }}/{{ req.params.statement }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-measure' if req.params.selectedPublicId }}" style="display: none;">Back to {{ activeStatement }}</a>
-
+  <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Measure and metric data view</h2>
   {% if data.subOutcomeStatementsAndDatas | length > 0 %}
     {% for item in data.subOutcomeStatementsAndDatas %}
       {{ projectDetails(item) }}
     {% endfor %}
   {% endif %}
   {% if not data.iframeUrl.error and not data.iframeUrl.url %}
-    <p class="govuk-body-s tableu-message">To view data, select a metric or measure</p>
+    <p class="govuk-body-s tableu-message">To view data of measures and metrics, select a data grouping or type</p>
   {% elseif data.iframeUrl.error %}
     <p class="govuk-body-s tableu-message">There has been an error accessing this data, please contact The Transition Taskforce Dashboard Team</p>
   {% else %}

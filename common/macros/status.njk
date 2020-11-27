@@ -1,6 +1,12 @@
-{% macro currentStatus(color) %}
+{% macro currentStatus(color, status) %}
 
 {% set style = "govuk-body govuk-!-font-size-14 govuk-!-font-weight-bold govuk-!-display-inline" %}
+
+{% if status == 'current' %}
+{% set style = "govuk-body govuk-!-font-size-14 govuk-!-font-weight-bold govuk-!-display-inline" %}
+{% else%}
+{% set style = "govuk-body govuk-!-font-size-14 govuk-!-font-weight-bold govuk-!-display-inline" %}
+{% endif %}
 
 <span class="govuk-caption-m govuk-!-font-size-14">Current status</span>
 {% if color == 'red' %}

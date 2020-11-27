@@ -17,7 +17,8 @@
 }
 
 .headline-figure .overview-card:hover, 
-.risk-col .overview-card:not(.inactive):hover {
+.risk-col .overview-card:not(.inactive):hover,
+.top-statements .overview-card:hover {
 	cursor: pointer;
 	background-color: #ffffff;
 }

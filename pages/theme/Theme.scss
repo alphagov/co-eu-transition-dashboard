@@ -3,41 +3,11 @@
     overflow-y: scroll;
 }
 
-.statement {
-    background-color: #f3f2f1;
-    padding: 10px 5px 5px 10px;
-    margin-bottom: 2px;
-    position: relative;
-  }
-
-.statement--link {
-    text-decoration: none;
-    color: #0b0c0c;
-    &:visited {
-        color: #0b0c0c;
-    }
-    &:before {
-        content: '';
-        bottom: 0;
-        top: 0;
-        left: 0;
-        right: 0;
-        position: absolute;
-    }
-}
-
-.statement:not(.active-statement):hover {
-    background-color: white;
-    background: url(/assets/images/arrow.png) 96% 10px no-repeat white;
-}
-
 .active-statement {
-    background-color: white;
-}
-
-.arrow {
-    padding-right: 2%;
-    float: right;
+    background-color: white !important;
+    .overview-card--link {
+        color: #003078 !important;
+    }
 }
 
 .no-horizontal-padding {
@@ -66,6 +36,10 @@
 }
 
 .readiness-accordion-wrapper {
+    // .govuk-accordion__section {
+    //     margin-bottom: 10px;
+    // }
+
     .govuk-accordion__section-content {
         padding-top: 0;
         padding-bottom: 0
@@ -74,7 +48,8 @@
     .govuk-accordion__section-header {
         border-top: none;
         margin-bottom:2px;
-        background-color: #f3f2f1;
+        background-color: #f8f8f8;
+        border: 1px solid #f3f2f1;
     }
 
     .govuk-accordion__section--expanded > .govuk-accordion__section-header {
@@ -211,47 +186,21 @@
     display: block;
 }
 
-.theme-name {
-    padding: 0px 26px;
-    position: relative;
-    margin-bottom: 5px;
-
-    &::before {
-        content: "";
-        width: 18px;
-        height: 18px;
-        position: absolute;
-        left: 3px;
-        top: 18px;
-    }
-}
-
-.theme-name.theme-red::before,
-.theme-name.theme-amber::before,
-.theme-name.theme-green::before,
-.theme-name.theme-yellow::before {
-    top: 10px;
-}
-
-.theme-name.theme-red::before,
 .section-red .govuk-accordion__section-button::before,
 .outcome-measure__item.item-red::before {
     background-color: #d4351c
 }
 
-.theme-name.theme-amber::before,
 .section-amber .govuk-accordion__section-button::before,
 .outcome-measure__item.item-amber::before {
     background-color: #f47738
 }
 
-.theme-name.theme-green::before,
 .section-green .govuk-accordion__section-button::before,
 .outcome-measure__item.item-green::before {
     background-color: #00703c
 }
 
-.theme-name.theme-yellow::before,
 .section-yellow .govuk-accordion__section-button::before,
 .outcome-measure__item.item-yellow::before {
     background-color: #ffdd00
@@ -289,4 +238,8 @@
 .overflow-scroll {
     overflow: scroll;
     padding: 0;
+}
+
+.search-right {
+    float: right;
 }
