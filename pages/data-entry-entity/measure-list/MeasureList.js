@@ -28,7 +28,6 @@ class MeasureList extends Page {
       themeCategory, 
       user: this.req.user
     });
-    // measureEntities.map(m => console.log(`${m.updatedAt} - ${m.groupID}`))
     const measureEntitiesGrouped = await measures.groupMeasures(measureEntities);
 
     return {
