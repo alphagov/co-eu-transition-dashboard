@@ -36,10 +36,6 @@ class RaygValues extends Page {
       if (!entityIds.includes(key)) {
         errors.push("Invalid Entity ID");
       }
-
-      if (isNaN(parseInt(body[key]))) {
-        errors.push(`Value(${body[key]}) should be a number`);
-      }
     });
 
     return errors;

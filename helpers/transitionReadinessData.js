@@ -100,6 +100,11 @@ const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project
 
 const applyRagRollups = (entity) => {
   let color = '';
+  
+  if (entity.raygStatus && entity.raygStatus !== 'default') {
+    entity.color = entity.raygStatus;
+    return entity.color;
+  }
 
   if (entity.category) {
     // entity is a project
@@ -781,7 +786,7 @@ const themeDetail = async (entitiesUserCanAccess, pageUrl, req) => {
 
   // set rag information on theme
   const outcomeColors = topLevelOutcomeStatements.map(c => c.color);
-  theme.color = rags.find(rag => outcomeColors.includes(rag));
+  theme.color = theme.raygStatus && theme.raygStatus !== 'default' ? theme.raygStatus : rags.find(rag => outcomeColors.includes(rag));
 
   const selected = subOutcomeStatementsAndDatas.reduce(findSelected, false);
   const iframeUrl = await getIframeUrl(req, selected);
