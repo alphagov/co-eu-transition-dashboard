@@ -15,6 +15,7 @@ const authentication = require('services/authentication');
 const { tableauIpWhiteList } = require('middleware/ipWhitelist');
 const entityUserPermissions = require('middleware/entityUserPermissions');
 const Role = require('models/role');
+const logger = require('services/logger');
 
 class TableauExport extends Page {
   get url() {
@@ -188,6 +189,14 @@ class TableauExport extends Page {
   }
 
   async exportMeasures(req, res) {
+    if(this.exportSchema) {
+      logger.info('Exporting schema');
+
+      // eslint-disable-next-line object-curly-spacing
+      const schema ={"Description":{"type":"string"},"MetricID":{"type":"string"},"Filter":{"type":"string"},"FilterValue":{"type":"string"},"Filter2":{"type":"string"},"FilterValue2":{"type":"string"},"Unit":{"type":"string"},"Value":{"type":"integer"},"Weight":{"type":"integer"},"Date":{"type":"date"},"Source":{"type":"string"},"ActiveFrom":{"type":"date"},"AdditionalComment":{"type":"string"},"RedThreshold":{"type":"integer"},"AYThreshold":{"type":"integer"},"GreenThreshold":{"type":"integer"},"GroupID":{"type":"string"},"Group Description":{"type":"string"},"Comments Only":{"type":"boolean"},"Public ID":{"type":"string"},"Statement - 1":{"type":"string"},"Statement - 2":{"type":"string"},"Statement - 3":{"type":"string"},"Statement - 4":{"type":"string"},"Theme - 1":{"type":"string"}}
+
+      return res.json(schema);
+    }
     const measuresCategory = await Category.findOne({
       where: {
         name: 'Measure'
@@ -196,7 +205,7 @@ class TableauExport extends Page {
 
     const data = await this.getEntitiesFlatStructure(measuresCategory);
 
-    return this.exportSchema ? res.json(data[0]) : res.json(data);
+    return res.json(data);
   }
 
   async exportCommunications(req, res) {
