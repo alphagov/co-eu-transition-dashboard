@@ -25,12 +25,12 @@ class RaygValues extends Page {
 
   get middleware() {
     return [
-      ...authentication.protect(['admin']),
+      ...authentication.protect(["admin"]),
       entityUserPermissions.assignEntityIdsUserCanAccessToLocals,
       flash
     ];
   }
-  
+
   isValid(body, entityIds) {
     const errors = [];
 
@@ -53,10 +53,10 @@ class RaygValues extends Page {
 
   flatternEntityData(entities) {
     const flatternedEntityData = {};
-    for(const entity of entities) {
+    for (const entity of entities) {
       flatternedEntityData[entity.id] = entity;
 
-      if (entity.children){
+      if (entity.children) {
         for (const child of entity.children) {
           flatternedEntityData[child.id] = child;
         }
@@ -68,7 +68,7 @@ class RaygValues extends Page {
   }
 
   async postRequest(req, res) {
-    const themeAndStatementData =  await this.getThemesAndTopLevelStatements()
+    const themeAndStatementData = await this.getThemesAndTopLevelStatements();
     const flatternedEntityData = this.flatternEntityData(themeAndStatementData);
     const formErrors = this.isValid(req.body, Object.keys(flatternedEntityData));
 
@@ -77,50 +77,52 @@ class RaygValues extends Page {
       return res.redirect(req.originalUrl);
     }
 
-    const entitiesToBeSave = this.buildEntitiesToBeSaved(req.body, flatternedEntityData)
+    const entitiesToBeSave = this.buildEntitiesToBeSaved(req.body,flatternedEntityData);
     await this.saveData(entitiesToBeSave);
   }
 
   async saveData(entitiesToBeSave) {
     const categories = await Category.findAll({
-      where: { name: ['Theme', 'Statement'] }
+      where: { name: ["Theme", "Statement"] }
     });
 
-    const themeCategory = categories.find(category => category.name === 'Theme');
-    const statmentCategory = categories.find(category => category.name === 'Statement');
+    const themeCategory = categories.find(category => category.name === "Theme");
+    const statmentCategory = categories.find(category => category.name === "Statement");
 
-    const themeCategoryFields = await Category.fieldDefinitions('Theme');
-    const statementCategoryFields = await Category.fieldDefinitions('Statement');
+    const themeCategoryFields = await Category.fieldDefinitions("Theme");
+    const statementCategoryFields = await Category.fieldDefinitions("Statement");
 
     const transaction = await sequelize.transaction();
     let redirectUrl = this.req.originalUrl;
 
     try {
-      for(const entity of entitiesToBeSave) {
+      for (const entity of entitiesToBeSave) {
         const category = entity.categoryId === themeCategory.id ? themeCategory : statmentCategory;
         const categoryFields = entity.categoryId === themeCategory.id ? themeCategoryFields : statementCategoryFields;
         await Entity.import(entity, category, categoryFields, { transaction, ignoreParents: true });
       }
       await transaction.commit();
       cache.clear();
-      redirectUrl += '/successful';
+      redirectUrl += "/successful";
     } catch (error) {
       logger.error(error);
-      this.req.flash(['Error saving data']);
+      this.req.flash(["Error saving data"]);
       await transaction.rollback();
     }
     return this.res.redirect(redirectUrl);
   }
 
   async getThemesAndTopLevelStatements() {
-    const themeEntities = await transitionReadinessData.getThemeEntities(this.res.locals.entitiesUserCanAccess);
+    const themeEntities = await transitionReadinessData.getThemeEntities(
+      this.res.locals.entitiesUserCanAccess
+    );
 
     for (const themeEntity of themeEntities) {
       if (themeEntity.children) {
-        themeEntity.children = await transitionReadinessData.filterTopLevelOutcomeStatementsChildren(themeEntity.children)
+        themeEntity.children = await transitionReadinessData.filterTopLevelOutcomeStatementsChildren(themeEntity.children);
       }
     }
-    return themeEntities
+    return themeEntities;
   }
 }
 
