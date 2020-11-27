@@ -43,7 +43,8 @@
     config.paths.admin.userManagementList,
     config.paths.admin.userManagementAuthentication,
     config.paths.admin.createUser,
-    config.paths.admin.staticExports
+    config.paths.admin.staticExports,
+    config.paths.admin.raygValues
     ]
 %}
 
@@ -208,6 +209,11 @@
               <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.staticExports }}">
                 <a class="govuk-header__link child-nav" href="{{ config.paths.admin.staticExports }}">
                 Static Export
+                </a>
+              </li>
+              <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.staticExports }}">
+                <a class="govuk-header__link child-nav" href="{{ config.paths.admin.raygValues }}">
+                RAYG Values
                 </a>
               </li>
             </ul>

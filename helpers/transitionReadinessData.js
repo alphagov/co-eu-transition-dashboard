@@ -682,47 +682,50 @@ const getThemesHierarchy = async (entitiesUserCanAccess) => {
   return allThemes;
 }
 
-const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
+const filterTopLevelOutcomeStatementsChildren = async(entities) => {
   const statementCategory = await Category.findOne({
     where: { name: 'Statement' }
   });
 
+  const filterChildren = (entities = []) => {
+    for (var i = entities.length - 1; i >= 0; i--) {
+      const entity = entities[i];
+
+      if(entity.children) {
+        filterChildren(entity.children);
+
+        if(!entity.children.length) {
+          entities.splice(i, 1);
+        }
+        continue;
+      }
+
+      if(entity.categoryId === statementCategory.id) {
+        entities.splice(i, 1);
+      }
+    }
+  };
+
+  entities.forEach(entity => {
+    if(entity.children) {
+      filterChildren(entity.children);
+    }
+  });
+
+  return entities.filter(entity => {
+    const hasChildren = entity.children && entity.children.length;
+    const hasOnlyParentOrLess = entity.parents.length <= 1;
+    return hasChildren && hasOnlyParentOrLess;
+  });
+}
+
+const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
+  
+
   let entities = topLevelEntity.children;
 
   try {
-    const filterChildren = (entities = []) => {
-      for (var i = entities.length - 1; i >= 0; i--) {
-        const entity = entities[i];
-
-        if(entity.children) {
-          filterChildren(entity.children);
-
-          if(!entity.children.length) {
-            // console.log(`Removing ${entity.publicId}`);
-            entities.splice(i, 1);
-          }
-          continue;
-        }
-
-        if(entity.categoryId === statementCategory.id) {
-          // console.log(`Removing ${entity.publicId}`);
-          entities.splice(i, 1);
-        }
-      }
-    };
-
-    entities.forEach(entity => {
-      if(entity.children) {
-        filterChildren(entity.children);
-      }
-    });
-
-    entities = entities.filter(entity => {
-      const hasChildren = entity.children && entity.children.length;
-      const hasOnlyParentOrLess = entity.parents.length <= 1;
-      // console.log(`Removing ${entity.publicId}`);
-      return hasChildren && hasOnlyParentOrLess;
-    });
+    entities = await filterTopLevelOutcomeStatementsChildren(entities)
 
     entities.forEach(entity => {
       groupById(entity);
@@ -860,6 +863,7 @@ const measuresWithLink = async (allThemes, publicIds, transitionReadinessThemeDe
 }
 
 module.exports = {
+  filterTopLevelOutcomeStatementsChildren,
   themeDetail,
   overview,
   measuresWithLink,
