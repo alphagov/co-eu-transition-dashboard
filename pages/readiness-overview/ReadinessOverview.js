@@ -6,7 +6,8 @@ const transitionReadinessData = require('helpers/transitionReadinessData');
 const HeadlineMeasures = require('models/headlineMeasures');
 const { ipWhiteList } = require('middleware/ipWhitelist');
 const entityUserPermissions = require('middleware/entityUserPermissions');
-
+const sequelize = require('services/sequelize');
+const moment = require('moment');
 class ReadinessOverview extends Page {
   get url() {
     return paths.readinessOverview;
@@ -41,6 +42,13 @@ class ReadinessOverview extends Page {
       headlineMeasures: data.headlineEntites,
       themes: themesGrouped
     };
+  }
+
+  async getLastUpdatedAt() {
+    const [result] = await sequelize.query(`
+      SELECT MAX(updated_at) AS updated_at
+      FROM entity`);
+    return moment(result[0].updated_at).format("dddd D MMMM YYYY [at] h:mma");
   }
 }
 

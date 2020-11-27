@@ -1,10 +1,5 @@
-
-.risk-col {
-	border-left: 1px solid #979797;
-}
-
 .overview-card-holder {
-	display: block;
+  display: block;
   overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
@@ -16,32 +11,16 @@
   margin-bottom: 10px;
   box-sizing: border-box;
   position: relative;
+  border: 1px solid #f3f2f1;
+  background-color: #f8f8f8;
+	&:first-child {
+		margin-top: 20px;
+	}
 }
 
-.headline-figure .overview-card  {
-  background-color: #F3F2F1;
-  margin-bottom: 2px;
-}
-
-.headline-figure .overview-card:hover {
-	background-color: white;
+.headline-figure .overview-card:hover, 
+.risk-col .overview-card:hover {
 	cursor: pointer;
-}
-
-.headline-figure .overview-card.red {
-	border-left: 12px solid #D4351C;
-}
-
-.headline-figure .overview-card.amber {
-	border-left: 12px solid #F47738;
-}
-
-.headline-figure .overview-card.yellow {
-	border-left: 12px solid #FFDD00;
-}
-
-.headline-figure .overview-card.green {
-	border-left: 12px solid #00703C;
 }
 
 .overview-card--link {
@@ -55,53 +34,22 @@
     right: 0;
     position: absolute;
   }
-}
 
-.risk-col .overview-card  {
-	background: white;
-	border: 1px solid #6F777B;
-  border-left-width: 16px;
-}
-
-.risk-col .overview-card:hover  {
-	background: url(/assets/images/arrow.png) 96% 10px no-repeat white;
-	border: 1px solid #000000;
-	cursor: pointer;
-}
-
-.risk-col .overview-card.inactive {
-	border-left-color: #F3F2F1;
-	border-left-width: 16px;
-}
-
-.risk-col .overview-card.inactive:hover  {
-	background-image: none;
-	a {
-		cursor: not-allowed;
+  &:last-child {
+	padding: 8px 15px;
+	font-size: 14px;
+	color: #1d70b8 !important;
+	margin-bottom: 0;
+	&:hover {
+		color: #003078 !important;
 	}
+  }
 }
-
-.risk-col .overview-card.red {
-	border-left: 16px solid #D4351C;
-}
-
-.risk-col .overview-card.amber {
-	border-left: 16px solid #F47738;
-}
-
-.risk-col .overview-card.yellow {
-	border-left: 16px solid #FFDD00;
-}
-
-.risk-col .overview-card.green {
-	border-left: 16px solid #00703C;
-}
-
 
 .overview-card--inner {
 	margin-left: 0;
 	display: inline-block;
-	padding: 12px 12px 4px;
+	padding: 16px 16px 12px;
 	font-family: "GDS Transport",Arial,sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -133,8 +81,9 @@
 }
 
 
-.risk-col .overview-card .overview-card--link {
+.risk-col .overview-card .overview-card--link:first-child {
 	text-transform: uppercase;
+	font-size: 19px;
 }
 
 .risk-col .overview-card p {
@@ -142,8 +91,14 @@
 }
 
 .risk-col .overview-card.inactive,
+.risk-col .overview-card.inactive .overview-card--link,
+.risk-col .overview-card.inactive .overview-card--metric {
+	color: #505a5f;
+	cursor: not-allowed;
+}
+
 .risk-col .overview-card.inactive .overview-card--link {
-	color: #B1B4B6;
+	pointer-events: none;
 }
 
 .overview-card--tag-theme {
@@ -151,7 +106,7 @@
 	outline: 2px solid transparent;
 	outline-offset: -2px;
 	color: #fff;
-	background-color: #6F777B;
+	background-color: #1d70b8;
 	text-decoration: none;
 	text-transform: uppercase;
 	font-size: 16px;
