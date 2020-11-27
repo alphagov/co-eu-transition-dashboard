@@ -3,9 +3,7 @@
 {% macro readinessThemeCard(item) %}
   <div class="overview-card {{ "inactive" if not item.active }}">
     <div class="overview-card--inner">
-      <a class="overview-card--link govuk-link" href="{{ item.link if item.active else "#" }}"> 
-        {{ item.name }}
-      </a>
+      <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ item.name }}</p>
       <p>{{ item.description }}</p>
       {{ currentStatus(item.color if item.active else "grey") }}
     </div>
