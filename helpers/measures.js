@@ -72,8 +72,19 @@ const getCategory = async (name) => {
 
 const getMeasureEntitiesFromGroup = (groupEntities, metricId) => {
   const measureEntities = groupEntities.filter(entity => entity.metricID === metricId)
+  
   const sortedEntities = measureEntities.sort((a, b) => moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf());
+  console.log('***sortedEntities', sortedEntities);
   return sortedEntities;
+}
+
+const getMaxUpdateAtForMeasures = (measures) => {
+  let maxMeasureUpdatedAt;
+  measures.forEach(measure => {
+    const entityUpdatedAt = (measure.updatedAt) ? moment(measure.updatedAt) : moment(measure.createdAt);
+    maxMeasureUpdatedAt = (maxMeasureUpdatedAt && maxMeasureUpdatedAt.isSameOrAfter(entityUpdatedAt)) ? maxMeasureUpdatedAt : entityUpdatedAt;
+  })
+  return maxMeasureUpdatedAt
 }
 
 const validateFormData = (formData, measuresEntities = []) => {
@@ -251,6 +262,7 @@ module.exports = {
   calculateUiInputs,
   getEntityFields,
   getCategory,
+  getMaxUpdateAtForMeasures,
   getMeasureEntitiesFromGroup,
   getMeasureEntities,
   getMeasuresWhichUserHasAccess,

@@ -125,8 +125,8 @@ class MeasureEdit extends Page {
       entity['entityFieldEntries'] = await measures.getEntityFields(entity.id)
     }
 
-    entities = await filterMetricsHelper.filterMetrics(this.req.user,entities); //repeated
-    const {entities:measureEntitiesMapped, updatedAt} = this.mapMeasureFieldsToEntity(entities, themeCategory); //repeated
+    entities = await filterMetricsHelper.filterMetrics(this.req.user,entities); 
+    const measureEntitiesMapped = this.mapMeasureFieldsToEntity(entities, themeCategory); 
 
     // In certain case when a measure is the only item in the group, we need to up allow users to update the
     // overall value which is stored in the RAYG row.
@@ -138,12 +138,10 @@ class MeasureEdit extends Page {
       }
       return data;
     }, { groupEntities: [], raygEntities: [] });
-    groupedEntitnes.updatedAt = updatedAt
     return groupedEntitnes
   }
 
-  mapMeasureFieldsToEntity(measureEntities, themeCategory) {
-    let maxUpdatedAt;
+  mapMeasureFieldsToEntity(measureEntities, themeCategory) {    
     let entities = measureEntities.map(entity => {
       const theme = get(entity, 'parents[0].parents').find(parentEntity => {
         return parentEntity.categoryId === themeCategory.id;
@@ -154,34 +152,32 @@ class MeasureEdit extends Page {
       });
 
       const parentPublicId = get(entity, 'parents[0].publicId');
-      const entityUpdatedDate = (entity.updated_at) ? moment(entity.updated_at) : moment(entity.created_at);
-      maxUpdatedAt = (maxUpdatedAt && maxUpdatedAt.isSameOrAfter(entityUpdatedDate)) ? maxUpdatedAt : entityUpdatedDate;
       const entityMapped = {
         id: entity.id,
         publicId: entity.publicId,
         theme: themeName.value,
         parentPublicId,
+        createdAt: entity.created_at,
+        updatedAt: entity.updated_at
       };
 
       entity.entityFieldEntries.map(entityfieldEntry => {
         entityMapped[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
       });
-
       entityMapped.colour = rayg.getRaygColour(entityMapped);
-
 
       return entityMapped;
     });
-    return { entities , updatedAt: maxUpdatedAt}
+    return entities;
   }
 
 
   async getMeasure() {
     const measureCategory = await measures.getCategory('Measure');
     const themeCategory = await measures.getCategory('Theme');
-    const { groupEntities, raygEntities, updatedAt }  = await this.getGroupEntities(measureCategory, themeCategory);
+    const { groupEntities, raygEntities }  = await this.getGroupEntities(measureCategory, themeCategory);
     const measuresEntities = await measures.getMeasureEntitiesFromGroup(groupEntities, this.req.params.metricId);
-
+    const updatedAt = measures.getMaxUpdateAtForMeasures(measuresEntities);
     if (measuresEntities.length === 0) {
       return this.res.redirect(paths.dataEntryEntity.measureList);
     }
