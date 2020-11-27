@@ -3,6 +3,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
+  margin-top: 20px;
 }
 
 .overview-card {
@@ -13,14 +14,12 @@
   position: relative;
   border: 1px solid #f3f2f1;
   background-color: #f8f8f8;
-	&:first-child {
-		margin-top: 20px;
-	}
 }
 
 .headline-figure .overview-card:hover, 
-.risk-col .overview-card:hover {
+.risk-col .overview-card:not(.inactive):hover {
 	cursor: pointer;
+	background-color: #ffffff;
 }
 
 .overview-card--link {
@@ -38,10 +37,10 @@
   &:last-child {
 	padding: 8px 15px;
 	font-size: 14px;
-	color: #1d70b8 !important;
+	color: #1d70b8;
 	margin-bottom: 0;
 	&:hover {
-		color: #003078 !important;
+		color: #003078;
 	}
   }
 }
@@ -74,14 +73,10 @@
 	margin-bottom: 10px;
 	display: block;
 	text-decoration: none;
-
-	&:visited {
-		color: #0b0c0c;
-	}
 }
 
 
-.risk-col .overview-card .overview-card--link:first-child {
+.risk-col .overview-card p:first-child {
 	text-transform: uppercase;
 	font-size: 19px;
 }
@@ -91,14 +86,9 @@
 }
 
 .risk-col .overview-card.inactive,
-.risk-col .overview-card.inactive .overview-card--link,
-.risk-col .overview-card.inactive .overview-card--metric {
+.risk-col .overview-card.inactive p:first-child {
 	color: #505a5f;
 	cursor: not-allowed;
-}
-
-.risk-col .overview-card.inactive .overview-card--link {
-	pointer-events: none;
 }
 
 .overview-card--tag-theme {
