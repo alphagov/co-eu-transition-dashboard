@@ -263,12 +263,6 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
         if (!mapAllEntities(entity.children[i])) {
           toDelete.push(i);
         }
-        // Only include milestones where complete is Yes or No ( dont include decommissioned milestones )
-        if(entity.categoryId === projectsCategory.id) {
-          if(!['Yes', 'No'].includes(entity.children[i].complete)) {
-            toDelete.push(i);
-          }
-        }
       }
       // Make sure we're deleting from the array in reverse order
       toDelete.sort( (a,b) => {
@@ -276,12 +270,6 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       });
       for (let i=toDelete.length - 1;i>=0;i--) {
         entity.children.splice(toDelete[i],1);
-      }
-    }
-
-    if (entity.categoryId === projectsCategory.id) {
-      if (entity.children && entity.children.length === 0) {
-        delete entity.children;
       }
     }
 
@@ -305,7 +293,10 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
           break;
         }
       }
-      if (!foundEntity) {
+
+      // dont include decommissioned milestones
+      const milestoneIsDecommissioned = entity.complete === 'Decommissioned';
+      if (!foundEntity || milestoneIsDecommissioned) {
         return false;
       }
     }
