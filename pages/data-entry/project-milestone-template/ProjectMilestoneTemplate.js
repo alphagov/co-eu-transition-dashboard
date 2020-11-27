@@ -195,7 +195,7 @@ class ProjectMilestoneTemplate extends Page {
 
       validationSheet
         .cell(1, validationSheetCurrentColumn)
-        .string(`${field.displayName} Options`);
+        .string(`${field.displayName || field.importColumnName} Options`);
 
       options.forEach((option, validationRowIndex) => {
         validationSheet
@@ -317,7 +317,7 @@ class ProjectMilestoneTemplate extends Page {
     const milestones = projects.reduce((milestones, project) => {
       return [...milestones, ...project.milestones];
     }, []);
-    const milestoneFields = await Milestone.fieldDefinitions();
+    const milestoneFields = await Milestone.fieldDefinitions(this.req.user);
 
     let currentColumnIndex = 1;
 
