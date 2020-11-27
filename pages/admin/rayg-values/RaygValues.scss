@@ -1,0 +1,12 @@
+.themeContainer {
+  margin-bottom: 20px;
+
+  .govuk-form-group {
+    margin-bottom:10px;
+    margin-left:15px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+}
