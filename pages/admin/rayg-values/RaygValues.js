@@ -1,5 +1,6 @@
 const Page = require('core/pages/page');
 const { paths } = require('config');
+const entityUserPermissions = require('middleware/entityUserPermissions');
 const flash = require('middleware/flash');
 const authentication = require('services/authentication');
 const Category = require('models/category');
@@ -25,6 +26,7 @@ class RaygValues extends Page {
   get middleware() {
     return [
       ...authentication.protect(['admin']),
+      entityUserPermissions.assignEntityIdsUserCanAccessToLocals,
       flash
     ];
   }
@@ -49,36 +51,41 @@ class RaygValues extends Page {
     }));
   }
 
-  async postRequest(req, res) {
-    const themeAndStatementData =  await this.getThemesAndTopLevelStatements()
+  flatternEntityData(entities) {
     const flatternedEntityData = {};
-    for(const entity of themeAndStatementData) {
+    for(const entity of entities) {
       flatternedEntityData[entity.id] = entity;
 
       if (entity.children){
         for (const child of entity.children) {
           flatternedEntityData[child.id] = child;
         }
+        delete entity.children;
       }
     }
 
+    return flatternedEntityData;
+  }
+
+  async postRequest(req, res) {
+    const themeAndStatementData =  await this.getThemesAndTopLevelStatements()
+    const flatternedEntityData = this.flatternEntityData(themeAndStatementData);
     const formErrors = this.isValid(req.body, Object.keys(flatternedEntityData));
 
     if (formErrors && formErrors.length) {
-      this.req.flash(formErrors);
-      return res.redirect(this.req.originalUrl);
+      req.flash(formErrors);
+      return res.redirect(req.originalUrl);
     }
 
     const entitiesToBeSave = this.buildEntitiesToBeSaved(req.body, flatternedEntityData)
-
     await this.saveData(entitiesToBeSave);
   }
 
   async saveData(entitiesToBeSave) {
-
     const categories = await Category.findAll({
       where: { name: ['Theme', 'Statement'] }
     });
+
     const themeCategory = categories.find(category => category.name === 'Theme');
     const statmentCategory = categories.find(category => category.name === 'Statement');
 
