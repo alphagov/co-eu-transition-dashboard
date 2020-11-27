@@ -125,14 +125,12 @@ class MeasureEdit extends Page {
       entity['entityFieldEntries'] = await measures.getEntityFields(entity.id)
     }
 
-    entities = await filterMetricsHelper.filterMetrics(this.req.user,entities);
-
-
-    const measureEntitiesMapped = this.mapMeasureFieldsToEntity(entities, themeCategory);
+    entities = await filterMetricsHelper.filterMetrics(this.req.user,entities); //repeated
+    const {entities:measureEntitiesMapped, updatedAt} = this.mapMeasureFieldsToEntity(entities, themeCategory); //repeated
 
     // In certain case when a measure is the only item in the group, we need to up allow users to update the
     // overall value which is stored in the RAYG row.
-    return measureEntitiesMapped.reduce((data, entity) => {
+    const groupedEntitnes =  measureEntitiesMapped.reduce((data, entity) => {
       if(entity.filter === 'RAYG') {
         data.raygEntities.push(entity)
       } else {
@@ -140,14 +138,13 @@ class MeasureEdit extends Page {
       }
       return data;
     }, { groupEntities: [], raygEntities: [] });
+    groupedEntitnes.updatedAt = updatedAt
+    return groupedEntitnes
   }
 
-
-
-
-
   mapMeasureFieldsToEntity(measureEntities, themeCategory) {
-    return measureEntities.map(entity => {
+    let maxUpdatedAt;
+    let entities = measureEntities.map(entity => {
       const theme = get(entity, 'parents[0].parents').find(parentEntity => {
         return parentEntity.categoryId === themeCategory.id;
       });
@@ -156,13 +153,14 @@ class MeasureEdit extends Page {
         return fieldEntry.categoryField.name === 'name';
       });
 
-      const parentPublicId = get(entity, 'parents[0].publicId')
-
+      const parentPublicId = get(entity, 'parents[0].publicId');
+      const entityUpdatedDate = (entity.updated_at) ? moment(entity.updated_at) : moment(entity.created_at);
+      maxUpdatedAt = (maxUpdatedAt && maxUpdatedAt.isSameOrAfter(entityUpdatedDate)) ? maxUpdatedAt : entityUpdatedDate;
       const entityMapped = {
         id: entity.id,
         publicId: entity.publicId,
         theme: themeName.value,
-        parentPublicId
+        parentPublicId,
       };
 
       entity.entityFieldEntries.map(entityfieldEntry => {
@@ -171,16 +169,17 @@ class MeasureEdit extends Page {
 
       entityMapped.colour = rayg.getRaygColour(entityMapped);
 
+
       return entityMapped;
     });
+    return { entities , updatedAt: maxUpdatedAt}
   }
 
 
   async getMeasure() {
     const measureCategory = await measures.getCategory('Measure');
     const themeCategory = await measures.getCategory('Theme');
-    const { groupEntities, raygEntities }  = await this.getGroupEntities(measureCategory, themeCategory);
-
+    const { groupEntities, raygEntities, updatedAt }  = await this.getGroupEntities(measureCategory, themeCategory);
     const measuresEntities = await measures.getMeasureEntitiesFromGroup(groupEntities, this.req.params.metricId);
 
     if (measuresEntities.length === 0) {
@@ -188,11 +187,12 @@ class MeasureEdit extends Page {
     }
 
     const uniqMetricIds = uniq(groupEntities.map(measure => measure.metricID));
-
+    
     return {
       measuresEntities,
       raygEntities,
-      uniqMetricIds
+      uniqMetricIds,
+      updatedAt
     }
   }
 
@@ -223,7 +223,7 @@ class MeasureEdit extends Page {
   
 
   async getMeasureData() {
-    const { measuresEntities, raygEntities, uniqMetricIds }  = await this.getMeasure();
+    const { measuresEntities, raygEntities, uniqMetricIds, updatedAt }  = await this.getMeasure();
     measures.applyLabelToEntities(measuresEntities)
     const groupedMeasureEntities = groupBy(measuresEntities, measure => measure.date);
     const uiInputs = measures.calculateUiInputs(measuresEntities);
@@ -241,7 +241,6 @@ class MeasureEdit extends Page {
     // If measure is part of a group, and the measure id is used as both metricId and groupId hide the delete button
     // This item will be able to be deleted after the rest of the group items have been removed.
     const preventDeleteForGroupMeasure = !isOnlyMeasureInGroup & this.req.params.metricId === this.req.params.groupId
-
     return {
       latest: measuresEntities[measuresEntities.length - 1],
       grouped: groupedMeasureEntities,
@@ -250,7 +249,8 @@ class MeasureEdit extends Page {
       displayOverallRaygDropdown,
       displayRaygValueCheckbox,
       uniqMetricIds,
-      preventDeleteForGroupMeasure
+      preventDeleteForGroupMeasure,
+      updatedAt: updatedAt.format('DD/MM/YYYY')
     }
   }
 
@@ -337,7 +337,7 @@ class MeasureEdit extends Page {
     }
 
     const updatedEntites = await this.updateMeasureEntities(formData);
-    return await this.saveMeasureData(updatedEntites, URLHash, { ignoreParents: true, updatedAt: true });
+    return await this.saveMeasureData(updatedEntites, URLHash, { ignoreParents: true, updatedAt: false });
   }
 
   async updateMeasureEntities(data) {

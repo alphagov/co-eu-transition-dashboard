@@ -22,6 +22,7 @@
 {% set measure = getMeasureData() | await %}
 {% set latestMeasure = measure.latest %}
 {% set raygEntity = measure.raygEntity %}
+{% set updatedAt = measure.updatedAt %}
 {% set groupedMeasures = measure.grouped %}
 {% set formFields = measure.fields %}
 {% set displayOverallRaygDropdown = measure.displayOverallRaygDropdown %}
