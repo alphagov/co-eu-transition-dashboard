@@ -276,6 +276,7 @@ class MeasureValue extends Page {
   }
 
   async updateMeasureValues(formData) {
+    console.log('***updateMeasureValues', formData)
     const { measureEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
     
     measures.applyLabelToEntities(measureEntities);

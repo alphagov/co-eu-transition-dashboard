@@ -175,13 +175,14 @@ const getMeasureEntities = async({ measureCategory, themeCategory, where, user }
     const entityMapped = {
       id: entity.id,
       publicId: entity.publicId,
-      theme: themeName.value
+      theme: themeName.value,
+      updatedAt: entity.updated_at,
+      createdAt: entity.created_at 
     };
 
     entity.entityFieldEntries.map(entityfieldEntry => {
       entityMapped[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
     });
-
     return entityMapped;
   });
 }
@@ -189,31 +190,41 @@ const getMeasureEntities = async({ measureCategory, themeCategory, where, user }
 const groupMeasures = (measures) => {
   const measureEntitiesGrouped = groupBy(measures, measure => {
     return measure.groupID;
-  });
-
+  });  
   const measureGroups = Object.values(measureEntitiesGrouped).reduce((measureGroups, group) => {
     const groupMeasure = group.find(measure => measure.filter === 'RAYG');
     // if no RAYG row then ignore as its not shown on dashboard
     if(!groupMeasure) {
       return measureGroups;
     }
-
+    
     const nonRaygRows = group.filter(measure => measure.filter !== 'RAYG');
 
     const measuresGroupedByMetricId = groupBy(nonRaygRows, entity => entity.metricID);
     groupMeasure.children = Object.values(measuresGroupedByMetricId).map(measures => {
+      let maxMeasureUpdatedAt 
+      measures.forEach(m => {
+        const entityUpdatedAt = (m.updatedAt) ? moment(m.updatedAt) : moment(m.createdAt);
+        maxMeasureUpdatedAt = (maxMeasureUpdatedAt && maxMeasureUpdatedAt.isSameOrAfter(entityUpdatedAt)) ? maxMeasureUpdatedAt : entityUpdatedAt;
+      });
       const measuresSortedByDate = measures.sort((a, b) => moment(b.date, 'DD/MM/YYYY').valueOf() - moment(a.date, 'DD/MM/YYYY').valueOf());
       measuresSortedByDate[0].colour = rayg.getRaygColour(measuresSortedByDate[0]);
+      measuresSortedByDate[0].updatedAt = maxMeasureUpdatedAt
+      measuresSortedByDate[0].updatedAtDate = (maxMeasureUpdatedAt) ? maxMeasureUpdatedAt.format('DD/MM/YYYY'): null;
       return measuresSortedByDate[0];
     });
 
+    let maxGroupUpdatedAt;
+    groupMeasure.children.forEach (measure => {
+      const entityUpdatedDate = (measure.updatedAt) ? moment(measure.updatedAt) : moment(measure.createdAt);
+      maxGroupUpdatedAt = (maxGroupUpdatedAt && maxGroupUpdatedAt.isSameOrAfter(entityUpdatedDate)) ? maxGroupUpdatedAt : entityUpdatedDate;  
+    });
+
     groupMeasure.colour = rayg.getRaygColour(groupMeasure);
-
+    groupMeasure.updatedAt = (maxGroupUpdatedAt) ? maxGroupUpdatedAt.format('DD/MM/YYYY'): null;
     measureGroups.push(groupMeasure);
-
     return measureGroups;
   }, []);
-
   return measureGroups;
 }
 
