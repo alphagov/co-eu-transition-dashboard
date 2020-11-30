@@ -4,7 +4,6 @@ const entityUserPermissions = require("middleware/entityUserPermissions");
 const flash = require("middleware/flash");
 const RaygValues = require("pages/admin/rayg-values/RaygValues");
 const authentication = require("services/authentication");
-const filterMetrics = require("helpers/filterMetrics");
 const Entity = require("models/entity");
 const Category = require("models/category");
 const sequelize = require("services/sequelize");
