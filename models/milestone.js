@@ -17,7 +17,7 @@ class Milestone extends Model {
     return modelUtils.createFilterOptions(attributeKey, options);
   }
 
-  static async fieldDefinitions() {
+  static async fieldDefinitions(user) {
     const config = {
       exportOptions: {
         header: {
@@ -28,6 +28,14 @@ class Milestone extends Model {
         }
       }
     };
+
+    let validMilestones = [];
+
+    if (user) {
+      const projects = await user.getProjects();
+      validMilestones = projects.reduce((milestones, project) => [...milestones, ...project.milestones], []);
+    }
+
     const milestoneFields = [{
       name: 'projectUid',
       type: 'string',
@@ -37,11 +45,13 @@ class Milestone extends Model {
       description: 'The UID of the project these milestones cover'
     },{
       name: 'uid',
-      type: 'string',
+      type: 'group',
       isUnique: true,
       importColumnName: 'Milestone UID',
-      config,
-      description: 'Please leave this column blank. CO will assign a permanent UID for each milestone.'
+      description: 'Please leave this column blank. CO will assign a permanent UID for each milestone.',
+      config: Object.assign({
+        options: validMilestones.map(milestone => milestone.uid)
+      }, config)
     },{
       name: 'description',
       type: 'string',

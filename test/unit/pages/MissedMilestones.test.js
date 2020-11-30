@@ -29,6 +29,14 @@ const departments = [{
   },{
     milestones: [{ id: 1, date: '06-06-2020' }, { id: 2, date: '25-08-2020' }, { id: 3, date: '04-04-2020' }]
   }]
+},{
+  id: 3,
+  name: 'BPDG',
+  projects: [{
+    milestones: [{ id: 1, date: '13-06-2020' }]
+  },{
+    milestones: [{ id: 1, date: '06-06-2020' }, { id: 2, date: '25-08-2020' }]
+  }]
 }];
 
 describe('pages/missed-milestones/MissedMilestones', () => {
@@ -139,7 +147,7 @@ describe('pages/missed-milestones/MissedMilestones', () => {
       expect(chartData.departments[1].id).to.eql(1);
     });
 
-    it('should return chart data when passed in department', () => {
+    it('should return chart data and exclude BPDG when passed in departments', () => {
       expect(page.chartData(departments)).to.eql( { data: [6,4], labels: ['Dept2', 'Dept1'], meta: [ { totalMilestones: 5, totalMilestonesMissed: 6 }, { totalMilestones: 5, totalMilestonesMissed: 4 }] });
     });
 
@@ -149,7 +157,6 @@ describe('pages/missed-milestones/MissedMilestones', () => {
       expect(departmentsWithMissedMilestones[0].departments[0].totalMilestonesMissed).to.eql(6);
       expect(departmentsWithMissedMilestones[0].totalMilestones).to.eql(1);
     });
-
   });
 
   describe('#totalMilestones', () => {

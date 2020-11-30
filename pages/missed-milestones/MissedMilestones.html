@@ -11,7 +11,6 @@
 {% set dates = getDepartmentsWithMissedMilestones() | await %}
 {% set chart = getChartData() | await %}
 {% set chartData = chartData(chart.departments) %}
-{% set chart = getChartData() | await %}
 {% set projectDetails = config.paths.projectDetails %}
 {% set milestoneDetails = config.paths.milestoneDetails %}
 
