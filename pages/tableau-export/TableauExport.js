@@ -188,7 +188,7 @@ class TableauExport extends Page {
     return entityFieldMaps;
   }
 
-  async exportMeasures(req, res) {
+  async exportMeasures() {
     const measuresCategory = await Category.findOne({
       where: {
         name: 'Measure'
@@ -198,7 +198,7 @@ class TableauExport extends Page {
     return await this.getEntitiesFlatStructure(measuresCategory);
   }
 
-  async exportCommunications(req, res) {
+  async exportCommunications() {
     const measuresCategory = await Category.findOne({
       where: {
         name: 'Communication'
@@ -250,7 +250,7 @@ class TableauExport extends Page {
     return milestoneDatas;
   }
 
-  async exportProjectsMilestones(req, res) {
+  async exportProjectsMilestones() {
     const projectsCategory = await Category.findOne({
       where: {
         name: 'Project'
