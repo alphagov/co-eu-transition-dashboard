@@ -19,8 +19,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div class="govuk-grid-column-one-third no-horizontal-padding search-right">{{searchMeasuresForm(searchUrl)}}</div>
-              {{ currentStatus(topOutcome.color, false) }}
-
+      {{ currentStatus(data.theme.color, false) }}
       <h1 class="govuk-heading-l govuk-grid-column-two-thirds no-horizontal-padding govuk-!-margin-bottom-1">{{ data.theme.name }}</h1>
     <div> 
   <div>
@@ -30,14 +29,14 @@
   <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'hide-statement' if req.params.statement }}" id="column-statements">
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcome statements</h2>
     {% for topOutcome in data.topLevelOutcomeStatements %}
-    <div class="overview-card {{ 'active-statement' if topOutcome.active }}">
-      <div class="overview-card--inner">   
+    <div class="overview-card">
+      <div class="overview-card--inner {{ 'active-statement' if topOutcome.active }}">   
       {% if topOutcome.active %} 
         {% set activeStatement = topOutcome.name %} 
         {% set activeColor = topOutcome.color %} 
       {% endif %}
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ topOutcome.name }}</p>
-        <p class="govuk-body-s govuk-!-margin-bottom-3">{{ topOutcome.description }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-2">{{ topOutcome.description }}</p>
         {{ currentStatus(topOutcome.color, true) }}
         </div>
         <hr class="govuk-section-break govuk-section-break--visible">

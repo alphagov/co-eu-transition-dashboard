@@ -5,8 +5,12 @@
 
 .active-statement {
     background-color: white !important;
-    .overview-card--link {
-        color: #003078 !important;
+}
+
+.active-statement ~ .overview-card--link {
+    color: #003078 !important;
+    &:hover {
+        background-color: #f8f8f8;
     }
 }
 
@@ -36,10 +40,6 @@
 }
 
 .readiness-accordion-wrapper {
-    // .govuk-accordion__section {
-    //     margin-bottom: 10px;
-    // }
-
     .govuk-accordion__section-content {
         padding-top: 0;
         padding-bottom: 0
@@ -47,21 +47,38 @@
 
     .govuk-accordion__section-header {
         border-top: none;
-        margin-bottom:2px;
         background-color: #f8f8f8;
         border: 1px solid #f3f2f1;
     }
 
+    .govuk-accordion__section--expanded {
+        margin-bottom: 10px;
+    }
+
     .govuk-accordion__section--expanded > .govuk-accordion__section-header {
         background-color: #ffffff;
+        .govuk-accordion__section-heading {
+            color: #0b0c0c;
+        }
     }
 
     .govuk-accordion__section-header:hover {
-        background-color: white;
+        background-color: #ffffff;
         text-decoration: none;
-        .govuk-accordion__section-button   {
+        .govuk-accordion__section-button:hover   {
             text-decoration: none;
+            color: #003078;
         }
+    }
+
+    .govuk-accordion__section--expanded > .govuk-accordion__section-header:hover {
+        .govuk-accordion__section-button:hover   {
+            color: black;
+        }
+    }
+
+    .govuk-accordion__section-button + .current-status {
+        margin-top: 10px;
     }
 
     .govuk-accordion {
@@ -90,6 +107,9 @@
     }
 
     .accordion-level-1 {
+        > .govuk-accordion__section {
+            margin-bottom: 10px;
+        }
         > .govuk-accordion__section--expanded > .govuk-accordion__section-header {
             background-color: #ffffff;
         }
@@ -104,6 +124,9 @@
                     height: 18px;
                     display: inline-block;
                     margin-right: 10px;
+                }
+                + .current-status {
+                    padding-left: 20px;
                 }
             }
         }
@@ -126,6 +149,8 @@
     .outcome-measure__item {
         padding: 10px 26px;
         position: relative;
+        border: 1px solid #f3f2f1;
+        background-color: #f8f8f8;
 
         &::before {
             content: "";
@@ -139,23 +164,26 @@
 
     .outcome-measure__item--active, .outcome-measure__item:hover {
         background-color: white;
-
-        &:after {
-            content: url('/assets/images/arrow.png');
-            position: absolute;
-            top: 12px;
-            right: 10px;
+        .outcome-measure__link {
+            color: #003078;
         }
     }
 
     .outcome-measure__link {
         text-decoration: none;
-        color: #0b0c0c;
-        display: block;
-    }
+        color: #1d70b8;
+        ~ .current-status {
+            margin-top: 8px;   
+        }
 
-    .comments-measure {
-        font-style: italic;
+        &:before {
+            content: '';
+            bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            position: absolute;
+          }
     }
 
     .placeholder-measure {
@@ -242,4 +270,8 @@
 
 .search-right {
     float: right;
+}
+
+.theme-color ~ .current-status {
+    padding-top: 2px;
 }
