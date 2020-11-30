@@ -28,7 +28,7 @@
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'hide-statement' if req.params.statement }}" id="column-statements">
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcome statements</h2>
-    <div class="top-statements">
+    <div class="top-statements" id="outcome-statements">
     {% for topOutcome in data.topLevelOutcomeStatements %}
     <div class="overview-card">
       <div class="overview-card--inner {{ 'active-statement' if topOutcome.active }}">   
@@ -41,7 +41,7 @@
         {{ currentStatus(topOutcome.color, true) }}
         </div>
         <hr class="govuk-section-break govuk-section-break--visible">
-        <a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>Data visualisation</a>
+        <a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>Explore data</a>
       </div>
     {% endfor %}
     </div>
@@ -50,9 +50,12 @@
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'show-statement' if req.params.statement and not req.params.selectedPublicId }}" id="column-sub-statements">
     <a href="{{ themeUrl }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.statement }}" style="display: none;">Back to outcome statements</a>
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Data groupings and types</h2>
-    <div class="top-statements">
-    {% if activeStatement %} 
-      <h3 class="govuk-heading-m govuk-!-font-weight-regular {{ 'show-statement' if req.params.statement }}" style="display: none;">{{ activeStatement }}</h3>
+    <div class="top-statements" id="sub-statements">
+    {% if activeStatement %}
+    <div class="{{ 'show-statement' if req.params.statement }}" style="display:none;"> 
+      {{ currentStatus(activeColor, false) }}
+      <h3 class="govuk-heading-m govuk-!-font-weight-regular govuk-!-margin-top-1">{{ activeStatement }}</h3>
+    </div>
     {% endif %}
     {% if data.subOutcomeStatementsAndDatas | length > 0 %}
       <div class="readiness-accordion-wrapper">
@@ -64,21 +67,23 @@
     </div>
   </div>
 
-  <div class="govuk-grid-column-one-half overflow-scroll {{ 'show-measure' if req.params.selectedPublicId }}" id="theme-tableu-placeholder">
+  <div class="govuk-grid-column-one-half no-horizontal-padding {{ 'show-measure' if req.params.selectedPublicId }}" id="theme-tableu-placeholder">
   <a href="{{ themeUrl }}/{{ req.params.statement }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-measure' if req.params.selectedPublicId }}" style="display: none;">Back to {{ activeStatement }}</a>
   <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Measure and metric data view</h2>
-  {% if data.subOutcomeStatementsAndDatas | length > 0 %}
-    {% for item in data.subOutcomeStatementsAndDatas %}
-      {{ projectDetails(item) }}
-    {% endfor %}
-  {% endif %}
-  {% if not data.iframeUrl.error and not data.iframeUrl.url %}
-    <p class="govuk-body-s tableu-message">To view data of measures and metrics, select a data grouping or type</p>
-  {% elseif data.iframeUrl.error %}
-    <p class="govuk-body-s tableu-message">There has been an error accessing this data, please contact The Transition Taskforce Dashboard Team</p>
-  {% else %}
-    <iframe title="Data view" src="{{ data.iframeUrl.url }}" class="theme-tableu"></iframe>
-  {% endif %}
+    <div class="overflow-scroll">
+    {% if data.subOutcomeStatementsAndDatas | length > 0 %}
+      {% for item in data.subOutcomeStatementsAndDatas %}
+        {{ projectDetails(item) }}
+      {% endfor %}
+    {% endif %}
+    {% if not data.iframeUrl.error and not data.iframeUrl.url %}
+      <p class="govuk-body-s tableu-message">To view data of measures and metrics, select a data grouping or type</p>
+    {% elseif data.iframeUrl.error %}
+      <p class="govuk-body-s tableu-message">There has been an error accessing this data, please contact The Transition Taskforce Dashboard Team</p>
+    {% else %}
+      <iframe title="Data view" src="{{ data.iframeUrl.url }}" class="theme-tableu"></iframe>
+    {% endif %}
+    </div>
   </div>
 
 </div>

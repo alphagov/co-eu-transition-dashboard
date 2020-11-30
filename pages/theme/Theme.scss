@@ -98,11 +98,11 @@
         .last-level-expandable .govuk-accordion__section-content {
             margin: -2px 0 2px 0;
             position: relative;
-            background-color: #f3f2f1;
+            background-color: #f8f8f8;
         }
 
         .last-level-expandable > .govuk-accordion__section-header {
-            background-color: #f3f2f1;
+            background-color: #f8f8f8;
         }
     }
 
@@ -162,11 +162,16 @@
         }
     }
 
+    .outcome-measure__link:hover {
+        color: #003078;
+    }
+
     .outcome-measure__item--active, .outcome-measure__item:hover {
         background-color: white;
-        .outcome-measure__link {
-            color: #003078;
-        }
+    }
+
+    .outcome-measure__item--active .outcome-measure__link {
+        color: black;;
     }
 
     .outcome-measure__link {
@@ -254,7 +259,7 @@
 
 .tableu-message {
     padding:50px 50px 50px 50px;
-    width: 100%;
+    width: 50%;
 }
 
 .theme-tableu {
@@ -270,8 +275,4 @@
 
 .search-right {
     float: right;
-}
-
-.theme-color ~ .current-status {
-    padding-top: 2px;
 }
