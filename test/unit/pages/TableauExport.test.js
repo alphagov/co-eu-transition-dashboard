@@ -243,10 +243,10 @@ describe('pages/tableau-export/TableauExport', () => {
         id: 1
       });
 
-      await page.exportMeasures(req, res);
+      const data = await page.exportMeasures(req, res);
 
       sinon.assert.calledWith(page.getEntitiesFlatStructure, { id: 1 });
-      sinon.assert.calledWith(res.json, resp);
+      expect(data).to.eql(resp);
     });
   });
 
@@ -259,10 +259,10 @@ describe('pages/tableau-export/TableauExport', () => {
         id: 1
       });
 
-      await page.exportCommunications(req, res);
+      const data = await page.exportCommunications(req, res);
 
       sinon.assert.calledWith(page.getEntitiesFlatStructure, { id: 1 });
-      sinon.assert.calledWith(res.json, resp);
+      expect(data).to.eql(resp);
     });
   });
 
@@ -345,7 +345,7 @@ describe('pages/tableau-export/TableauExport', () => {
   });
 
   describe('#exportProjectsMilestones', () => {
-    it('gets all metrics and creats an object', async () => {
+    it('gets all ProjectsMilestones and creats an object', async () => {
       const entities = [{ data: 'data' }];
       const entitiesWithProjects = [{ data: 'data', data1: 'data 1' }];
       sinon.stub(page, 'getEntitiesFlatStructure').resolves(entities);
@@ -355,11 +355,11 @@ describe('pages/tableau-export/TableauExport', () => {
         id: 1
       });
 
-      await page.exportProjectsMilestones(req, res);
+      const data = await page.exportProjectsMilestones(req, res);
 
       sinon.assert.calledWith(page.getEntitiesFlatStructure, { id: 1 });
       sinon.assert.calledWith(page.mergeProjectsWithEntities, entities);
-      sinon.assert.calledWith(res.json, entitiesWithProjects);
+      expect(data).to.eql(entitiesWithProjects);
     });
   });
 });

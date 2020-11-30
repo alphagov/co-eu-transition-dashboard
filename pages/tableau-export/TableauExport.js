@@ -188,36 +188,24 @@ class TableauExport extends Page {
     return entityFieldMaps;
   }
 
-  async exportMeasures(req, res) {
-    if(this.exportSchema) {
-      logger.info('Exporting schema');
-
-      // eslint-disable-next-line object-curly-spacing
-      const schema ={"Description":{"type":"string"},"MetricID":{"type":"string"},"Filter":{"type":"string"},"FilterValue":{"type":"string"},"Filter2":{"type":"string"},"FilterValue2":{"type":"string"},"Unit":{"type":"string"},"Value":{"type":"integer"},"Weight":{"type":"integer"},"Date":{"type":"date"},"Source":{"type":"string"},"ActiveFrom":{"type":"date"},"AdditionalComment":{"type":"string"},"RedThreshold":{"type":"integer"},"AYThreshold":{"type":"integer"},"GreenThreshold":{"type":"integer"},"GroupID":{"type":"string"},"Group Description":{"type":"string"},"Comments Only":{"type":"boolean"},"Public ID":{"type":"string"},"Statement - 1":{"type":"string"},"Statement - 2":{"type":"string"},"Statement - 3":{"type":"string"},"Statement - 4":{"type":"string"},"Theme - 1":{"type":"string"}}
-
-      return res.json(schema);
-    }
+  async exportMeasures() {
     const measuresCategory = await Category.findOne({
       where: {
         name: 'Measure'
       }
     });
 
-    const data = await this.getEntitiesFlatStructure(measuresCategory);
-
-    return res.json(data);
+    return await this.getEntitiesFlatStructure(measuresCategory);
   }
 
-  async exportCommunications(req, res) {
+  async exportCommunications() {
     const measuresCategory = await Category.findOne({
       where: {
         name: 'Communication'
       }
     });
 
-    const data = await this.getEntitiesFlatStructure(measuresCategory);
-
-    return this.exportSchema ? res.json(data[0]) : res.json(data);
+    return await this.getEntitiesFlatStructure(measuresCategory);
   }
 
   async mergeProjectsWithEntities(entities) {
@@ -262,7 +250,7 @@ class TableauExport extends Page {
     return milestoneDatas;
   }
 
-  async exportProjectsMilestones(req, res) {
+  async exportProjectsMilestones() {
     const projectsCategory = await Category.findOne({
       where: {
         name: 'Project'
@@ -270,9 +258,7 @@ class TableauExport extends Page {
     });
 
     const entities = await this.getEntitiesFlatStructure(projectsCategory);
-    const data = await this.mergeProjectsWithEntities(entities);
-
-    return this.exportSchema ? res.json(data[0]) : res.json(data)
+    return await this.mergeProjectsWithEntities(entities);
   }
 
   responseAsCSV(data, res) {
@@ -286,17 +272,26 @@ class TableauExport extends Page {
   }
 
   async getRequest(req, res) {
-
     if (this.showForm) {
       return super.getRequest(req, res);
     }
 
+    let data;
     if(this.exportingMeasures) {
-      return await this.exportMeasures(req, res);
+      data = await this.exportMeasures(req, res);
     } else if(this.exportingProjects) {
-      return await this.exportProjectsMilestones(req, res);
+      data = await this.exportProjectsMilestones(req, res);
     } else if(this.exportingCommunications) {
-      return await this.exportCommunications(req, res);
+      data = await this.exportCommunications(req, res);
+    }
+    if (data && data.length) {
+      if (this.exportSchema) {
+        logger.info(`Exporting schema ${this.req.params.type}: ${Object.keys(data[0])}`);
+        return res.json(data[0]);
+      } else {
+        logger.info(`Exporting data ${this.req.params.type}: ${Object.keys(data[0])}`);
+        return res.json(data)
+      }
     }
 
     return res.sendStatus(METHOD_NOT_ALLOWED);
