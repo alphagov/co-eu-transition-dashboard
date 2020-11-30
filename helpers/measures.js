@@ -82,7 +82,7 @@ const getMaxUpdateAtForMeasures = (measures) => {
     const entityUpdatedAt = (measure.updatedAt) ? moment(measure.updatedAt) : moment(measure.createdAt);
     maxMeasureUpdatedAt = (maxMeasureUpdatedAt && maxMeasureUpdatedAt.isSameOrAfter(entityUpdatedAt)) ? maxMeasureUpdatedAt : entityUpdatedAt;
   })
-  return maxMeasureUpdatedAt
+  return maxMeasureUpdatedAt;
 }
 
 const validateFormData = (formData, measuresEntities = []) => {
@@ -180,7 +180,6 @@ const getMeasureEntities = async({ measureCategory, themeCategory, where, user }
     const themeName = theme.entityFieldEntries.find(fieldEntry => {
       return fieldEntry.categoryField.name === 'name';
     });
-
     const entityMapped = {
       id: entity.id,
       publicId: entity.publicId,

@@ -138,7 +138,7 @@ class MeasureEdit extends Page {
       }
       return data;
     }, { groupEntities: [], raygEntities: [] });
-    return groupedEntitnes
+    return groupedEntitnes;
   }
 
   mapMeasureFieldsToEntity(measureEntities, themeCategory) {    
