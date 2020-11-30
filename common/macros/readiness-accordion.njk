@@ -24,7 +24,7 @@
               {% endif %}
               <button type="button" id="accordion-default-{{ id }}-heading-{{ loop.index }}" aria-controls="accordion-default-{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-button" aria-expanded="{{ expanded }}" {{ dataAttribute | safe }}>
                 {{ heading }}
-                {% if item.level > 1 %} ({{ childCount }}){% endif %}
+                {% if item.level > 1 and childCount %} ({{ childCount }}){% endif %}
                 {% if not item.meta.children %}
                   <span class="govuk-accordion__icon__arrow" aria-hidden="true"></span>
                 {% else %}
