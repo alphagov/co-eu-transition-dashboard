@@ -1,6 +1,16 @@
 {% extends "template.njk" %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
+{% block beforeContent %}
+{{ govukBackLink({
+  text: "Back",
+  href: "#",
+  attributes: {
+    onclick: "history.go(-1); return false;"
+  }
+}) }}
+{% endblock %}
+
 {% block pageTitle %}Accessibility{% endblock %}
 
 {% block content %}
