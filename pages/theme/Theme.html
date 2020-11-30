@@ -26,8 +26,9 @@
   <p class="govuk-body-l">{{ data.theme.description }}</p>
   <p class="govuk-body-s govuk-!-margin-bottom-5"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
 
-  <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'hide-statement' if req.params.statement }}" id="column-statements">
+  <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'hide-statement' if req.params.statement }}" id="column-statements">
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcome statements</h2>
+    <div class="top-statements">
     {% for topOutcome in data.topLevelOutcomeStatements %}
     <div class="overview-card">
       <div class="overview-card--inner {{ 'active-statement' if topOutcome.active }}">   
@@ -43,11 +44,13 @@
         <a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>Data visualisation</a>
       </div>
     {% endfor %}
+    </div>
   </div>
 
-  <div class="govuk-grid-column-one-quarter no-horizontal-padding top-statements {{ 'show-statement' if req.params.statement and not req.params.selectedPublicId }}" id="column-sub-statements">
+  <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'show-statement' if req.params.statement and not req.params.selectedPublicId }}" id="column-sub-statements">
     <a href="{{ themeUrl }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.statement }}" style="display: none;">Back to outcome statements</a>
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Data groupings and types</h2>
+    <div class="top-statements">
     {% if activeStatement %} 
       <h3 class="govuk-heading-m govuk-!-font-weight-regular {{ 'show-statement' if req.params.statement }}" style="display: none;">{{ activeStatement }}</h3>
     {% endif %}
@@ -58,6 +61,7 @@
     {% else %}
       <p class="govuk-body-s tableu-message">To view data groupings and types, select an outcome statement</p>
     {% endif %}
+    </div>
   </div>
 
   <div class="govuk-grid-column-one-half overflow-scroll {{ 'show-measure' if req.params.selectedPublicId }}" id="theme-tableu-placeholder">
