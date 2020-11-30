@@ -11,6 +11,6 @@ TagEntity.init({
     type: INTEGER,
     field: "tag_id",
   }
-}, { sequelize, modelName: 'tag', tableName: 'tag', timestamps: false });
+}, { sequelize, modelName: 'tagEntity', tableName: 'tag_entity', timestamps: false });
 
 module.exports = TagEntity;
