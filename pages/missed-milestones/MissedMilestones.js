@@ -59,7 +59,9 @@ class MissedMilestones extends Page {
     return count;
   }
 
-  chartData(departments) {
+  chartData(departmentsWithMilestones) {
+    const departments = departmentsWithMilestones.filter(department => department.name !== 'BPDG');
+    
     const data = {
       labels: departments.map(department => department.name),
       data: departments.map(department => department.totalMilestonesMissed),

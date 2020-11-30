@@ -115,7 +115,9 @@ const applyRagRollups = (entity) => {
       }
 
       entity.color = color;
-      entity.children.forEach(applyRagRollups);
+      if (entity.children) {
+        entity.children.forEach(applyRagRollups);
+      }
       return color;
 
     // entity is a milestone
@@ -251,8 +253,7 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
   }
 
   const projects = await dao.getAllData(undefined, {
-    uid: projectUids,
-    complete: ['Yes', 'No'] // Only include milestones that are completed Yes or No ( dont include decommissioned milestones )
+    uid: projectUids
   });
 
   const mapAllEntities = (entity) => {
@@ -269,12 +270,6 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       });
       for (let i=toDelete.length - 1;i>=0;i--) {
         entity.children.splice(toDelete[i],1);
-      }
-    }
-
-    if (entity.categoryId === projectsCategory.id) {
-      if (!entity.children || entity.children.length === 0) {
-        return false;
       }
     }
 
@@ -298,7 +293,10 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
           break;
         }
       }
-      if (!foundEntity) {
+
+      // dont include decommissioned milestones
+      const milestoneIsDecommissioned = entity.complete === 'Decommissioned';
+      if (!foundEntity || milestoneIsDecommissioned) {
         return false;
       }
     }
