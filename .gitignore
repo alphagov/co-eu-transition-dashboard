@@ -56,3 +56,5 @@ npm-debug.log
 ehthumbs.db
 Thumbs.dbnode_modules
 package-lock.json
+test/cypress/fixtures/login.json
+services/cache.js
