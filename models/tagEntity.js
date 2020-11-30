@@ -1,4 +1,4 @@
-const { Model, STRING, ENUM, TEXT, INTEGER } = require('sequelize');
+const { Model, INTEGER } = require('sequelize');
 const sequelize = require('services/sequelize');
 
 class TagEntity extends Model {}
