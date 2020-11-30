@@ -45,6 +45,14 @@
   }
 }), items) %}
 
+{% set items = (items.push({
+  label: "Measure Tags",
+  id: "measure-tags",
+  panel: {
+    html: measureTags(tagstUrl)
+  }
+}), items) %}
+
 {{ govukTabs({
   items: items
 }) }}
