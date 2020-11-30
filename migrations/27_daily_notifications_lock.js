@@ -1,7 +1,7 @@
 const logger = require('services/logger');
 const config = require('config');
 
-const up = async (query) => {
+const migrate = async (query) => {
   query.bulkInsert('dashboard_locks', [{
     name: config.locks.dailyUpdatesNotifications
   }]);
@@ -15,16 +15,18 @@ const down = async (query) => {
   }
 };
 
+const up = async (query) => {
+  try {
+    await migrate(query);
+  } catch (error) {
+    logger.error(`Error migrating ${error}`);
+    logger.error(`Rolling back changes`);
+    await down(query);
+    throw error;
+  }
+};
+
 module.exports = {
-  up: async (query) => {
-    try {
-      await up(query);
-    } catch (error) {
-      logger.error(`Error migrating ${error}`);
-      logger.error(`Rolling back changes`);
-      await down(query);
-      throw error;
-    }
-  },
+  up,
   down
 }
