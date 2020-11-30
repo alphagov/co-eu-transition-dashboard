@@ -58,3 +58,6 @@ Thumbs.dbnode_modules
 package-lock.json
 test/cypress/fixtures/login.json
 services/cache.js
+package-lock.json
+test/cypress/fixtures/login.json
+services/cache.js
