@@ -58,10 +58,10 @@
       <li class="outcome-measure__item {% if item.activeFrom %} item-disabled {% else %} {{ raygColor }} {% endif %} {% if item.active %} outcome-measure__item--active {% endif %}">
       {% if item.activeFrom %}
         <a href="{{ item.link }}" class="govuk-link outcome-measure__link placeholder-measure" {{ ariaCurrent(item.active) }}>
-        <p class="govuk-body govuk-!-font-weight-bold placeholder-title">DATA EXPECTED: {{ item.activeFrom | formatDate("DD/MM/YYYY") }}</p>
+        <p class="govuk-body govuk-!-font-weight-bold measure-info">DATA EXPECTED: {{ item.activeFrom | formatDate("DD/MM/YYYY") }}</p>
         {{ item.name }}</a>
       {% elseif item.commentsOnly == 'Yes' %}
-        <p class="govuk-body govuk-!-font-weight-bold comments-title">COMMENTS ONLY</p>
+        <p class="govuk-body govuk-!-font-weight-bold measure-info">COMMENTS ONLY</p>
         <a href="{{ item.link }}" class="govuk-link outcome-measure__link" {{ ariaCurrent(item.active) }}>
           {{ item.name }}</a>
       {% else %}
