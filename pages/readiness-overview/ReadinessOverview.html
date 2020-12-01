@@ -22,7 +22,7 @@
     <div class="govuk-grid-row">
 
       <div class="govuk-grid-column-one-quarter">
-        <h2 class="govuk-heading-m govuk-!-margin-bottom-0" id="headline-figures">Headline<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-0" id="headline-figures">Headline figures<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
 
         <div class="overview-card-holder headline-figure top-statements">
@@ -48,6 +48,7 @@
 
           {# High risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
+            <h3 class="govuk-body govuk-!-margin-bottom-2">High risk</h3>
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.red %}
                 {{ readinessThemeCard(item) }}
@@ -57,6 +58,7 @@
 
           {# Medium risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
+          <h3 class="govuk-body govuk-!-margin-bottom-2">Medium risk</h3>
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.amber %}
                 {{ readinessThemeCard(item) }}
@@ -66,6 +68,7 @@
 
            {# Low risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
+          <h3 class="govuk-body govuk-!-margin-bottom-2">Low risk</h3>
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.yellow %}
                 {{ readinessThemeCard(item) }}
@@ -75,6 +78,7 @@
 
            {# Minimal risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
+          <h3 class="govuk-body govuk-!-margin-bottom-2">Minimal/No risk</h3>
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.green %}
                 {{ readinessThemeCard(item) }}

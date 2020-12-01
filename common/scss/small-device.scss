@@ -96,9 +96,13 @@
             font-weight: normal;
             display: inline !important;
         }
-    
-        #themes {
-            margin-top: 20px;
+
+        #headline-figures, #themes {
+            margin-top: 10px;
+            margin-bottom: 10px !important;
+            ~ hr {
+                display: none;
+            }
         }
     }
 
