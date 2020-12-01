@@ -200,3 +200,84 @@
 .search-right {
     float: right;
 }
+
+.govuk-accordion__section-header:before,
+.outcome-measure__item:before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    width: 0;
+    height: 0;
+}
+
+.govuk-accordion__section-header.red:before {
+    border-left: 15px solid #C21D03;
+    border-top: 15px solid #C21D03;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+}
+
+.govuk-accordion__section-header.amber:before {
+    border-left: 15px solid #FF7631;
+    border-top: 15px solid #FF7631;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+}
+
+.govuk-accordion__section-header.yellow:before {
+    border-left: 15px solid #FFDD00;
+    border-top: 15px solid #FFDD00;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+}
+
+.govuk-accordion__section-header.green:before {
+    border-left: 15px solid #00B661;
+    border-top: 15px solid #00B661;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+}
+
+.govuk-accordion__section-header.grey:before {
+    border-left: 15px solid #B1B4B6;
+    border-top: 15px solid #B1B4B6;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+}
+
+.outcome-measure__item.red:before {
+    border-left: 10px solid #C21D03;
+    border-top: 10px solid #C21D03;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+.outcome-measure__item.amber:before {
+    border-left: 10px solid #FF7631;
+    border-top: 10px solid #FF7631;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+.outcome-measure__item.yellow:before {
+    border-left: 10px solid #FFDD00;
+    border-top: 10px solid #FFDD00;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+.outcome-measure__item.green:before {
+    border-left: 10px solid #00B661;
+    border-top: 10px solid #00B661;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+.outcome-measure__item.grey:before {
+    border-left: 10px solid #B1B4B6;
+    border-top: 10px solid #B1B4B6;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}

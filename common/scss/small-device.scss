@@ -117,19 +117,6 @@
     .show-statement, .show-measure {
         display: block !important;
     }
-
-    .theme-name.show-statement::before {
-        top: 5px;
-    }
-
-    @media only screen and (max-width:640px) {
-        .theme-name::before {
-            top: 3px;
-        }
-        .theme-name.show-statement::before {
-            top: 0px;
-        }
-    }
   }
 
     // RAYG Definitions

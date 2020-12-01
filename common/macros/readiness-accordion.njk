@@ -17,7 +17,7 @@
         {% set expanded =  "govuk-accordion__section--expanded" if item.expanded or active %}
 
         <div class="govuk-accordion__section govuk-accordion__section-{{ id }} {{ isLastExpandable }} {{ expanded }} {{ noChildren }}">
-          <div class="govuk-accordion__section-header section-header-{{ item.level }}">
+          <div class="govuk-accordion__section-header {{ color }} section-header-{{ item.level }}">
             <h2 class="govuk-accordion__section-heading">
 
               {% if item.meta.category.name == 'Project' %}
@@ -54,7 +54,7 @@
 {% macro outcomeMeasuresContent(items) %}
   <ul class="govuk-body govuk-!-font-size-16 outcome-measures">
     {% for item in items %}
-      {% set raygColor = "item-complete" if item.complete == "Yes" else "item-" + item.color %}
+      {% set raygColor = "item-complete" if item.complete == "Yes" else item.color %}
       <li class="outcome-measure__item {% if item.activeFrom %} item-disabled {% else %} {{ raygColor }} {% endif %} {% if item.active %} outcome-measure__item--active {% endif %}">
       {% if item.activeFrom %}
         <a href="{{ item.link }}" class="govuk-link outcome-measure__link placeholder-measure" {{ ariaCurrent(item.active) }}>

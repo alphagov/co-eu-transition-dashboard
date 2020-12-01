@@ -19,18 +19,19 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div class="govuk-grid-column-one-third no-horizontal-padding search-right">{{searchMeasuresForm(searchUrl)}}</div>
-      {{ currentStatus(data.theme.color, false) }}
       <h1 class="govuk-heading-l govuk-grid-column-two-thirds no-horizontal-padding govuk-!-margin-bottom-1">{{ data.theme.name }}</h1>
     <div> 
   <div>
-  <p class="govuk-body-l">{{ data.theme.description }}</p>
-  <p class="govuk-body-s govuk-!-margin-bottom-5"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
+  <p class="govuk-body-l govuk-!-margin-bottom-1">{{ data.theme.description }}</p>
+  {{ currentStatus(data.theme.color, false) }}
+
+  <p class="govuk-body-s govuk-!-margin-bottom-5 govuk-!-margin-top-4"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'hide-statement' if req.params.statement }}" id="column-statements">
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcomes</h2>
     <div class="top-statements" id="outcome-statements">
     {% for topOutcome in data.topLevelOutcomeStatements %}
-    <div class="overview-card">
+    <div class="overview-card {{ topOutcome.color }}">
       <div class="overview-card--inner {{ 'active-statement' if topOutcome.active }}">   
       {% if topOutcome.active %} 
         {% set activeStatement = topOutcome.name %} 
