@@ -42,6 +42,10 @@ class MeasureEdit extends Page {
     return `${this.measureUrl}/edit`
   }
 
+  get tagsUrl() {
+    return `${this.measureUrl}/tags`
+  }
+
   get pathToBind() {
     return `${this.url}/:metricId/:groupId/:type?`;
   }
@@ -52,6 +56,10 @@ class MeasureEdit extends Page {
 
   get editMeasure() {
     return this.req.params && this.req.params.type == 'edit';
+  }
+
+  get editTags() {
+    return this.req.params && this.req.params.type == 'tags';
   }
 
   get deleteMeasureUrl() {
@@ -325,7 +333,16 @@ class MeasureEdit extends Page {
       return await this.updateMeasureInformation(req.body)
     }
 
+    if (this.updateTags) {
+      return await this.updateEntityTags(req.body)
+    }
+
     return res.redirect(this.measureUrl);
+  }
+
+  async updateEntityTags(formData) {
+    console.log('updateEntityTagsupdateEntityTags')
+    return this.res.redirect(`${this.req.originalUrl}`);
   }
 
   async updateMeasureInformation(formData) {
