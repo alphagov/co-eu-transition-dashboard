@@ -99,7 +99,9 @@ ReadinessAccordion.prototype.hideShowProjectDetails = function (expanded, sectio
         projectInformationOpen.classList.add(this.hiddenClass);
       }
     } else {
-      projectInformationOpen.classList.add(this.hiddenClass);
+      if(projectInformationOpen) {
+        projectInformationOpen.classList.add(this.hiddenClass);
+      }
       tableauMessageOrIframe.classList.remove(this.hiddenClass);
     }
   }
