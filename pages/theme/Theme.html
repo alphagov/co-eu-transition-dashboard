@@ -27,7 +27,7 @@
   <p class="govuk-body-s govuk-!-margin-bottom-5"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'hide-statement' if req.params.statement }}" id="column-statements">
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcome statements</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcomes</h2>
     <div class="top-statements" id="outcome-statements">
     {% for topOutcome in data.topLevelOutcomeStatements %}
     <div class="overview-card">
@@ -49,7 +49,7 @@
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'show-statement' if req.params.statement and not req.params.selectedPublicId }}" id="column-sub-statements">
     <a href="{{ themeUrl }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.statement }}" style="display: none;">Back to outcome statements</a>
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Data groupings and types</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Select data</h2>
     <div class="top-statements" id="sub-statements">
     {% if activeStatement %}
     <div class="{{ 'show-statement' if req.params.statement }}" style="display:none;"> 
@@ -69,7 +69,7 @@
 
   <div class="govuk-grid-column-one-half no-horizontal-padding {{ 'show-measure' if req.params.selectedPublicId }}" id="theme-tableu-placeholder">
   <a href="{{ themeUrl }}/{{ req.params.statement }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-measure' if req.params.selectedPublicId }}" style="display: none;">Back to {{ activeStatement }}</a>
-  <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Measure and metric data view</h2>
+  <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Data display</h2>
     <div class="overflow-scroll">
     {% if data.subOutcomeStatementsAndDatas | length > 0 %}
       {% for item in data.subOutcomeStatementsAndDatas %}

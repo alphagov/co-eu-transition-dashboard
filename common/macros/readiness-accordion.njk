@@ -16,7 +16,7 @@
         {% set noChildren =  "no-children" if not item.meta.children %}
         {% set expanded =  "govuk-accordion__section--expanded" if item.expanded or active %}
 
-        <div class="govuk-accordion__section section-{{ color }} govuk-accordion__section-{{ id }} {{ isLastExpandable }} {{ expanded }} {{ noChildren }}">
+        <div class="govuk-accordion__section govuk-accordion__section-{{ id }} {{ isLastExpandable }} {{ expanded }} {{ noChildren }}">
           <div class="govuk-accordion__section-header section-header-{{ item.level }}">
             <h2 class="govuk-accordion__section-heading">
 
