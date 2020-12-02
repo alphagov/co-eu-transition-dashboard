@@ -121,9 +121,12 @@
         background-color: #f8f8f8;
     }
 
-    .outcome-measure__item.grey .outcome-measure__link {
-        pointer-events: none;
-        color: #505a5f;
+    .outcome-measure__item.grey {
+        cursor: not-allowed;
+        .outcome-measure__link {
+            pointer-events: none;
+            color: #505a5f;
+        }
     }
 
     .outcome-measure__link:hover {
