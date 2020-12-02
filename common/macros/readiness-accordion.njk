@@ -54,11 +54,10 @@
 {% macro outcomeMeasuresContent(items) %}
   <ul class="govuk-body govuk-!-font-size-16 outcome-measures">
     {% for item in items %}
-      {% set raygColor = "item-complete" if item.complete == "Yes" else item.color %}
-      <li class="outcome-measure__item {% if item.activeFrom %} item-disabled {% else %} {{ raygColor }} {% endif %} {% if item.active %} outcome-measure__item--active {% endif %}">
+      <li class="outcome-measure__item {% if item.activeFrom %} grey {% else %} {{ item.color }} {% endif %} {% if item.active %} outcome-measure__item--active {% endif %}">
       {% if item.activeFrom %}
-        <a href="{{ item.link }}" class="govuk-link outcome-measure__link placeholder-measure" {{ ariaCurrent(item.active) }}>
-        <p class="govuk-body govuk-!-font-weight-bold measure-info">DATA EXPECTED: {{ item.activeFrom | formatDate("DD/MM/YYYY") }}</p>
+        <a href="#" class="govuk-link outcome-measure__link">
+        <p class="govuk-body govuk-!-font-weight-bold measure-info">PLACEHOLDER/INACTIVE/EXPECTED: {{ item.activeFrom | formatDate("DD/MM/YYYY") }}</p>
         {{ item.name }}</a>
       {% elseif item.commentsOnly == 'Yes' %}
         <p class="govuk-body govuk-!-font-weight-bold measure-info">COMMENTS ONLY</p>
@@ -67,7 +66,7 @@
       {% else %}
         <a href="{{ item.link }}" class="govuk-link outcome-measure__link" {{ ariaCurrent(item.active) }}>{{ item.name }}</a>
       {% endif %}
-      {{ currentStatus(item.color, true) }}
+      {{ currentStatus(item.color if not item.activeFrom else "grey", true) if item.complete !== "Yes" }}
       </li>
     {% endfor %}
   </ul>

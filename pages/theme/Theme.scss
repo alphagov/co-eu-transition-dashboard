@@ -121,16 +121,21 @@
         background-color: #f8f8f8;
     }
 
+    .outcome-measure__item.grey .outcome-measure__link {
+        pointer-events: none;
+        color: #505a5f;
+    }
+
     .outcome-measure__link:hover {
         color: #003078;
     }
 
-    .outcome-measure__item--active, .outcome-measure__item:hover {
+    .outcome-measure__item--active, .outcome-measure__item:not(.grey):hover {
         background-color: white;
     }
 
     .outcome-measure__item--active .outcome-measure__link {
-        color: black;;
+        color: black;
     }
 
     .outcome-measure__link {
