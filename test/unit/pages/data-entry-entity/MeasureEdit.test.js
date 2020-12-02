@@ -13,7 +13,8 @@ const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const flash = require('middleware/flash');
 const sequelize = require('services/sequelize');
-const measures = require('helpers/measures')
+const measures = require('helpers/measures');
+const moment = require('moment');
 
 let page = {};
 let res = {};
@@ -125,6 +126,8 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     const entities = {
       id: 'some-id',
       publicId: 'some-public-id-1',
+      created_at: '2020-11-05T13:15:30Z',
+      updated_at: '2020-11-06T13:15:30Z',
       parents: [
         {
           publicId: 'parent-1',
@@ -173,6 +176,8 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
           colour: 'green',
           theme: 'borders',
           test: 'new value',
+          createdAt: '2020-11-05T13:15:30Z',
+          updatedAt: '2020-11-06T13:15:30Z'
         }],
         raygEntities: []
       });
@@ -210,7 +215,12 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
   describe('#getMeasure', () => {
     const measureCategory = { id: 'some-category' };
     const measureEntities = {
-      groupEntities : [{ metricID: 'measure-1', id: 'new-id', publicId: 'pubId', parents: [], entityFieldEntries: [{ categoryField: { name: 'test' }, value: 'new value' }] }],
+      groupEntities : [
+        { 
+          metricID: 'measure-1', id: 'new-id', publicId: 'pubId', parents: [], entityFieldEntries: [{ categoryField: { name: 'test' }, value: 'new value' }],
+          createdAt: '2020-11-05T13:15:30Z',
+          updatedAt: '2020-11-06T13:15:30Z'
+        }],
       raygEntities: [{ publicId: 'rayg1', filter: 'RAYG' }]
     };
 
@@ -238,7 +248,8 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       expect(response).to.eql({
         measuresEntities: measureEntities.groupEntities,
         raygEntities: measureEntities.raygEntities,
-        uniqMetricIds: ['measure-1']
+        uniqMetricIds: ['measure-1'],
+        updatedAt: moment('2020-11-06T13:15:30Z')
       });
     });
 
@@ -311,9 +322,13 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
 
   describe('#getMeasureData', () => {
     const measureEntities = {
-      measuresEntities: [{ metricID: 'metric1', date: '05/10/2020', value: 2, filter: 'test' }, { metricID: 'metric1', date: '04/10/2020', value: 1, filter: 'test'  }],
+      measuresEntities: [
+        { metricID: 'metric1', date: '05/10/2020', value: 2, filter: 'test' }, 
+        { metricID: 'metric1', date: '04/10/2020', value: 1, filter: 'test'  }
+      ],
       raygEntities: [{ value: 1 }],
-      uniqMetricIds: ['metric1']
+      uniqMetricIds: ['metric1'],
+      updatedAt: moment('2020-11-06T13:15:30Z')
     };
 
     beforeEach(() => {
@@ -325,7 +340,27 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     });
 
     it('getMeasureData should call getMeasure', async () => {
-      await page.getMeasureData();
+      const md = await page.getMeasureData();
+      expect(md).to.eql({
+        latest: { metricID: 'metric1', date: '04/10/2020', value: 1, filter: 'test' },
+        grouped: { 
+          '05/10/2020': [ { metricID: 'metric1', date: '05/10/2020', value: 2, filter: 'test' } ], 
+          '04/10/2020': [ { metricID: 'metric1', date: '04/10/2020', value: 1, filter: 'test' } ] },
+        fields: [
+          {
+            metricID: 'metric1',
+            date: '05/10/2020',
+            value: 2,
+            filter: 'test'
+          }
+        ],
+        raygEntity: { value: 1 },
+        displayOverallRaygDropdown: true,
+        displayRaygValueCheckbox: false,
+        uniqMetricIds: [ 'metric1' ],
+        preventDeleteForGroupMeasure: 0,
+        updatedAt: '06/11/2020'
+      });
       sinon.assert.calledOnce(page.getMeasure);
     });
 
@@ -499,7 +534,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
 
       await page.updateMeasureInformation(formData);
 
-      sinon.assert.calledWith(page.saveMeasureData, UpdatedEntities, '#measure-information', { ignoreParents: true, updatedAt: true });
+      sinon.assert.calledWith(page.saveMeasureData, UpdatedEntities, '#measure-information', { ignoreParents: true, updatedAt: false });
     });
   });
 

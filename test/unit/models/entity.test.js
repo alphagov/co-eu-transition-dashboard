@@ -5,6 +5,8 @@ const EntityFieldEntry = require('models/entityFieldEntry');
 const EntityFieldEntryAudit = require('models/entityFieldEntryAudit');
 const { STRING, INTEGER } = require('sequelize');
 const sequelize = require('services/sequelize');
+const Tag = require('models/tag');
+const TagEntity = require('models/tagEntity');
 
 describe('models/entity', () => {
   it('called Entity.init with the correct parameters', () => {
@@ -42,6 +44,14 @@ describe('models/entity', () => {
 
   it('called EntityFieldEntryAudit.belongsTo with the correct parameters', () => {
     expect(EntityFieldEntryAudit.belongsTo).to.have.been.calledWith(Entity, { foreignKey: 'entityId' });
+  });
+
+  it('called Entity.belongsToMany with the correct parameters', () => {
+    expect(Entity.belongsToMany).to.have.been.calledWith(Tag, { through: TagEntity, foreignKey: 'entityId' });
+  });
+
+  it('called Tag.belongsToMany with the correct parameters', () => {
+    expect(Tag.belongsToMany).to.have.been.calledWith(Entity, { through: TagEntity, foreignKey: 'tagId' });
   });
 
   describe('#import', () => {

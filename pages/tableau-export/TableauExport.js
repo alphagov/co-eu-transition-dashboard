@@ -15,6 +15,7 @@ const authentication = require('services/authentication');
 const { tableauIpWhiteList } = require('middleware/ipWhitelist');
 const entityUserPermissions = require('middleware/entityUserPermissions');
 const Role = require('models/role');
+const logger = require('services/logger');
 
 class TableauExport extends Page {
   get url() {
@@ -187,28 +188,24 @@ class TableauExport extends Page {
     return entityFieldMaps;
   }
 
-  async exportMeasures(req, res) {
+  async exportMeasures() {
     const measuresCategory = await Category.findOne({
       where: {
         name: 'Measure'
       }
     });
 
-    const data = await this.getEntitiesFlatStructure(measuresCategory);
-
-    return this.exportSchema ? res.json(data[0]) : res.json(data);
+    return await this.getEntitiesFlatStructure(measuresCategory);
   }
 
-  async exportCommunications(req, res) {
+  async exportCommunications() {
     const measuresCategory = await Category.findOne({
       where: {
         name: 'Communication'
       }
     });
 
-    const data = await this.getEntitiesFlatStructure(measuresCategory);
-
-    return this.exportSchema ? res.json(data[0]) : res.json(data);
+    return await this.getEntitiesFlatStructure(measuresCategory);
   }
 
   async mergeProjectsWithEntities(entities) {
@@ -253,7 +250,7 @@ class TableauExport extends Page {
     return milestoneDatas;
   }
 
-  async exportProjectsMilestones(req, res) {
+  async exportProjectsMilestones() {
     const projectsCategory = await Category.findOne({
       where: {
         name: 'Project'
@@ -261,9 +258,7 @@ class TableauExport extends Page {
     });
 
     const entities = await this.getEntitiesFlatStructure(projectsCategory);
-    const data = await this.mergeProjectsWithEntities(entities);
-
-    return this.exportSchema ? res.json(data[0]) : res.json(data)
+    return await this.mergeProjectsWithEntities(entities);
   }
 
   responseAsCSV(data, res) {
@@ -277,17 +272,26 @@ class TableauExport extends Page {
   }
 
   async getRequest(req, res) {
-
     if (this.showForm) {
       return super.getRequest(req, res);
     }
 
+    let data;
     if(this.exportingMeasures) {
-      return await this.exportMeasures(req, res);
+      data = await this.exportMeasures(req, res);
     } else if(this.exportingProjects) {
-      return await this.exportProjectsMilestones(req, res);
+      data = await this.exportProjectsMilestones(req, res);
     } else if(this.exportingCommunications) {
-      return await this.exportCommunications(req, res);
+      data = await this.exportCommunications(req, res);
+    }
+    if (data && data.length) {
+      if (this.exportSchema) {
+        logger.info(`Exporting schema ${this.req.params.type}: ${Object.keys(data[0])}`);
+        return res.json(data[0]);
+      } else {
+        logger.info(`Exporting data ${this.req.params.type}: ${Object.keys(data[0])}`);
+        return res.json(data)
+      }
     }
 
     return res.sendStatus(METHOD_NOT_ALLOWED);

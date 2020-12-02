@@ -76,10 +76,10 @@ describe('models/milestone', () => {
         description: 'The UID of the project these milestones cover'
       },{
         name: 'uid',
-        type: 'string',
+        type: 'group',
         isUnique: true,
         importColumnName: 'Milestone UID',
-        config,
+        config: Object.assign({ "options": [] }, config),
         description: 'Please leave this column blank. CO will assign a permanent UID for each milestone.'
       },{
         name: 'description',

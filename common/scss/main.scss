@@ -14,8 +14,10 @@
 @import 'pages/data-entry-entity/measure-list/MeasureList.scss';
 @import 'pages/data-entry-entity/measure-value/MeasureValue.scss';
 @import 'pages/search-transition-readiness/SearchTransitionReadiness.scss';
+@import 'pages/admin/rayg-values/RaygValues.scss';
 @import './small-device.scss';
 @import './search-measures.scss';
+@import './accordion.scss';
 
 .no-borders {
   .govuk-table__header, .govuk-table__cell{
@@ -29,6 +31,14 @@
 
 .show {
   display: inherit !important;
+}
+
+.rayg-img {
+  width: 20px;
+  height: 19px;
+  padding-right: 5px;
+  top: 4px;
+  position: relative;
 }
 
 .rayg-status {
@@ -80,7 +90,7 @@
 
 .govuk-header__link--service-name,
 .logout-item {
-  background-color: black;
+  background-color: #0b0c0c;
 }
 
 .govuk-main-wrapper, .govuk-footer__meta {

@@ -88,7 +88,7 @@ class Import extends Page {
   }
 
   async validateMilestones(milestones, parsedProjects = []) {
-    const milestoneFields = await Milestone.fieldDefinitions();
+    const milestoneFields = await Milestone.fieldDefinitions(this.req.user);
 
     const parsedMilestones = parse.parseItems(milestones, milestoneFields);
     if (!parsedMilestones.length) {
