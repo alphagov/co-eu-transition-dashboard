@@ -1,10 +1,25 @@
-{% macro measureTags(url) %}
-  <form action="{{ url }}#tags" method="post">
-    {{ latestMeasure.name }}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
+{% macro measureTags(url, tags) %}
+  <form action="{{ url }}" method="post">
 
-    <br>
-    <button class="govuk-button" data-module="govuk-button" type="submit">Save</button>
+    {{ 
+      govukCheckboxes({
+          idPrefix: "measure-tags",
+          name: "tags",
+          fieldset: {
+              legend: {
+                  html: "<strong>Select tags</strong>"
+              }
+          },
+          hint: {
+              text: "Select all that apply."
+          },
+          items: tags
+      }) 
+    }}
+
+    <button class="govuk-button" data-module="govuk-button" type="submit">Save Tags</button>
 
   </form>
 

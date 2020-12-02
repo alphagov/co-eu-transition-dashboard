@@ -8,10 +8,12 @@ const Category = require('models/category');
 const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
 const EntityFieldEntry = require('models/entityFieldEntry');
+const Tag = require('models/tag');
 const logger = require('services/logger');
 const sequelize = require('services/sequelize');
 const flash = require('middleware/flash');
 const rayg = require('helpers/rayg');
+const tags = require('helpers/tags');
 const filterMetricsHelper = require('helpers/filterMetrics');
 const { buildDateString } = require('helpers/utils');
 const get = require('lodash/get');
@@ -126,6 +128,8 @@ class MeasureEdit extends Page {
             model: Category
           }]
         }]
+      },{
+        model: Tag
       }]
     });
 
@@ -170,8 +174,12 @@ class MeasureEdit extends Page {
         id: entity.id,
         publicId: entity.publicId,
         theme: themeName.value,
-        parentPublicId
+        parentPublicId,
       };
+
+      if (entity.tags.length > 0) {
+        entityMapped.tags = entity.tags.map(tag => tag.id)
+      }
 
       entity.entityFieldEntries.map(entityfieldEntry => {
         entityMapped[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
@@ -333,16 +341,11 @@ class MeasureEdit extends Page {
       return await this.updateMeasureInformation(req.body)
     }
 
-    if (this.updateTags) {
+    if (this.editTags) {
       return await this.updateEntityTags(req.body)
     }
 
     return res.redirect(this.measureUrl);
-  }
-
-  async updateEntityTags(formData) {
-    console.log('updateEntityTagsupdateEntityTags')
-    return this.res.redirect(`${this.req.originalUrl}`);
   }
 
   async updateMeasureInformation(formData) {
@@ -531,6 +534,46 @@ class MeasureEdit extends Page {
     }
     return this.res.redirect(`${redirectUrl}${URLHash}`);
   }
+
+  async getTags() {
+    const { raygEntities } = await this.getMeasure();
+
+    // In the event we have multiple RAYG rows the tags would be the same for each row so it is safe 
+    // to use the first entry to populate the selected items
+    const raygRow = raygEntities[0].tags || [];
+
+    const tags = await Tag.findAll().map(tag => ({
+      value: tag.dataValues.id,
+      text: tag.dataValues.name,
+      checked: raygRow.includes(tag.dataValues.id)
+    }));
+    
+    return tags;
+  }
+
+  async updateEntityTags({ tags: tagsData }) {
+    const { raygEntities } = await this.getMeasure();
+    const transaction = await sequelize.transaction();
+    let redirectUrl = `${this.measureUrl}/successful`
+
+    try {
+      for(const entity of raygEntities) {
+        await tags.removeEntitiesTags(entity.id, transaction);
+        if (tagsData) {
+          await tags.createEntityTags(entity.id, tagsData, transaction);
+        }
+      }
+      await transaction.commit();
+    } catch (error) {
+      redirectUrl = `${this.measureUrl}#tags`
+      logger.error(error);
+      this.req.flash(['Error saving tags']);
+      await transaction.rollback();
+    }
+    return this.res.redirect(`${redirectUrl}`);
+  }
+
+ 
 }
 
 module.exports = MeasureEdit;

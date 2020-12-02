@@ -30,6 +30,7 @@
 {% set uniqMetricIds = measure.uniqMetricIds %}
 {% set preventDeleteForGroupMeasure = measure.preventDeleteForGroupMeasure %}
 {% set errorMessages = errors if errors else flash %}
+{% set tags = getTags() | await %}
 
 {% block content %}
 
