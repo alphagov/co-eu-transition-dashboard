@@ -242,7 +242,21 @@ const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
   };
   const measuresPublicId = uniq(allThemes.reduce(findEntities, []));
   const measuresWithLink = await transitionReadinessData.measuresWithLink(allThemes, measuresPublicId, paths.transitionReadinessThemeDetail)
-  return { measures: measuresWithLink, themes: allThemes , colors: ['red', 'amber', 'yellow','green'] };
+
+  let tags = measuresWithLink.reduce((tags, measure) => {
+    if(!measure.tags) {
+      return tags;
+    }
+    return [...tags, ...measure.tags.map(tag => tag.name)];
+  }, []);
+  tags = uniq(tags);
+
+  return {
+    tags,
+    measures: measuresWithLink,
+    themes: allThemes,
+    colors: ['red', 'amber', 'yellow', 'green']
+  };
 }
 
 module.exports = {
