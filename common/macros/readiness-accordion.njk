@@ -63,7 +63,7 @@
         <p class="govuk-body govuk-!-font-weight-bold measure-info">COMMENTS ONLY</p>
         <a href="{{ item.link }}" class="govuk-link outcome-measure__link" {{ ariaCurrent(item.active) }}>
           {{ item.name }}</a>
-      {% elseif item.complete !== 'Yes' %}
+      {% elseif item.complete == 'Yes' %}
         <p class="govuk-body govuk-!-font-weight-bold measure-info measure-complete">COMPLETED</p>
         <a href="{{ item.link }}" class="govuk-link outcome-measure__link" {{ ariaCurrent(item.active) }}>
           {{ item.name }}</a>
