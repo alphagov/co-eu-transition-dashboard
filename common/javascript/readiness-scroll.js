@@ -11,8 +11,8 @@ export default ($element) =>  {
     }
     
     window.addEventListener('scroll', () => setScrollPosition('page'))
-    document.getElementById('column-statements').addEventListener('scroll', () => setScrollPosition('statements'))
-    document.getElementById('column-sub-statements').addEventListener('scroll', () => setScrollPosition('subStatements'))
+    document.getElementById('outcome-statements').addEventListener('scroll', () => setScrollPosition('statements'))
+    document.getElementById('sub-statements').addEventListener('scroll', () => setScrollPosition('subStatements'))
 
   } catch (exception) {
     new Error('Notice: sessionStorage not available.')
@@ -29,14 +29,14 @@ const setScrollPosition = (scrollElement) => {
     }
 
     if (scrollElement === 'statements') {
-      const subStatementColumn = document.getElementById('column-statements')
+      const subStatementColumn = document.getElementById('outcome-statements')
       if (subStatementColumn) {
         scrollValue = subStatementColumn.scrollTop
       }
     }
 
     if (scrollElement === 'subStatements') {
-      const subStatementColumn = document.getElementById('column-sub-statements')
+      const subStatementColumn = document.getElementById('sub-statements')
       if (subStatementColumn) {
         scrollValue = subStatementColumn.scrollTop
       }
@@ -53,8 +53,8 @@ const restoreScrollPosition = () => {
   const scrollPositionPage = window.sessionStorage.getItem('scroll-position-page') || 0
   window.scrollTo(0, parseInt(scrollPositionPage));
   
-  const statementColumn = document.getElementById('column-statements')
-  const subStatementColumn = document.getElementById('column-sub-statements')
+  const statementColumn = document.getElementById('outcome-statements')
+  const subStatementColumn = document.getElementById('sub-statements')
 
   if (statementColumn) {
     const scrollPositionStatements = window.sessionStorage.getItem('scroll-position-statements') || 0
