@@ -154,11 +154,6 @@
             position: absolute;
           }
     }
-
-    .placeholder-measure {
-        font-style: italic;
-        color: #b1b4b6;
-    }
 }
 
 .measure-info {
@@ -166,6 +161,10 @@
     margin-bottom: 2px;
     font-size: 13px;
     font-style: normal;
+}
+
+.measure-complete {
+    color: #0b0c0c;
 }
 
 .js-enabled .govuk-accordion__section--expanded .govuk-accordion__section-content {
