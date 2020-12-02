@@ -71,7 +71,6 @@
   <div class="govuk-grid-column-one-half no-horizontal-padding {{ 'show-measure' if req.params.selectedPublicId }}" id="theme-tableu-placeholder">
   <a href="{{ themeUrl }}/{{ req.params.statement }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-measure' if req.params.selectedPublicId }}" style="display: none;">Back to {{ activeStatement }}</a>
   <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Data display</h2>
-    <div class="overflow-scroll">
     {% if data.subOutcomeStatementsAndDatas | length > 0 %}
       {% for item in data.subOutcomeStatementsAndDatas %}
         {{ projectDetails(item) }}
@@ -84,7 +83,6 @@
     {% else %}
       <iframe title="Data view" src="{{ data.iframeUrl.url }}" class="theme-tableu"></iframe>
     {% endif %}
-    </div>
   </div>
 
 </div>
