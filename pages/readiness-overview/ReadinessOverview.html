@@ -34,7 +34,7 @@
                 {{ currentStatus(item.color, true) }}
               </div>
                 <hr class="govuk-section-break govuk-section-break--visible">
-                <a href="{{ item.link }}" class="overview-card--link govuk-link">Data visualisation</a>
+                <a href="{{ item.link }}" aria-label="{{ item.name }}" class="overview-card--link govuk-link">Data visualisation</a>
             </div>
           {% endfor %}
         </div>
