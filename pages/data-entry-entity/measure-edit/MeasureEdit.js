@@ -238,7 +238,7 @@ class MeasureEdit extends Page {
     // If measure is part of a group, and the measure id is used as both metricId and groupId hide the delete button
     // This item will be able to be deleted after the rest of the group items have been removed.
     const preventDeleteForGroupMeasure = !isOnlyMeasureInGroup & this.req.params.metricId === this.req.params.groupId
-    const measureData = {
+    return {
       latest: measuresEntities[measuresEntities.length - 1],
       grouped: groupedMeasureEntities,
       fields: uiInputs,
@@ -249,8 +249,6 @@ class MeasureEdit extends Page {
       preventDeleteForGroupMeasure,
       updatedAt: updatedAt.format('DD/MM/YYYY')
     }
-    console.log('***measureData', measureData);
-    return measureData;
   }
 
   async getEntitiesToBeCloned(entityIds) {
@@ -296,7 +294,6 @@ class MeasureEdit extends Page {
   }
 
   calculateUpdateDueOn(formData, latestEntityDate, currentUpdateDueOn, frequency) {
-    console.log('***calculateUpdateDueOn',formData, latestEntityDate, currentUpdateDueOn, frequency)
     if (!currentUpdateDueOn || !frequency) {
       return null;
     }
@@ -486,10 +483,12 @@ class MeasureEdit extends Page {
     let allMeasures = [];
 
     measuresEntities.forEach(m => {
+      // eslint-disable-next-line no-unused-vars
       const { theme, createdAt, updatedAt, colour, ...other } = m;
       allMeasures.push(other);
     });
     raygEntities.forEach(m => {
+      // eslint-disable-next-line no-unused-vars
       const { theme, createdAt, updatedAt, colour, ...other } = m;
       allMeasures.push(other);
     });
@@ -513,21 +512,16 @@ class MeasureEdit extends Page {
       }
     });
     
-    console.log('***updateDueOn', updateDueOn); // DD/MM/YYYY; YYYY-MM-DD
-    console.log('***newEntities1', [...newEntities])
-    console.log('***newEntities2', newEntities)
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
 
     // These are the entities which is being added by the form
     let entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measuresEntities, raygEntities, uniqMetricIds)
-    console.log('***entitiesToBeSaved1', [...entitiesToBeSaved])
     entitiesToBeSaved = [...entitiesToBeSaved, ...allMeasures];
     entitiesToBeSaved.forEach(e=> {
       if (e.updateDueOn) {
         e.updateDueOn = updateDueOn
       }
     });
-    console.log('***entitiesToBeSaved1', entitiesToBeSaved)
 
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ['Error in entity data'] });

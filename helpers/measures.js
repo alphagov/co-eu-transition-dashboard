@@ -210,23 +210,14 @@ const groupMeasures = (measures) => {
 
     const measuresGroupedByMetricId = groupBy(nonRaygRows, entity => entity.metricID);
     groupMeasure.children = Object.values(measuresGroupedByMetricId).map(measures => {
-      console.log('***measures', measures)
       const maxMeasureUpdatedAt = getMaxUpdateAtForMeasures(measures);
       const measuresSortedByDate = measures.sort((a, b) => moment(b.date, 'DD/MM/YYYY').valueOf() - moment(a.date, 'DD/MM/YYYY').valueOf());
       measuresSortedByDate[0].colour = rayg.getRaygColour(measuresSortedByDate[0]);
       measuresSortedByDate[0].updatedAt = maxMeasureUpdatedAt
       measuresSortedByDate[0].updatedAtDate = (maxMeasureUpdatedAt) ? maxMeasureUpdatedAt.format('DD/MM/YYYY'): null;
       measuresSortedByDate[0].updateDueOn = (measures.length > 0 && measures[0].updateDueOn) ? moment(measures[0].updateDueOn, 'DD/MM/YYYY').format("DD/MM/YYYY") : null;
-      console.log('***measuresSortedByDate[0].updateDueOn',measuresSortedByDate[0].updateDueOn)
       return measuresSortedByDate[0];
     });
-
-    groupMeasure.children.forEach(c => {
-      if (c.metricID === 'gp4') {
-        console.log('***measures child', c)
-      }
-    })
-    console.log('***groupMeasure.children', groupMeasure.children);
 
     const maxGroupUpdatedAt = getMaxUpdateAtForMeasures(groupMeasure.children);
     groupMeasure.colour = rayg.getRaygColour(groupMeasure);

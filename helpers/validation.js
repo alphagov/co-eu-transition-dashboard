@@ -23,7 +23,6 @@ const validateNumber = value => {
 };
 
 const validateDate = value => {
-  console.log('***validateDate', value);
   const isValidDate = moment(value).isValid();
   if(!isValidDate) {
     throw Error(`Is not a valid date`);

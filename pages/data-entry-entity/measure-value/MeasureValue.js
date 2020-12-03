@@ -301,7 +301,6 @@ class MeasureValue extends Page {
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ["Error in entity data"] });
     }
-    console.log('***updateMeasureValues entitiesToBeSaved', entitiesToBeSaved);
     return await this.saveMeasureData(entitiesToBeSaved, { updatedAt: true });
   }
 
