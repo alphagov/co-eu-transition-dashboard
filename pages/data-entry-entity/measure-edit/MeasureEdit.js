@@ -13,7 +13,7 @@ const logger = require('services/logger');
 const sequelize = require('services/sequelize');
 const flash = require('middleware/flash');
 const rayg = require('helpers/rayg');
-const tags = require('helpers/tags');
+const tagsHelper = require('helpers/tags');
 const filterMetricsHelper = require('helpers/filterMetrics');
 const { buildDateString } = require('helpers/utils');
 const get = require('lodash/get');
@@ -173,7 +173,7 @@ class MeasureEdit extends Page {
         updatedAt: entity.updated_at
       };
 
-      if (entity.tags.length > 0) {
+      if (entity.tags && entity.tags.length) {
         entityMapped.tags = entity.tags.map(tag => tag.id)
       }
 
@@ -547,16 +547,16 @@ class MeasureEdit extends Page {
     return tags;
   }
 
-  async updateEntityTags({ tags: tagsData }) {
+  async updateEntityTags({ tags }) {
     const { raygEntities } = await this.getMeasure();
     const transaction = await sequelize.transaction();
     let redirectUrl = `${this.measureUrl}/successful`
 
     try {
       for(const entity of raygEntities) {
-        await tags.removeEntitiesTags(entity.id, transaction);
-        if (tagsData) {
-          await tags.createEntityTags(entity.id, tagsData, transaction);
+        await tagsHelper.removeEntitiesTags(entity.id, transaction);
+        if (tags && tags.length) {
+          await tagsHelper.createEntityTags(entity.id, tags, transaction);
         }
       }
       await transaction.commit();

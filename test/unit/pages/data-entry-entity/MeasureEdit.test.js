@@ -11,9 +11,11 @@ const Category = require('models/category');
 const CategoryField = require('models/categoryField');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
+const Tag = require('models/tag');
 const flash = require('middleware/flash');
 const sequelize = require('services/sequelize');
 const measures = require('helpers/measures');
+const tagsHelper = require('helpers/tags');
 const moment = require('moment');
 
 let page = {};
@@ -56,6 +58,12 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     });
   });
 
+  describe('#tagsUrl', () => {
+    it('returns url for edit measure', () => {
+      expect(page.tagsUrl).to.eql(`${page.url}/${req.params.metricId}/${req.params.groupId}/tags`);
+    });
+  });
+
   describe('#addMeasure', () => {
     it('returns true when type equals add', () => {
       page.req.params = { metricId: '123', successful: 'successful', type: "add" };
@@ -76,6 +84,17 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
 
     it('returns false when type does not equal edit', () => {
       expect(page.editMeasure).to.be.not.ok;
+    });
+  });
+
+  describe('#editTags', () => {
+    it('returns true when type equals tags', () => {
+      page.req.params = { metricId: '123', type: "tags" };
+      expect(page.editTags).to.be.ok;
+    });
+
+    it('returns false when type does not equal tags', () => {
+      expect(page.editTags).to.be.not.ok;
     });
   });
 
@@ -207,6 +226,8 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
               model: Category
             }]
           }]
+        }, {
+          model: Tag
         }]
       });
     });
@@ -458,6 +479,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     beforeEach(() => {
       sinon.stub(page, 'addMeasureEntityData').returns([])
       sinon.stub(page, 'updateMeasureInformation').returns([])
+      sinon.stub(page, 'updateEntityTags').returns([])
     });
 
     afterEach(() => {
@@ -491,6 +513,15 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       await page.postRequest(req, res);
 
       sinon.assert.calledWith(page.updateMeasureInformation, req.body);
+    });
+
+    it('should call updateEntityTags when type is tags', async () => {
+      page.req.params = { metricId: '123', successful: 'successful', type: "tags" };
+      req.user = { isAdmin: true, getPermittedMetricMap: sinon.stub().returns({}) }
+
+      await page.postRequest(req, res);
+
+      sinon.assert.calledWith(page.updateEntityTags, req.body);
     });
 
     it('should call redirect if no error and not add or Edit Measure', async () => {
@@ -796,6 +827,77 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       await page.saveMeasureData(entities, URLHash);
 
       sinon.assert.calledWith(page.res.redirect, `${page.url}/${req.params.metricId}/${req.params.groupId}${URLHash}`);
+      sinon.assert.calledOnce(transaction.rollback);
+    });
+  });
+
+  describe('#getTags', () => {
+    const getMeasureData = {
+      raygEntities: [{ id: 123, tags: ['15', '16'] }],
+    };
+
+    beforeEach(() => {
+      sinon.stub(page, 'getMeasure').returns(getMeasureData);
+      Tag.findAll.returns([ { dataValues: { id: '15', name: 'test' } }, { dataValues: { id: '17', name: 'test2' } }]);
+    });
+
+    afterEach(() => {
+      page.getMeasure.restore();
+    });
+
+    it('should call getTags and return data in the correct format', async () => {
+
+      const response = await page.getTags();
+
+      expect(response).to.eql([{
+        value: '15',
+        text: 'test',
+        checked: true
+      }, {
+        value: '17',
+        text: 'test2',
+        checked: false
+      }]);
+    });
+  });
+
+  describe('#updateEntityTags', () => {
+    const entityId = 345;
+    const getMeasureData = {
+      raygEntities: [{ id: entityId }],
+    };
+    const transaction = sequelize.transaction();
+
+    beforeEach(() => {
+      sinon.stub(page, 'getMeasure').returns(getMeasureData);
+      sinon.stub(tagsHelper, 'removeEntitiesTags')
+      sinon.stub(tagsHelper, 'createEntityTags')
+    });
+
+    afterEach(() => {
+      page.getMeasure.restore();
+      tagsHelper.removeEntitiesTags.restore();
+      tagsHelper.createEntityTags.restore();
+      transaction.commit.reset();
+      transaction.rollback.reset();
+    });
+
+    it('should call removeEntitiesTags and not createEntityTags when tagsData is empty ', async () => {
+      const formData = { tags: [] }
+      await page.updateEntityTags(formData);
+
+      sinon.assert.calledWith(tagsHelper.removeEntitiesTags, entityId, transaction);
+      sinon.assert.notCalled(tagsHelper.createEntityTags);
+      sinon.assert.calledOnce(transaction.commit);
+      sinon.assert.calledWith(page.res.redirect, `${page.url}/${req.params.metricId}/${req.params.groupId}/successful`);
+    });
+
+    it('should rollback transaction on error', async () => {
+      tagsHelper.removeEntitiesTags.throws(new Error('error'));
+
+      await page.updateEntityTags({});
+
+      sinon.assert.calledWith(page.res.redirect, `${page.url}/${req.params.metricId}/${req.params.groupId}#tags`);
       sinon.assert.calledOnce(transaction.rollback);
     });
   });
