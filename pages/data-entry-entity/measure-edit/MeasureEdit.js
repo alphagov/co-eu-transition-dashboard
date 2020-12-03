@@ -479,9 +479,12 @@ class MeasureEdit extends Page {
     return newEntities
   }
 
+
   async addMeasureEntityData (formData) {
     const { measuresEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
+    
     let allMeasures = [];
+
     measuresEntities.forEach(m => {
       const { theme, createdAt, updatedAt, colour, ...other } = m;
       allMeasures.push(other);
@@ -490,10 +493,8 @@ class MeasureEdit extends Page {
       const { theme, createdAt, updatedAt, colour, ...other } = m;
       allMeasures.push(other);
     });
-    console.log('***allMeasures', allMeasures);
+    
     const latestmeasure = maxBy(allMeasures, m => moment(m.date, 'DD/MM/YYYY'));
-    console.log('***latestmeasure', {...latestmeasure});  
-
     formData.entities = utils.removeNulls(formData.entities)
 
     const formValidationErrors = await measures.validateFormData(formData, measuresEntities);
@@ -506,7 +507,11 @@ class MeasureEdit extends Page {
     const updateDueOn = this.calculateUpdateDueOn(
       formData, latestmeasure.date, 
       latestmeasure.updateDueOn, latestmeasure.frequency);
-    newEntities.forEach(e=> e.updateDueOn = updateDueOn);
+    newEntities.forEach(e=> {
+      if (e.updateDueOn) {
+        e.updateDueOn = updateDueOn
+      }
+    });
     
     console.log('***updateDueOn', updateDueOn); // DD/MM/YYYY; YYYY-MM-DD
     console.log('***newEntities1', [...newEntities])
@@ -518,7 +523,9 @@ class MeasureEdit extends Page {
     console.log('***entitiesToBeSaved1', [...entitiesToBeSaved])
     entitiesToBeSaved = [...entitiesToBeSaved, ...allMeasures];
     entitiesToBeSaved.forEach(e=> {
-      e.updateDueOn = updateDueOn
+      if (e.updateDueOn) {
+        e.updateDueOn = updateDueOn
+      }
     });
     console.log('***entitiesToBeSaved1', entitiesToBeSaved)
 

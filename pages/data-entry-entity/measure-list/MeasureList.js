@@ -30,7 +30,7 @@ class MeasureList extends Page {
     });
     
     const measureEntitiesGrouped = await measures.groupMeasures(measureEntities);
-    console.log('***measureEntities', measureEntitiesGrouped.filter(measure => measure.children.length > 1)[1].children);
+    console.log('***measureEntities', measureEntitiesGrouped.filter(measure => measure.children.length === 1));
     return {
       grouped: measureEntitiesGrouped.filter(measure => measure.children.length > 1),
       notGrouped: measureEntitiesGrouped.filter(measure => measure.children.length === 1)

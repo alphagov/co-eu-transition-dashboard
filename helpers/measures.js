@@ -179,7 +179,6 @@ const getMeasureEntities = async({ measureCategory, themeCategory, where, user }
     const themeName = theme.entityFieldEntries.find(fieldEntry => {
       return fieldEntry.categoryField.name === 'name';
     });
-    const d = entity.entityFieldEntries.filter(efe => efe.categoryField.id === 42);
     const entityMapped = {
       id: entity.id,
       publicId: entity.publicId,
@@ -206,7 +205,7 @@ const groupMeasures = (measures) => {
     if(!groupMeasure) {
       return measureGroups;
     }
-    console
+    
     const nonRaygRows = group.filter(measure => measure.filter !== 'RAYG');
 
     const measuresGroupedByMetricId = groupBy(nonRaygRows, entity => entity.metricID);
@@ -217,10 +216,16 @@ const groupMeasures = (measures) => {
       measuresSortedByDate[0].colour = rayg.getRaygColour(measuresSortedByDate[0]);
       measuresSortedByDate[0].updatedAt = maxMeasureUpdatedAt
       measuresSortedByDate[0].updatedAtDate = (maxMeasureUpdatedAt) ? maxMeasureUpdatedAt.format('DD/MM/YYYY'): null;
-      measuresSortedByDate[0].updateDueOn = (measures.length > 0 && measures[0].updateDueOn) ? moment(measures[0].updateDueOn, 'DD/MM/YYYY').format("DD/MM/YYYY") : "N/A";
+      measuresSortedByDate[0].updateDueOn = (measures.length > 0 && measures[0].updateDueOn) ? moment(measures[0].updateDueOn, 'DD/MM/YYYY').format("DD/MM/YYYY") : null;
+      console.log('***measuresSortedByDate[0].updateDueOn',measuresSortedByDate[0].updateDueOn)
       return measuresSortedByDate[0];
     });
 
+    groupMeasure.children.forEach(c => {
+      if (c.metricID === 'gp4') {
+        console.log('***measures child', c)
+      }
+    })
     console.log('***groupMeasure.children', groupMeasure.children);
 
     const maxGroupUpdatedAt = getMaxUpdateAtForMeasures(groupMeasure.children);
