@@ -17,6 +17,7 @@ const { buildDateString } = require('helpers/utils');
 const get = require('lodash/get');
 const groupBy = require('lodash/groupBy');
 const uniq = require('lodash/uniq');
+const maxBy = require('lodash/maxBy')
 const measures = require('helpers/measures')
 const moment = require('moment');
 const utils = require('helpers/utils');
@@ -151,12 +152,12 @@ class MeasureEdit extends Page {
         return fieldEntry.categoryField.name === 'name';
       });
 
-      const parentPublicId = get(entity, 'parents[0].publicId');
+      const parentStatementPublicId = get(entity, 'parents[0].publicId');
       const entityMapped = {
         id: entity.id,
         publicId: entity.publicId,
         theme: themeName.value,
-        parentPublicId,
+        parentStatementPublicId,
         createdAt: entity.created_at,
         updatedAt: entity.updated_at
       };
@@ -237,7 +238,7 @@ class MeasureEdit extends Page {
     // If measure is part of a group, and the measure id is used as both metricId and groupId hide the delete button
     // This item will be able to be deleted after the rest of the group items have been removed.
     const preventDeleteForGroupMeasure = !isOnlyMeasureInGroup & this.req.params.metricId === this.req.params.groupId
-    return {
+    const measureData = {
       latest: measuresEntities[measuresEntities.length - 1],
       grouped: groupedMeasureEntities,
       fields: uiInputs,
@@ -248,6 +249,8 @@ class MeasureEdit extends Page {
       preventDeleteForGroupMeasure,
       updatedAt: updatedAt.format('DD/MM/YYYY')
     }
+    console.log('***measureData', measureData);
+    return measureData;
   }
 
   async getEntitiesToBeCloned(entityIds) {
@@ -290,6 +293,18 @@ class MeasureEdit extends Page {
 
       return entityMapped;
     });
+  }
+
+  calculateUpdateDueOn(formData, latestEntityDate, currentUpdateDueOn, frequency) {
+    console.log('***calculateUpdateDueOn',formData, latestEntityDate, currentUpdateDueOn, frequency)
+    if (!currentUpdateDueOn || !frequency) {
+      return null;
+    }
+    const mCurrentUpdateDueOn = moment(currentUpdateDueOn, "DD/MM/YYYY");
+    const mLatestEntityDate = moment(latestEntityDate, "DD/MM/YYYY");
+    const entityDate = moment(buildDateString(formData), "YYYY-MM-DD");
+    const entityUpdateDueOn = entityDate.isSameOrAfter(mLatestEntityDate) ? mCurrentUpdateDueOn.add(frequency, 'd') : mCurrentUpdateDueOn;
+    return entityUpdateDueOn.format('YYYY-MM-DD');
   }
 
   createEntitiesFromClonedData(merticEntities, formData) {
@@ -454,7 +469,7 @@ class MeasureEdit extends Page {
       raygEntities.forEach(raygEntity => {
         newEntities.push({
           publicId: raygEntity.publicId,
-          parentStatementPublicId: raygEntity.parentPublicId,
+          parentStatementPublicId: raygEntity.parentStatementPublicId,
           date: newDate,
           value
         })
@@ -466,6 +481,18 @@ class MeasureEdit extends Page {
 
   async addMeasureEntityData (formData) {
     const { measuresEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
+    let allMeasures = [];
+    measuresEntities.forEach(m => {
+      const { theme, createdAt, updatedAt, colour, ...other } = m;
+      allMeasures.push(other);
+    });
+    raygEntities.forEach(m => {
+      const { theme, createdAt, updatedAt, colour, ...other } = m;
+      allMeasures.push(other);
+    });
+    console.log('***allMeasures', allMeasures);
+    const latestmeasure = maxBy(allMeasures, m => moment(m.date, 'DD/MM/YYYY'));
+    console.log('***latestmeasure', {...latestmeasure});  
 
     formData.entities = utils.removeNulls(formData.entities)
 
@@ -475,17 +502,32 @@ class MeasureEdit extends Page {
     }
 
     const clonedEntities = await this.getEntitiesToBeCloned(Object.keys(formData.entities))
-    const newEntities = await this.createEntitiesFromClonedData(clonedEntities, formData)
+    const newEntities = await this.createEntitiesFromClonedData(clonedEntities, formData);
+    const updateDueOn = this.calculateUpdateDueOn(
+      formData, latestmeasure.date, 
+      latestmeasure.updateDueOn, latestmeasure.frequency);
+    newEntities.forEach(e=> e.updateDueOn = updateDueOn);
+    
+    console.log('***updateDueOn', updateDueOn); // DD/MM/YYYY; YYYY-MM-DD
+    console.log('***newEntities1', [...newEntities])
+    console.log('***newEntities2', newEntities)
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
 
-    const entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measuresEntities, raygEntities, uniqMetricIds)
+    // These are the entities which is being added by the form
+    let entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measuresEntities, raygEntities, uniqMetricIds)
+    console.log('***entitiesToBeSaved1', [...entitiesToBeSaved])
+    entitiesToBeSaved = [...entitiesToBeSaved, ...allMeasures];
+    entitiesToBeSaved.forEach(e=> {
+      e.updateDueOn = updateDueOn
+    });
+    console.log('***entitiesToBeSaved1', entitiesToBeSaved)
 
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ['Error in entity data'] });
     }
 
     const URLHash = `#data-entries`;
-    return await this.saveMeasureData(entitiesToBeSaved, URLHash, { updatedAt: true });
+    return this.saveMeasureData(entitiesToBeSaved, URLHash, { updatedAt: true });
   }
 
   async saveMeasureData(entities, URLHash, options = {}) {

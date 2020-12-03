@@ -277,7 +277,14 @@ class MeasureValue extends Page {
 
   async updateMeasureValues(formData) {
     const { measureEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
-    
+
+    console.log('***updateMeasureValues before', [...measureEntities, ...raygEntities])
+    const frequency = measureEntities[0].frequency ? measureEntities[0].frequency : 7; //toto: put 7 in config
+    const updateDueOn = moment().add(frequency, 'd').format('YYYY-MM-DD');
+    measureEntities.forEach(e => e.updateDueOn = updateDueOn);
+    raygEntities.forEach(e => e.updateDueOn = updateDueOn);
+    console.log('***updateMeasureValues after', [...measureEntities, ...raygEntities])
+
     measures.applyLabelToEntities(measureEntities);
     
     const entitiesForSelectedDate = measureEntities.filter((measure) => measure.date === this.req.params.date);
@@ -301,7 +308,18 @@ class MeasureValue extends Page {
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ["Error in entity data"] });
     }
-    console.log('***updateMeasureValues entitiesToBeSaved', entitiesToBeSaved);
+
+    // This is the entity which has been updated by the form
+    const entitiesToBeSavedIds = entitiesToBeSaved.map(entity => entity.id);
+    
+    // Get all the entities which have NOT been updated by the form, but needs the updateDueOn to be updated
+    const entitiesToUpdateDateDueOn = [...measureEntities, ...raygEntities];
+    entitiesToUpdateDateDueOn.forEach((entity) => {
+      if(!entitiesToBeSavedIds.includes(entity.id)) {
+        entitiesToBeSaved.push(entity);
+      }
+    });
+    console.log('****updateMeasureValues entitiesToBeSaved', entitiesToBeSaved)
     return await this.saveMeasureData(entitiesToBeSaved, { updatedAt: true });
   }
 
@@ -435,6 +453,7 @@ class MeasureValue extends Page {
 
   async getMeasureData() {
     const { measureEntities, uniqMetricIds } = await this.getMeasure();
+    console.log('***getMeasureData', measureEntities);
     measures.applyLabelToEntities(measureEntities);
     const uiInputs = measures.calculateUiInputs(measureEntities);
 
