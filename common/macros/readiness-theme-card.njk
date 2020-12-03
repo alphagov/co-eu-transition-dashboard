@@ -9,7 +9,7 @@
     </div>
     {% if item.active %}
       <hr class="govuk-section-break govuk-section-break--visible">
-      <a href="{{ item.link }}" class="overview-card--link govuk-link">All theme data</a>
+      <a href="{{ item.link }}" aria-label="{{ item.name }}" class="overview-card--link govuk-link">All theme data</a>
     {% endif %}
   </div>
 {% endmacro %}
