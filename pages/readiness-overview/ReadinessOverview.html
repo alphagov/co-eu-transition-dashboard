@@ -15,24 +15,23 @@
 <div class="govuk-grid-row readiness-overview">
   <div class="govuk-grid-column-full">
     <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-third search-right">{{searchMeasuresForm(searchUrl)}}</div>
       <h1 class="govuk-heading-l govuk-grid-column-two-thirds">Transition Readiness Overview</h1>
-      <div class="govuk-grid-column-one-third">{{searchMeasuresForm(searchUrl)}}</div>
     </div>
-    <span class="govuk-caption-m govuk-!-margin-bottom-2">Last updated on {{ getLastUpdatedAt() | await }}</span>
     <p class="govuk-body-s govuk-!-margin-bottom-5"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
     <div class="govuk-grid-row">
 
       <div class="govuk-grid-column-one-quarter">
-        <h2 class="govuk-heading-m govuk-!-margin-bottom-2" id="headline-figures">Headline<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
-        <span class="govuk-caption-m">A set of measures that are of high significance in terms of the readiness.</span>
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-0" id="headline-figures">Headline figures<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
 
         <div class="overview-card-holder headline-figure top-statements">
           {% for item in data.headlineMeasures %}
-            <div class="overview-card">
+            <div class="overview-card {{ item.color }}">
               <div class="overview-card--inner">    
                 <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ item.name }}</p>
                 <span class="overview-card--tag-theme govuk-heading-s govuk-!-margin-bottom-3">{{ item.theme }}</span>
-                {{ currentStatus(item.color) }}
+                {{ currentStatus(item.color, true) }}
               </div>
                 <hr class="govuk-section-break govuk-section-break--visible">
                 <a href="{{ item.link }}" class="overview-card--link govuk-link">Data visualisation</a>
@@ -42,13 +41,14 @@
       </div>
 
       <div class="govuk-grid-column-three-quarters">
-        <h2 class="govuk-heading-m govuk-!-margin-bottom-2" id="themes"><a class="govuk-link govuk-!-margin-right-6 overview-link" style="display:none" href="#headline-figures">Headline figures</a>Themes</h2>
-        <span class="govuk-caption-m">Themes are a set of predefined groupings that share common characteristics. Each theme and it's corresponding measures and metrics is defined by it's element of risk in regards to readiness.</span>
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-0" id="themes"><a class="govuk-link govuk-!-margin-right-6 overview-link" style="display:none" href="#headline-figures">Headline figures</a>Themes</h2>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
 
         <div class="govuk-grid-row">
 
           {# High risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
+            <h3 class="govuk-body govuk-!-margin-bottom-2">High risk</h3>
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.red %}
                 {{ readinessThemeCard(item) }}
@@ -58,6 +58,7 @@
 
           {# Medium risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
+          <h3 class="govuk-body govuk-!-margin-bottom-2">Medium risk</h3>
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.amber %}
                 {{ readinessThemeCard(item) }}
@@ -67,6 +68,7 @@
 
            {# Low risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
+          <h3 class="govuk-body govuk-!-margin-bottom-2">Low risk</h3>
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.yellow %}
                 {{ readinessThemeCard(item) }}
@@ -76,6 +78,7 @@
 
            {# Minimal risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
+          <h3 class="govuk-body govuk-!-margin-bottom-2">Minimal/No risk</h3>
             <div class="overview-card-holder top-statements">
               {% for item in data.themes.green %}
                 {{ readinessThemeCard(item) }}

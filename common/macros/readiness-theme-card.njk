@@ -1,11 +1,11 @@
 {% from "status.njk" import currentStatus %}
 
 {% macro readinessThemeCard(item) %}
-  <div class="overview-card {{ "inactive" if not item.active }}">
+  <div class="overview-card {{ item.color }} {{ "inactive" if not item.active }}">
     <div class="overview-card--inner">
       <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ item.name }}</p>
       <p>{{ item.description }}</p>
-      {{ currentStatus(item.color if item.active else "grey") }}
+      {{ currentStatus(item.color if item.active else "grey", true) }}
     </div>
     {% if item.active %}
       <hr class="govuk-section-break govuk-section-break--visible">
