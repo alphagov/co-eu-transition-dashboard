@@ -3,6 +3,7 @@
 {% from "attribute.njk" import ariaCurrent %}
 {% from "searchMeasures.njk" import searchMeasuresForm %}
 {% from "status.njk" import currentStatus %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 
 {% set data = data() | await %}
 {% set activeStatement = '' %}
@@ -16,6 +17,26 @@
 <div class="govuk-grid-column-full">
 
   <a href="{{ config.paths.readinessOverview }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.theme }}" style="display: none;">Overview</a>
+
+  <div class="govuk-breadcrumbs" id="breadcrumbs-theme">
+    <ol class="govuk-breadcrumbs__list">
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="{{ config.paths.readinessOverview }}">Overview</a>
+      </li>
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="{{ themeUrl }}">{{ data.theme.name }}</a>
+      </li>
+      {% if req.params.statement %}
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="{{ themeUrl }}/{{ req.params.statement }}">{{ activeStatement }}</a>
+      </li>
+      {% endif %}
+      {% if req.params.selectedPublicId %}
+      <li class="govuk-breadcrumbs__list-item">{{ req.params.selectedPublicId }}</li>
+      {% endif %}
+    </ol>
+  </div>
+
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div class="govuk-grid-column-one-third no-horizontal-padding search-right">{{searchMeasuresForm(searchUrl)}}</div>
