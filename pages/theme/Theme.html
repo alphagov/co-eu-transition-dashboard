@@ -42,7 +42,7 @@
         {{ currentStatus(topOutcome.color, true) }}
         </div>
         <hr class="govuk-section-break govuk-section-break--visible">
-        <a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>Explore data</a>
+        <a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" aria-label="{{ topOutcome.name }}" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>Explore data</a>
       </div>
     {% endfor %}
     </div>
