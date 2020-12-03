@@ -1,30 +1,11 @@
-.rayg-def {
-    padding: 4px 15px 4px 15px;
-    border-left: 0;
-    height: 20px;
-    width: 20px;
-  
-    &.red {
-      background-color: #D4351C;
-    }
-  
-    &.amber {
-      background-color: #F47738;
-    }
-  
-    &.yellow {
-      background-color: #FFDD00;
-    }
-  
-    &.green {
-      background-color: #00703C;
-    }
-
-    &.grey {
-      background-color: #b1b4b6;
-    }
-
-    &.blue {
-      background-color: #1d70b8;
-    }
+.rayg-table {
+  width: 60%;
+  td, img {
+    vertical-align: middle;
   }
+}
+
+.rayg-icon {
+  width: 28px;
+  height: 26px;
+}

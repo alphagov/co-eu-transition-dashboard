@@ -3,7 +3,6 @@ const { paths } = require('config');
 const authentication = require('services/authentication');
 const { ipWhiteList } = require('middleware/ipWhitelist');
 const entityUserPermissions = require('middleware/entityUserPermissions');
-const sequelize = require('services/sequelize');
 
 let page = {};
 let res = {};
@@ -37,21 +36,6 @@ describe('pages/readiness-overview/ReadinessOverview', () => {
       ]);
 
       sinon.assert.calledWith(authentication.protect, ['viewer', 'static']);
-    });
-  });
-
-  describe('#getLastUpdatedAt', () => {
-    beforeEach(() => {
-      sequelize.query.resolves([[{ updated_at: '2020-11-11 11:52:06' }]]);
-    });
-
-    it('calls sequelize.query with correct query and returns date', async () => {
-      const date = await page.getLastUpdatedAt();
-      expect(date).to.eql('Wednesday 11 November 2020 at 11:52am');
-
-      sinon.assert.calledWith(sequelize.query, `
-      SELECT MAX(updated_at) AS updated_at
-      FROM entity`);
     });
   });
 });
