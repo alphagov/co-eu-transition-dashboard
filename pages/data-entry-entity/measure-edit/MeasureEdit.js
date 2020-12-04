@@ -8,10 +8,12 @@ const Category = require('models/category');
 const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
 const EntityFieldEntry = require('models/entityFieldEntry');
+const Tag = require('models/tag');
 const logger = require('services/logger');
 const sequelize = require('services/sequelize');
 const flash = require('middleware/flash');
 const rayg = require('helpers/rayg');
+const tagsHelper = require('helpers/tags');
 const filterMetricsHelper = require('helpers/filterMetrics');
 const { buildDateString } = require('helpers/utils');
 const get = require('lodash/get');
@@ -43,6 +45,10 @@ class MeasureEdit extends Page {
     return `${this.measureUrl}/edit`
   }
 
+  get tagsUrl() {
+    return `${this.measureUrl}/tags`
+  }
+
   get pathToBind() {
     return `${this.url}/:metricId/:groupId/:type?`;
   }
@@ -53,6 +59,10 @@ class MeasureEdit extends Page {
 
   get editMeasure() {
     return this.req.params && this.req.params.type == 'edit';
+  }
+
+  get editTags() {
+    return this.req.params && this.req.params.type == 'tags';
   }
 
   get deleteMeasureUrl() {
@@ -119,6 +129,8 @@ class MeasureEdit extends Page {
             model: Category
           }]
         }]
+      },{
+        model: Tag
       }]
     });
 
@@ -161,6 +173,10 @@ class MeasureEdit extends Page {
         createdAt: entity.created_at,
         updatedAt: entity.updated_at
       };
+
+      if (entity.tags && entity.tags.length) {
+        entityMapped.tags = entity.tags.map(tag => tag.id)
+      }
 
       entity.entityFieldEntries.map(entityfieldEntry => {
         entityMapped[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
@@ -331,6 +347,10 @@ class MeasureEdit extends Page {
 
     if (this.editMeasure) {
       return await this.updateMeasureInformation(req.body)
+    }
+
+    if (this.editTags) {
+      return await this.updateEntityTags(req.body)
     }
 
     return res.redirect(this.measureUrl);
@@ -552,6 +572,46 @@ class MeasureEdit extends Page {
     }
     return this.res.redirect(`${redirectUrl}${URLHash}`);
   }
+
+  async getTags() {
+    const { raygEntities } = await this.getMeasure();
+
+    // In the event we have multiple RAYG rows the tags would be the same for each row so it is safe 
+    // to use the first entry to populate the selected items
+    const raygRow = raygEntities[0].tags || [];
+
+    const tags = await Tag.findAll().map(tag => ({
+      value: tag.dataValues.id,
+      text: tag.dataValues.name,
+      checked: raygRow.includes(tag.dataValues.id)
+    }));
+    
+    return tags;
+  }
+
+  async updateEntityTags({ tags }) {
+    const { raygEntities } = await this.getMeasure();
+    const transaction = await sequelize.transaction();
+    let redirectUrl = `${this.measureUrl}/successful`
+
+    try {
+      for(const entity of raygEntities) {
+        await tagsHelper.removeEntitiesTags(entity.id, transaction);
+        if (tags && tags.length) {
+          await tagsHelper.createEntityTags(entity.id, tags, transaction);
+        }
+      }
+      await transaction.commit();
+    } catch (error) {
+      redirectUrl = `${this.measureUrl}#tags`
+      logger.error(error);
+      this.req.flash(['Error saving tags']);
+      await transaction.rollback();
+    }
+    return this.res.redirect(`${redirectUrl}`);
+  }
+
+ 
 }
 
 module.exports = MeasureEdit;
