@@ -865,13 +865,15 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       sinon.stub(measures, 'validateFormData').returns([])
       measures.validateEntities.returns({ errors: [], parsedEntities })
       const formData = { day: 23, month: 12, year: 2020, type: 'entries', entities: { 1216: 333 } };
+      let copyAllMeasures = allMeasures.slice();
+      copyAllMeasures.forEach(m => m.date = moment(m.date, 'DD/MM/YYYY').format('YYYY-MM-DD'));
 
       await page.addMeasureEntityData(formData);
 
       sinon.assert.calledWith(page.getEntitiesToBeCloned, ["1216"]);
       sinon.assert.calledWith(page.createEntitiesFromClonedData, clonedEntities, formData);
       sinon.assert.calledWith(measures.validateEntities, newEntities);
-      entitiesToBeSaved = [...entitiesToBeSaved, ...allMeasures];
+      entitiesToBeSaved = [...entitiesToBeSaved, ...copyAllMeasures];
       entitiesToBeSaved.forEach(e=>e.updateDueOn = '2020-12-28');
       sinon.assert.calledWith(page.saveMeasureData, entitiesToBeSaved, `#data-entries`, { updatedAt: true });
     });

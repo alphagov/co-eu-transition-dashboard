@@ -215,7 +215,7 @@ const groupMeasures = (measures) => {
       measuresSortedByDate[0].colour = rayg.getRaygColour(measuresSortedByDate[0]);
       measuresSortedByDate[0].updatedAt = maxMeasureUpdatedAt
       measuresSortedByDate[0].updatedAtDate = (maxMeasureUpdatedAt) ? maxMeasureUpdatedAt.format('DD/MM/YYYY'): null;
-      measuresSortedByDate[0].updateDueOn = (measures.length > 0 && measures[0].updateDueOn) ? moment(measures[0].updateDueOn, 'DD/MM/YYYY').format("DD/MM/YYYY") : null;
+      measuresSortedByDate[0].updateDueOn = (measures.length > 0 && measures[0].updateDueOn) ? measures[0].updateDueOn : null;
       return measuresSortedByDate[0];
     });
 

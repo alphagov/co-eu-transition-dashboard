@@ -17,7 +17,6 @@ const { buildDateString } = require('helpers/utils');
 const get = require('lodash/get');
 const groupBy = require('lodash/groupBy');
 const uniq = require('lodash/uniq');
-const maxBy = require('lodash/maxBy')
 const measures = require('helpers/measures')
 const moment = require('moment');
 const utils = require('helpers/utils');
@@ -484,15 +483,16 @@ class MeasureEdit extends Page {
     measuresEntities.forEach(m => {
       // eslint-disable-next-line no-unused-vars
       const { theme, createdAt, updatedAt, colour, ...other } = m;
+      other.date = moment(other.date, "DD/MM/YYYY").format("YYYY-MM-DD");
       allMeasures.push(other);
     });
     raygEntities.forEach(m => {
       // eslint-disable-next-line no-unused-vars
       const { theme, createdAt, updatedAt, colour, ...other } = m;
+      other.date = moment(other.date, "DD/MM/YYYY").format("YYYY-MM-DD");
       allMeasures.push(other);
     });
-    
-    const latestmeasure = maxBy(allMeasures, m => moment(m.date, 'DD/MM/YYYY'));
+    const latestmeasure = measuresEntities[measuresEntities.length - 1];
     formData.entities = utils.removeNulls(formData.entities)
 
     const formValidationErrors = await measures.validateFormData(formData, measuresEntities);
@@ -500,7 +500,7 @@ class MeasureEdit extends Page {
       return this.renderRequest(this.res, { errors: formValidationErrors });
     }
 
-    const clonedEntities = await this.getEntitiesToBeCloned(Object.keys(formData.entities))
+    const clonedEntities = await this.getEntitiesToBeCloned(Object.keys(formData.entities));
     const newEntities = await this.createEntitiesFromClonedData(clonedEntities, formData);
     const updateDueOn = this.calculateUpdateDueOn(
       formData, latestmeasure.date, 
@@ -510,7 +510,6 @@ class MeasureEdit extends Page {
         e.updateDueOn = updateDueOn
       }
     });
-
     
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
     // These are the entities which is being added by the form
@@ -521,7 +520,6 @@ class MeasureEdit extends Page {
         e.updateDueOn = updateDueOn
       }
     });
-
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ['Error in entity data'] });
     }
