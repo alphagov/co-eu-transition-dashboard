@@ -28,7 +28,7 @@
       </li>
       {% if req.params.statement %}
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{{ themeUrl }}/{{ req.params.statement }}">{{ activeStatement }}</a>
+        <a class="govuk-breadcrumbs__link" href="{{ themeUrl }}/{{ req.params.statement }}">{{ req.params.statement }}</a>
       </li>
       {% endif %}
       {% if req.params.selectedPublicId %}
