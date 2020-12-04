@@ -479,7 +479,6 @@ class MeasureEdit extends Page {
 
   async addMeasureEntityData (formData) {
     const { measuresEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
-    
     let allMeasures = [];
 
     measuresEntities.forEach(m => {
@@ -511,9 +510,9 @@ class MeasureEdit extends Page {
         e.updateDueOn = updateDueOn
       }
     });
+
     
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
-
     // These are the entities which is being added by the form
     let entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measuresEntities, raygEntities, uniqMetricIds)
     entitiesToBeSaved = [...entitiesToBeSaved, ...allMeasures];
