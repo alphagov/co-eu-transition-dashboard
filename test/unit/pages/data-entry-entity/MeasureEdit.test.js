@@ -190,7 +190,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       expect(response).to.eql({ 
         groupEntities: [{
           id: 'some-id',
-          parentPublicId: 'parent-1',
+          parentStatementPublicId: 'parent-1',
           publicId: 'some-public-id-1',
           colour: 'green',
           theme: 'borders',
@@ -572,7 +572,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
   describe('#updateRaygRowForSingleMeasureWithNoFilter', () => {
     const entities = [{ id: 1, value: 'hello again', parentStatementPublicId: 'state-1'  }];
     const measuresEntities = [{ metricID: 'metric1', date: '05/10/2020', value: 2 }];
-    const raygEntities = [{ value: 1, publicId: 'pub-1', parentPublicId: 'state-1' }];
+    const raygEntities = [{ value: 1, publicId: 'pub-1', parentStatementPublicId: 'state-1' }];
     const uniqMetricIds = ['metric1'];
 
     it('should return an array when measure is the only item in the group and that has not filter values set', async () => {
@@ -720,23 +720,143 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
 
 
   describe('#addMeasureEntityData', () => {
-    const clonedEntities = [{ id: 1, value: 'hello' }];
-    const newEntities = [{ id: 1, value: 'hello again' }];
-    const errors = [{ error: 'error' }]
-    const parsedEntities = [{ id: 1, value: 'parsed again' }];
+    const measuresEntities = [{
+      id: 1216,
+      publicId: 'measure-534',
+      theme: 'Borders',
+      parentStatementPublicId: 'statement-01-01-01',
+      createdAt: '2020-12-03T15:59:39.000Z',
+      updatedAt: '2020-12-04T10:47:40.000Z',
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 2,
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '20/12/2020',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      updateDueOn: '24/12/2020',
+      colour: 'red'
+    },
+    {
+      id: 1230,
+      publicId: 'measure-548',
+      theme: 'Borders',
+      parentStatementPublicId: 'statement-01-01-01',
+      createdAt: '2020-12-04T10:47:40.000Z',
+      updatedAt: '2020-12-04T10:47:40.000Z',
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 222,
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '21/12/2020',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      updateDueOn: '24/12/2020',
+      colour: 'green'
+    }
+    ]
+
+    const raygEntities = [{
+      id: 1217,
+      publicId: 'measure-535',
+      theme: 'Borders',
+      parentStatementPublicId: 'statement-01-01-01',
+      createdAt: '2020-12-03T15:59:39.000Z',
+      updatedAt: '2020-12-04T10:47:40.000Z',
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 2,
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '20/12/2020',
+      filter: 'RAYG',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      updateDueOn: '24/12/2020',
+      colour: 'red'
+    }
+    ]
 
     const getMeasureData = {
-      measuresEntities: [{ metricID: 'metric1', date: '05/10/2020', value: 2 }],
-      raygEntities: [{ value: 1, publicId: 'pub-1', parentPublicId: 'state-1' }],
-      uniqMetricIds: ['metric1']
+      measuresEntities,
+      raygEntities,
+      uniqMetricIds: ['gp1']
     };
+  
+    const entityToAdd = {
+      parentStatementPublicId: 'statement-01-01-01',
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '2021-12-23',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 333
+    }
+    const clonedEntities = [entityToAdd];
+    const newEntities = [entityToAdd];
+    const errors = [{ error: 'error' }]
+    const parsedEntities = [entityToAdd];
+    let entitiesToBeSaved = [{
+      parentStatementPublicId: 'statement-01-01-01',
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '2021-12-23',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 333
+    }
+    ]
+    let allMeasures = [];
+
+    measuresEntities.forEach(m => {
+      // eslint-disable-next-line no-unused-vars
+      const { theme, createdAt, updatedAt, colour, ...other } = m;
+      allMeasures.push(other);
+    });
+    raygEntities.forEach(m => {
+      // eslint-disable-next-line no-unused-vars
+      const { theme, createdAt, updatedAt, colour, ...other } = m;
+      allMeasures.push(other);
+    });
+    
 
     beforeEach(() => {
       sinon.stub(page, 'getEntitiesToBeCloned').returns(clonedEntities)
       sinon.stub(page, 'createEntitiesFromClonedData').returns(newEntities)
       sinon.stub(page, 'saveMeasureData').returns({})
       sinon.stub(page, 'renderRequest').returns()
-      sinon.stub(page, 'updateRaygRowForSingleMeasureWithNoFilter').returns()
+      sinon.stub(page, 'updateRaygRowForSingleMeasureWithNoFilter').returns(entitiesToBeSaved)
       sinon.stub(page, 'getMeasure').returns(getMeasureData);
       sinon.stub(measures, 'validateEntities').returns([]);
     });
@@ -753,7 +873,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     });
 
     it('should return errors when validateFormData return errors', async () => {
-      const formData = { day: 1,  year: 2020, type: 'entries', entities: { 123: 100 } };
+      const formData = { day: 23, month: 12, year: 2020, type: 'entries', entities: { 1216: 333 } };
       sinon.stub(measures, 'validateFormData').returns(["error"])
 
       await page.addMeasureEntityData(formData);
@@ -775,15 +895,18 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     it('should call saveMeasureData with parsedEntities data', async () => {
       sinon.stub(measures, 'validateFormData').returns([])
       measures.validateEntities.returns({ errors: [], parsedEntities })
-      page.updateRaygRowForSingleMeasureWithNoFilter.returns(parsedEntities);
-      const formData = { day: 1, month: 2, year: 2020, type: 'entries', entities: { 123: 100 } };
+      const formData = { day: 23, month: 12, year: 2020, type: 'entries', entities: { 1216: 333 } };
+      let copyAllMeasures = allMeasures.slice();
+      copyAllMeasures.forEach(m => m.date = moment(m.date, 'DD/MM/YYYY').format('YYYY-MM-DD'));
 
       await page.addMeasureEntityData(formData);
 
-      sinon.assert.calledWith(page.getEntitiesToBeCloned, ["123"]);
+      sinon.assert.calledWith(page.getEntitiesToBeCloned, ["1216"]);
       sinon.assert.calledWith(page.createEntitiesFromClonedData, clonedEntities, formData);
       sinon.assert.calledWith(measures.validateEntities, newEntities);
-      sinon.assert.calledWith(page.saveMeasureData, parsedEntities);
+      entitiesToBeSaved = [...entitiesToBeSaved, ...copyAllMeasures];
+      entitiesToBeSaved.forEach(e=>e.updateDueOn = '2020-12-28');
+      sinon.assert.calledWith(page.saveMeasureData, entitiesToBeSaved, `#data-entries`, { updatedAt: true });
     });
   });
 

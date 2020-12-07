@@ -163,12 +163,12 @@ class MeasureEdit extends Page {
         return fieldEntry.categoryField.name === 'name';
       });
 
-      const parentPublicId = get(entity, 'parents[0].publicId');
+      const parentStatementPublicId = get(entity, 'parents[0].publicId');
       const entityMapped = {
         id: entity.id,
         publicId: entity.publicId,
         theme: themeName.value,
-        parentPublicId,
+        parentStatementPublicId,
         createdAt: entity.created_at,
         updatedAt: entity.updated_at
       };
@@ -306,6 +306,17 @@ class MeasureEdit extends Page {
 
       return entityMapped;
     });
+  }
+
+  calculateUpdateDueOn(formData, latestEntityDate, currentUpdateDueOn, frequency) {
+    if (!currentUpdateDueOn || !frequency) {
+      return null;
+    }
+    const mCurrentUpdateDueOn = moment(currentUpdateDueOn, "DD/MM/YYYY");
+    const mLatestEntityDate = moment(latestEntityDate, "DD/MM/YYYY");
+    const entityDate = moment(buildDateString(formData), "YYYY-MM-DD");
+    const entityUpdateDueOn = entityDate.isSameOrAfter(mLatestEntityDate) ? mCurrentUpdateDueOn.add(frequency, 'd') : mCurrentUpdateDueOn;
+    return entityUpdateDueOn.format('YYYY-MM-DD');
   }
 
   createEntitiesFromClonedData(merticEntities, formData) {
@@ -474,7 +485,7 @@ class MeasureEdit extends Page {
       raygEntities.forEach(raygEntity => {
         newEntities.push({
           publicId: raygEntity.publicId,
-          parentStatementPublicId: raygEntity.parentPublicId,
+          parentStatementPublicId: raygEntity.parentStatementPublicId,
           date: newDate,
           value
         })
@@ -484,9 +495,24 @@ class MeasureEdit extends Page {
     return newEntities
   }
 
+
   async addMeasureEntityData (formData) {
     const { measuresEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
+    let allMeasures = [];
 
+    measuresEntities.forEach(m => {
+      // eslint-disable-next-line no-unused-vars
+      const { theme, createdAt, updatedAt, colour, ...other } = m;
+      other.date = moment(other.date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push(other);
+    });
+    raygEntities.forEach(m => {
+      // eslint-disable-next-line no-unused-vars
+      const { theme, createdAt, updatedAt, colour, ...other } = m;
+      other.date = moment(other.date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push(other);
+    });
+    const latestmeasure = measuresEntities[measuresEntities.length - 1];
     formData.entities = utils.removeNulls(formData.entities)
 
     const formValidationErrors = await measures.validateFormData(formData, measuresEntities);
@@ -494,18 +520,32 @@ class MeasureEdit extends Page {
       return this.renderRequest(this.res, { errors: formValidationErrors });
     }
 
-    const clonedEntities = await this.getEntitiesToBeCloned(Object.keys(formData.entities))
-    const newEntities = await this.createEntitiesFromClonedData(clonedEntities, formData)
+    const clonedEntities = await this.getEntitiesToBeCloned(Object.keys(formData.entities));
+    const newEntities = await this.createEntitiesFromClonedData(clonedEntities, formData);
+    const updateDueOn = this.calculateUpdateDueOn(
+      formData, latestmeasure.date, 
+      latestmeasure.updateDueOn, latestmeasure.frequency);
+    newEntities.forEach(e=> {
+      if (e.updateDueOn) {
+        e.updateDueOn = updateDueOn
+      }
+    });
+    
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
-
-    const entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measuresEntities, raygEntities, uniqMetricIds)
-
+    // These are the entities which is being added by the form
+    let entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measuresEntities, raygEntities, uniqMetricIds)
+    entitiesToBeSaved = [...entitiesToBeSaved, ...allMeasures];
+    entitiesToBeSaved.forEach(e=> {
+      if (e.updateDueOn) {
+        e.updateDueOn = updateDueOn
+      }
+    });
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ['Error in entity data'] });
     }
 
     const URLHash = `#data-entries`;
-    return await this.saveMeasureData(entitiesToBeSaved, URLHash, { updatedAt: true });
+    return this.saveMeasureData(entitiesToBeSaved, URLHash, { updatedAt: true });
   }
 
   async saveMeasureData(entities, URLHash, options = {}) {

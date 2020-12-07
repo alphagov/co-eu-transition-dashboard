@@ -53,6 +53,7 @@
               <th scope="col" class="govuk-table__header govuk-table__cell__small">Status</th>
               <th scope="col" class="govuk-table__header">Comment only</th>
               <th scope="col" class="govuk-table__header">Last updated</th>
+              <th scope="col" class="govuk-table__header">Update due on</th>
               <th scope="col" class="govuk-table__header"></th>
             </tr>
           </thead>
@@ -66,6 +67,7 @@
                 </td>
                 <td class="govuk-table__cell">{{ "Yes" if measure.commentsOnly else "No" }}</td>
                 <td class="govuk-table__cell">{{ measure.updatedAtDate }}</td>
+                <td class="govuk-table__cell">{{ measure.updateDueOn }}</td>
                 <td class="govuk-table__cell govuk-table__cell__actions">
                   <a href="{{ config.paths.dataEntryEntity.measureEdit }}/{{ measure.metricID }}/{{ measure.groupID }}" class="govuk-link">Edit</a>
                 </td>
@@ -110,6 +112,7 @@
             <th scope="col" class="govuk-table__header govuk-table__cell__small">Status</th>
             <th scope="col" class="govuk-table__header">Comment only</th>
             <th scope="col" class="govuk-table__header">Last updated</th>
+            <th scope="col" class="govuk-table__header">Update due on</th>
             <th scope="col" class="govuk-table__header"></th>
           </tr>
         </thead>
@@ -123,6 +126,7 @@
               </td>
               <td class="govuk-table__cell">{{ "Yes" if measure.commentsOnly else "No" }}</td>
               <td class="govuk-table__cell">{{ measure.updatedAt }}</td>
+              <td class="govuk-table__cell">{{ measure.updateDueOn }}</td>
               <td class="govuk-table__cell govuk-table__cell__actions">
                 <a href="{{ config.paths.dataEntryEntity.measureEdit }}/{{ measure.metricID }}/{{ measure.groupID }}" class="govuk-link">Edit</a>
               </td>
