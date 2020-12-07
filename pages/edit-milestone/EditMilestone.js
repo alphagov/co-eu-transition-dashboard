@@ -108,7 +108,7 @@ class EditMilestone extends Page {
   }
 
   async validateMilestone(parsedData) {
-    const milestoneFields = await Milestone.fieldDefinitions();
+    const milestoneFields = await Milestone.fieldDefinitions(this.req.user);
     const errors = validation.validateItems([parsedData], milestoneFields);
 
     return errors.reduce((message, error) => {
