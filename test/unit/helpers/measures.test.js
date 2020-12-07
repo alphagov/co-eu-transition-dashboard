@@ -232,7 +232,8 @@ describe('helpers/measures', () => {
         }]
       }],
       created_at: '2020-09-05T13:15:30Z',
-      updated_at: '2020-09-06T13:15:30Z'
+      updated_at: '2020-09-06T13:15:30Z',
+      updateDueOn: "2020-11-20T13:15:30Z"
     },{
       id: 'some-id',
       publicId: 'some-public-id-2',
@@ -253,7 +254,8 @@ describe('helpers/measures', () => {
         }]
       }],
       created_at: '2020-10-05T13:15:30Z',
-      updated_at: '2020-11-05T13:15:30Z'
+      updated_at: '2020-11-05T13:15:30Z',
+      updateDueOn: "2020-11-20T13:15:30Z"
     }];
     const category = { id: 1 };
 
@@ -275,7 +277,8 @@ describe('helpers/measures', () => {
         publicId: "some-public-id-1",
         theme: "theme name",
         createdAt: '2020-09-05T13:15:30Z',
-        updatedAt: '2020-09-06T13:15:30Z'
+        updatedAt: '2020-09-06T13:15:30Z',
+        updateDueOn: "2020-11-20T13:15:30Z"
       },{
         filter: "RAYG",
         id: "some-id",
@@ -283,7 +286,8 @@ describe('helpers/measures', () => {
         publicId: "some-public-id-2",
         theme: "theme name",
         createdAt: '2020-10-05T13:15:30Z',
-        updatedAt: '2020-11-05T13:15:30Z'
+        updatedAt: '2020-11-05T13:15:30Z',
+        updateDueOn: "2020-11-20T13:15:30Z"
       }]);
 
       sinon.assert.calledWith(Entity.findAll, {
@@ -325,7 +329,8 @@ describe('helpers/measures', () => {
       aYThreshold: 2,
       greenThreshold: 3,
       value: 1,
-      updatedAt: '2020-11-05T13:15:30Z'
+      updatedAt: '2020-11-05T13:15:30Z',
+      updateDueOn: "20/11/2020"
     },{
       filter: "RAYG",
       id: "some-id",
@@ -338,7 +343,8 @@ describe('helpers/measures', () => {
       aYThreshold: 2,
       greenThreshold: 3,
       value: 1,
-      updatedAt: '2020-11-06T13:15:30Z'
+      updatedAt: '2020-11-06T13:15:30Z',
+      updateDueOn: "20/11/2020"
     }];
 
     it('groups measures by rayg row, sets rayg colour', () => {
@@ -357,6 +363,7 @@ describe('helpers/measures', () => {
         greenThreshold: 3,
         value: 1,
         updatedAt: '05/11/2020',
+        updateDueOn: '20/11/2020',
         children: [
           {
             id: 'some-id',
@@ -370,8 +377,9 @@ describe('helpers/measures', () => {
             greenThreshold: 3,
             value: 1,
             updatedAt: moment('2020-11-05T13:15:30Z'),
+            updatedAtDate: '05/11/2020',
             colour: 'red',
-            updatedAtDate: '05/11/2020'
+            updateDueOn: '20/11/2020'
           }
         ], 
       }]);
