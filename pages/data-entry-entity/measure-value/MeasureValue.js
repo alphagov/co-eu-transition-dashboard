@@ -335,7 +335,11 @@ class MeasureValue extends Page {
 
     const entitiesToBeCloned = this.getEntitiesIdsToBeCloned(measureEntities, formData.entities);
     const newEntities = await this.createEntitiesFromClonedData(entitiesToBeCloned, formData, entitiesForSelectedDate);
-
+    newEntities.forEach(e=> {
+      if (e.updateDueOn) {
+        e.updateDueOn = moment(e.updateDueOn, "DD/MM/YYYY").format("YYYY-MM-DD")
+      }
+    });
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
 
     const entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measureEntities, raygEntities, uniqMetricIds)
@@ -343,7 +347,6 @@ class MeasureValue extends Page {
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ["Error in entity data"] });
     }
-
     return await this.saveMeasureData(entitiesToBeSaved, { updatedAt: true });
   }
 

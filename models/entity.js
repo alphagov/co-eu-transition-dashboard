@@ -98,7 +98,6 @@ class Entity extends Model {
 
   static async importFieldEntries(entity, entityFields, options) {
     const attributes = Object.keys(entity);
-
     const entityFieldEntryAttributes = attributes.filter(attribute => {
       const isRawField = this.rawAttributes[attribute];
       const entityField = entityFields.find(entityField => entityField.name === attribute);
