@@ -71,7 +71,7 @@ const getCategory = async (name) => {
 }
 
 const getMeasureEntitiesFromGroup = (groupEntities, metricId) => {
-  const measureEntities = groupEntities.filter(entity => entity.metricID === metricId)
+  const measureEntities = groupEntities.filter(entity => entity.metricID === metricId);
   const sortedEntities = measureEntities.sort((a, b) => moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf());
   return sortedEntities;
 }
@@ -87,7 +87,6 @@ const getMaxUpdateAtForMeasures = (measures) => {
 
 const validateFormData = (formData, measuresEntities = []) => {
   const errors = [];
-
   if (!moment(buildDateString(formData), 'YYYY-MM-DD').isValid()) {
     errors.push("Invalid date");
   }
@@ -185,7 +184,8 @@ const getMeasureEntities = async({ measureCategory, themeCategory, where, user }
       publicId: entity.publicId,
       theme: themeName.value,
       updatedAt: entity.updated_at,
-      createdAt: entity.created_at 
+      createdAt: entity.created_at,
+      updateDueOn: entity.updateDueOn
     };
 
     entity.entityFieldEntries.map(entityfieldEntry => {
@@ -215,6 +215,7 @@ const groupMeasures = (measures) => {
       measuresSortedByDate[0].colour = rayg.getRaygColour(measuresSortedByDate[0]);
       measuresSortedByDate[0].updatedAt = maxMeasureUpdatedAt
       measuresSortedByDate[0].updatedAtDate = (maxMeasureUpdatedAt) ? maxMeasureUpdatedAt.format('DD/MM/YYYY'): null;
+      measuresSortedByDate[0].updateDueOn = (measures.length > 0 && measures[0].updateDueOn) ? measures[0].updateDueOn : null;
       return measuresSortedByDate[0];
     });
 
