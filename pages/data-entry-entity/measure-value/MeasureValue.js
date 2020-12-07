@@ -103,7 +103,7 @@ class MeasureValue extends Page {
     const { measureEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
     const entitiesForSelectedDate = measureEntities.filter((measure) => measure.date === this.req.params.date);
 
-    // If there is only a single entry (single value or group of measure values) when sorted by date, 
+    // If there is only a single entry (single value or group of measure values) when sorted by date,
     // we want to prevent the user from being able to delete this last entry
     const measureByDate = groupBy(measureEntities, measure => measure.date);
 
@@ -112,8 +112,8 @@ class MeasureValue extends Page {
       return this.res.redirect(this.deleteUrl);
     }
 
-    //If the latest value for a measure is deleted, which is the only item in the group and has no filter value, 
-    // we need to update the rayg row 
+    //If the latest value for a measure is deleted, which is the only item in the group and has no filter value,
+    // we need to update the rayg row
     const updatedRaygEntities = await this.onDeleteUpdateRaygRowForSingleMeasureWithNoFilter(measureEntities, raygEntities, uniqMetricIds);
 
     return await this.deleteAndUpdateRaygMeasureData(entitiesForSelectedDate, updatedRaygEntities);
@@ -135,7 +135,7 @@ class MeasureValue extends Page {
       // Remove entity with current data and sort the array to be in date order
       const entitiesExcludingCurrentDate = measureEntities.filter((measure) => measure.date !== this.req.params.date);
       entitiesExcludingCurrentDate.sort((a, b) => moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf());
-    
+
       const latestEntryAfterSortingByDate = entitiesExcludingCurrentDate[entitiesExcludingCurrentDate.length -1];
       const value = latestEntryAfterSortingByDate.value;
       const date = moment(latestEntryAfterSortingByDate.date, 'DD/MM/YYYY').format('YYYY-MM-DD');
@@ -151,6 +151,46 @@ class MeasureValue extends Page {
     }
 
     return updatedRaygEntites
+  }
+
+  async updateDateDueOn(entitiesRemoved, options) {
+    const { measureEntities, raygEntities } = await this.getMeasure();
+    let entitesToUpdate = [...raygEntities, ...measureEntities];
+
+    // ensure we are only updating this metric rows
+    entitesToUpdate = entitesToUpdate.filter(entities => entities.metricID === this.req.params.metricId);
+
+    // if it was the latest value deleted there wont be any entities to update
+    if(!entitesToUpdate || !entitesToUpdate.length) {
+      return;
+    }
+
+    // do not update if no updateDueOn or frequency is set
+    const latestEntity = entitesToUpdate[entitesToUpdate.length - 1];
+    if (!latestEntity.updateDueOn || !latestEntity.frequency) {
+      return;
+    }
+
+    const latestEntityDate = moment(latestEntity.date, 'DD/MM/YYYY').valueOf();
+    const entityRemovedDate = moment(entitiesRemoved.pop().date, 'DD/MM/YYYY').valueOf();
+
+    // check to ensure the entity removed was the latest one
+    if (entityRemovedDate >= latestEntityDate) {
+      const newDateDueOn = moment(latestEntity.updateDueOn, 'DD/MM/YYYY')
+        .subtract(latestEntity.frequency, 'days')
+        .format();
+
+      entitesToUpdate.forEach(entity => {
+        entity.updateDueOn = newDateDueOn;
+      });
+
+      const category = await measures.getCategory("Measure");
+      const categoryFields = await Category.fieldDefinitions("Measure");
+
+      for (const entity of entitesToUpdate) {
+        await Entity.import(entity, category, categoryFields, options);
+      }
+    }
   }
 
   async deleteAndUpdateRaygMeasureData(entitiesForSelectedDate, updatedRaygEntities = []) {
@@ -169,7 +209,9 @@ class MeasureValue extends Page {
           await Entity.import(entity, category, categoryFields, { transaction, ignoreParents: true, updatedAt: true });
         }
       }
-      
+
+      await this.updateDateDueOn(entitiesForSelectedDate, { transaction });
+
       await transaction.commit();
       redirectUrl += "/successful";
     } catch (error) {
@@ -240,7 +282,7 @@ class MeasureValue extends Page {
       let latestEntryUpdate = false;
 
       // If the latest meausevalue was updated, the date could have been changed to a point in the past.
-      // To find the correct value for the RAYG row, we need to combined the submited form datawith the 
+      // To find the correct value for the RAYG row, we need to combined the submited form datawith the
       // current measure values and re-sort by date, this will give us the correct entry and value
       if (latestEntry.publicId === newEntities[0].publicId) {
         latestEntryUpdate = true;
@@ -250,16 +292,16 @@ class MeasureValue extends Page {
         clonedLatestEntry.date = newDateMoment.format('DD/MM/YYYY');
         clonedLatestEntry.value = newEntities[0].value;
 
-        //Re-sort the array and get the latest value 
+        //Re-sort the array and get the latest value
         measureEntitiesCloned.sort((a, b) => moment(a.date, 'DD/MM/YYYY').valueOf() - moment(b.date, 'DD/MM/YYYY').valueOf());
-      
+
         const latestEntryAfterSorting = measureEntitiesCloned[measureEntitiesCloned.length -1];
         value = latestEntryAfterSorting.value;
         newDate = moment(latestEntryAfterSorting.date, 'DD/MM/YYYY').format('YYYY-MM-DD');
       }
 
       if (isDateLatestOrNewer || updateRAYG == 'true' || latestEntryUpdate) {
-       
+
         // We need to set the parentStatementPublicId as the import will remove and recreate the entitiy in the entityparents table
         raygEntities.forEach(raygEntity => {
           newEntities.push({
@@ -277,9 +319,9 @@ class MeasureValue extends Page {
 
   async updateMeasureValues(formData) {
     const { measureEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
-    
+
     measures.applyLabelToEntities(measureEntities);
-    
+
     const entitiesForSelectedDate = measureEntities.filter((measure) => measure.date === this.req.params.date);
     const entitiesExcludingCurrentDate = measureEntities.filter((measure) => measure.date !== this.req.params.date);
 
@@ -445,7 +487,7 @@ class MeasureValue extends Page {
     }
 
     const measureValues = this.generateInputValues(uiInputs, measuresForSelectedDate, this.req.params.date);
-    
+
     // measuresEntities are already sorted by date, so the last entry is the newest
     const latestEntity = measureEntities[measureEntities.length - 1];
     const backLink = `${config.paths.dataEntryEntity.measureEdit}/${latestEntity.metricID}/${latestEntity.groupID}`;

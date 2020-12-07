@@ -1,0 +1,15 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+
+{{ govukCheckboxes({
+    name: "tagFilter",
+    items: [
+      {
+        id: "tagFilter-" + option,
+        value: option,
+        text: option,
+        checked: false
+      }
+    ]
+  })
+}}

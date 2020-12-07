@@ -25,13 +25,15 @@ Search.prototype.init = function() {
     terms : params.term.split(" "),
     themeFilters: (params.themeFilter) ? params.themeFilter.split(",") : [],
     colorFilters: (params.colorFilter) ? params.colorFilter.split(",") : [],
+    tagFilters: (params.tagFilter) ? params.tagFilter.split(",") : [],
   }
   this.setSearchInput(this.queryParameters.terms);
   this.setClearFiltersUrl(this.queryParameters.terms)
   this.setThemeFilters(this.queryParameters.themeFilters);
   this.setColorFilters(this.queryParameters.colorFilters);
+  this.setTagFilters(this.queryParameters.tagFilters);
   this.hideShowClearButton();
-  this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
+  this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters, this.queryParameters.tagFilters);
   this.updateResultCount();
   this.bindEvents();
 };
@@ -61,7 +63,7 @@ Search.prototype.setElements = function() {
 };
 
 Search.prototype.getSearchArguments = function() {
-  const queryParameterNames = ['term', 'themeFilter', 'colorFilter'];
+  const queryParameterNames = ['term', 'themeFilter', 'colorFilter', 'tagFilter'];
 
   const params = queryParameterNames.reduce((queryParameters, name) => {
     const queryParameterValue = helper.getUrlQueryParameter(name);
@@ -106,7 +108,16 @@ Search.prototype.setColorFilters = function(colorFilters) {
   }
 };
 
-Search.prototype.filterTable = function(terms, themeFilters=[], colorFilters=[]) {
+Search.prototype.setTagFilters = function(tagFilters) {
+  if(tagFilters.length>0) {
+    tagFilters.forEach(filter => {
+      const themeFilterElement = document.querySelector(`input[value="${filter}"]`);
+      themeFilterElement.setAttribute('checked', 'true')
+    });
+  }
+};
+
+Search.prototype.filterTable = function(terms, themeFilters=[], colorFilters=[], tagFilters=[]) {
   this.elements.$tableRows.forEach($row => {
     let rowText = $row.innerText || $row.textContent;
     rowText = rowText.toLowerCase();
@@ -115,11 +126,18 @@ Search.prototype.filterTable = function(terms, themeFilters=[], colorFilters=[])
       .every(queryParameterValue => rowText.includes(queryParameterValue.toLowerCase()));
     if (themeFilters.length > 0) {
       matchesQueryParmeters = matchesQueryParmeters && themeFilters.includes($row.getAttribute('data-theme'));
-    } 
+    }
 
     if (colorFilters.length > 0) {
       matchesQueryParmeters = matchesQueryParmeters && colorFilters.includes($row.getAttribute('data-color'));
-    } 
+    }
+
+    if (tagFilters.length > 0) {
+      const rowTags = $row.getAttribute('data-tags').split(',');
+      tagFilters.forEach(tagFilter => {
+        matchesQueryParmeters = matchesQueryParmeters && rowTags.includes(tagFilter);
+      });
+    }
 
     if(matchesQueryParmeters) {
       $row.classList.add("show");
@@ -155,7 +173,7 @@ Search.prototype.bindEvents = function() {
     this.hideShowClearButton();
 
     if (liveSearchEnabled) {
-      this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
+      this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters, this.queryParameters.tagFilters);
       this.updateResultCount();
     }
   });
@@ -164,7 +182,7 @@ Search.prototype.bindEvents = function() {
     this.hideShowClearButton();
     if (liveSearchEnabled) {
       this.queryParameters.terms = this.elements.$searchInput.value;
-      this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters);
+      this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters, this.queryParameters.tagFilters);
       this.updateResultCount();
     }
   });

@@ -3,7 +3,6 @@
   overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
-  margin-top: 20px;
 }
 
 .overview-card {
@@ -16,8 +15,46 @@
   background-color: #f8f8f8;
 }
 
+.overview-card:before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    width: 0;
+    height: 0;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+}
+
+.overview-card.red:before {
+	border-left: 20px solid #C21D03;
+	border-top: 20px solid #C21D03;
+}
+
+.overview-card.amber:before {
+	border-left: 20px solid #FF7631;
+	border-top: 20px solid #FF7631;
+}
+
+.overview-card.yellow:before {
+	border-left: 20px solid #FFDD00;
+	border-top: 20px solid #FFDD00;
+}
+
+.overview-card.green:before {
+	border-left: 20px solid #00B661;
+	border-top: 20px solid #00B661;
+}
+
+.overview-card.grey:before {
+	border-left: 20px solid #B1B4B6;
+	border-top: 20px solid #B1B4B6;
+}
+
 .headline-figure .overview-card:hover, 
-.risk-col .overview-card:not(.inactive):hover {
+.risk-col .overview-card:not(.inactive):hover,
+.top-statements .overview-card:hover {
 	cursor: pointer;
 	background-color: #ffffff;
 }
@@ -47,8 +84,8 @@
 
 .overview-card--inner {
 	margin-left: 0;
-	display: inline-block;
-	padding: 16px 16px 12px;
+	display: block;
+	padding: 20px 16px 12px;
 	font-family: "GDS Transport",Arial,sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -102,6 +139,6 @@
 	text-transform: uppercase;
 	font-size: 16px;
 	line-height: 1;
-	padding: 5px 8px 4px;
+	padding: 6px;
 	margin-bottom: 10px;
 }

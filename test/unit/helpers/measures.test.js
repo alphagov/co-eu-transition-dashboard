@@ -265,7 +265,7 @@ describe('helpers/measures', () => {
       const user = { roles:[{ name: 'admin' }], isAdmin: true };
 
       const response = await measures.getMeasureEntities({
-        measureCategory:category, 
+        measureCategory:category,
         themeCategory:category,
         user
       });
@@ -425,7 +425,7 @@ describe('helpers/measures', () => {
     const entitiesUserCanAccess = [{ entity: { dataValues: { publicId: 'm01', id: 600, children: [] } } },
       { entity: { dataValues: { publicId: 'm02', id: 601, children: [] } } },
       { entity: { dataValues: { publicId: 'm03', id: 602, children: [] } } }]
-    
+
     const measuresPublicId = ['m01', 'm02', 'm03'];
     const measuresWithLink = [{
       id: 600,
@@ -434,7 +434,10 @@ describe('helpers/measures', () => {
       color: 'green',
       found: true,
       theme: 'Borders',
-      link: '/transition-readiness-detail/B/st-01/measure1'
+      link: '/transition-readiness-detail/B/st-01/measure1',
+      tags: [{
+        name: 'some-tag'
+      }]
     }, {
       id: 601,
       publicId: 'm02',
@@ -473,6 +476,7 @@ describe('helpers/measures', () => {
       getThemesHierarchyStub.resolves(allThemes);
 
       const expectedMeasures = {
+        tags: [ 'some-tag' ],
         measures: measuresWithLink,
         themes: allThemes,
         colors: ["red","amber","yellow","green"]

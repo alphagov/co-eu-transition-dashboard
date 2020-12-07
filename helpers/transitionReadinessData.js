@@ -16,6 +16,7 @@ const tableau = require('services/tableau');
 const cache = require('services/cache');
 const config = require('config');
 const uniq = require('lodash/uniq');
+const Tag = require('models/tag');
 
 const rags = ['red', 'amber', 'yellow', 'green'];
 
@@ -443,6 +444,8 @@ const getAllEntities = async () => {
         model: CategoryField,
         where: { isActive: true }
       }
+    }, {
+      model: Tag
     }]
   });
 
