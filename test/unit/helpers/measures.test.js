@@ -487,7 +487,7 @@ describe('helpers/measures', () => {
         tags: [ 'some-tag' ],
         measures: measuresWithLink,
         themes: allThemes,
-        colors: ["red","amber","yellow","green"]
+        colors: [{ color: 'red', definition: 'High risk' }, { color: 'amber', definition: 'Medium risk' }, { color: 'yellow', definition: 'Low risk' }, { color: 'green', definition: 'Minimal/No risk' }]
       }
 
       const measuresWhichUserHasAccess = await measures.getMeasuresWhichUserHasAccess(entitiesUserCanAccess);

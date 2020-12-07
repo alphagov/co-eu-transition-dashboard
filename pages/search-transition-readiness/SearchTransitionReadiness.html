@@ -4,6 +4,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "searchMeasures.njk" import searchMeasures %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "status.njk" import currentStatus %}
 
 {% set data = getData() | await %}
 
@@ -66,7 +67,7 @@
                 {%- endfor -%}
               {%- endset -%}
               <tr class="govuk-table__row searchable-row" data-theme="{{ measure.theme }}" data-color="{{ measure.color }}" data-tags="{{ tags }}">
-                <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
+                <td class="govuk-table__cell search-current-status">{{ currentStatus(measure.color, false) }}</td>
                 <td class="govuk-table__cell govuk-!-width-full">
                   <table class="govuk-table no-borders govuk-!-margin-0">
                     <tbody class="govuk-table__body">

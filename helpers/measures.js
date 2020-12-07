@@ -256,7 +256,7 @@ const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
     tags,
     measures: measuresWithLink,
     themes: allThemes,
-    colors: ['red', 'amber', 'yellow', 'green']
+    colors: [{ color: 'red', definition: 'High risk' }, { color: 'amber', definition: 'Medium risk' }, { color: 'yellow', definition: 'Low risk' }, { color: 'green', definition: 'Minimal/No risk' }]
   };
 }
 
