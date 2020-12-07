@@ -23,3 +23,16 @@
     text-transform:capitalize;
   }
 }
+
+.search-current-status {
+  width: 50px;
+  padding-top: 20px;
+
+  img {
+    display: block;
+    padding-bottom: 5px;
+  }
+  
+  p {
+    display: none !important;
+  }
