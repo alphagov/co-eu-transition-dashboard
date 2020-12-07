@@ -16,8 +16,8 @@ Cypress.Commands.add('createuser', (username) => {
     deleterole(username,rolename).as('dbResultUserID');
   });
 
-  Cypress.Commands.add('addepartment', (username,departmentname) => {
-    addepartment(username, departmentname).as('dbResultUserID');
+  Cypress.Commands.add('addDepartment', (username,departmentname) => {
+    addDepartment(username, departmentname).as('dbResultUserID');
   });
 
   Cypress.Commands.add('deletedepartment', (username,departmentname) => {
@@ -65,7 +65,7 @@ Cypress.Commands.add('createuser', (username) => {
       return cy.task('queryDb', query);
   };
 
-  function addepartment(username, departmentname) {
+  function addDepartment(username, departmentname) {
     const query =
       `set @email = '${username}';
       select id into @l_userid from dashboard.user where email = @email; 

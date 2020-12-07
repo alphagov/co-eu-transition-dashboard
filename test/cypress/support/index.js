@@ -16,7 +16,6 @@ mysql.loadDBCommands();*/
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
 import './db_user'
 import './db_entity'
 

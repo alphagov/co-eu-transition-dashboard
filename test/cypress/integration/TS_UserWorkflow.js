@@ -19,8 +19,8 @@ function addrole(rolename) {
   cy.addrole(username, rolename);
 }
 
-function addepartment(department) {
-  cy.addepartment(username, department);
+function addDepartment(department) {
+  cy.addDepartment(username, department);
 }
 
 beforeEach(() => {
@@ -49,7 +49,7 @@ describe('Verify accessible Menus as an Admin User', () => {
     addrole("all_data");
     addrole("devolved_administrations");
     //Add department to user
-    addepartment("BEIS");
+    addDepartment("BEIS");
 
     login.login(username);
     
@@ -62,8 +62,4 @@ describe('Verify accessible Menus as an Admin User', () => {
     //nav.verifyAllThemes();
   });
 
-  it("I can see and access 'All data' and all submenus underneath", function () {
-    //nav.select_Oveview();
-    //nav.select_Adddata();
-  });
 });
