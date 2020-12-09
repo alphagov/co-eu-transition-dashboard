@@ -56,4 +56,5 @@ npm-debug.log
 ehthumbs.db
 Thumbs.dbnode_modules
 test/cypress/fixtures/login.json
+test/cypress/screenshot/*.*
 

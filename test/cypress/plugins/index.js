@@ -20,15 +20,24 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
   on('task', cypressmysqlDb.loadDBPlugin(mysql, config.db));
 */
-const mysql = require('mysql')
+const mysql = require('mysql2')
+const dbconfig = require('config')
+
 function queryTestDb(query, config) {
   // creates a new mysql connection using credentials from cypress.json env's
-  const connection = mysql.createConnection(config.env.db)
+  const env = dbconfig.services.mysql;
+  const connection = mysql.createConnection(
+    {
+      "uri": env.uri,
+      "sslCertificate": env.sslCertificate,
+      "charset": env.charset,
+      "multipleStatements": true
+    });
   // start connection to db
-  connection.connect()
+  connection.connect();
   // exec query + disconnect to db as a Promise
   return new Promise((resolve, reject) => {
-   connection.query(query, (error, results) => {
+    connection.query(query, (error, results) => {
       if (error) reject(error)
       else {
         connection.end()
