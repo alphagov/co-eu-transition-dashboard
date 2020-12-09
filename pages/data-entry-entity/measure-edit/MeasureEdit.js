@@ -499,19 +499,17 @@ class MeasureEdit extends Page {
   async addMeasureEntityData (formData) {
     const { measuresEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
     let allMeasures = [];
-
     measuresEntities.forEach(m => {
-      // eslint-disable-next-line no-unused-vars
-      const { theme, createdAt, updatedAt, colour, ...other } = m;
-      other.date = moment(other.date, "DD/MM/YYYY").format("YYYY-MM-DD");
-      allMeasures.push(other);
+      let { publicId, parentStatementPublicId, date, updateDueOn } = m;
+      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push({ publicId, parentStatementPublicId, date, updateDueOn });
     });
     raygEntities.forEach(m => {
-      // eslint-disable-next-line no-unused-vars
-      const { theme, createdAt, updatedAt, colour, ...other } = m;
-      other.date = moment(other.date, "DD/MM/YYYY").format("YYYY-MM-DD");
-      allMeasures.push(other);
+      let { publicId, parentStatementPublicId, date, updateDueOn } = m;
+      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push({ publicId, parentStatementPublicId, date, updateDueOn });
     });
+
     const latestmeasure = measuresEntities[measuresEntities.length - 1];
     formData.entities = utils.removeNulls(formData.entities)
 
