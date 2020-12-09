@@ -1,0 +1,10 @@
+{% from "status.njk" import currentStatus %}
+
+{% macro activeStatementBox(activeStatement, activeColor) %}
+  {% if activeStatement %}
+    <div class="selected-statement govuk-!-margin-bottom-2 {{ 'show-statement' if req.params.statement }}" style="display:none;"> 
+      <h3 class="govuk-heading-s govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ activeStatement }}</h3>
+      {{ currentStatus(activeColor, false) }}
+    </div>
+  {% endif %}
+{% endmacro %}

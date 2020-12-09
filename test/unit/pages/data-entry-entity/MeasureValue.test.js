@@ -387,7 +387,7 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
 
     beforeEach(() => {
       sinon.stub(Category, 'fieldDefinitions').returns(categoryFields);
-      Category.findOne.resolves(category);
+      Category.findAll.resolves(category);
       sinon.stub(Entity, 'import');
     });
 
@@ -554,14 +554,15 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
       measureEntities = [{
         metricID: 'metricId',
         updateDueOn: moment().add(5, 'days').format('DD/MM/YYYY'),
-        frequency: 5,
-        date: moment().subtract(5, 'days').format('DD/MM/YYYY')
+        date: moment().format('DD/MM/YYYY'),
+        frequency: 5
       }];
 
       raygEntities = [{
         metricID: 'metricId',
         updateDueOn: moment().add(5, 'days').format('DD/MM/YYYY'),
-        frequency: 5
+        frequency: 5,
+        date: moment().format('DD/MM/YYYY')
       }]
 
       sinon.stub(page, 'getMeasure').returns({
@@ -583,11 +584,12 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
       await page.updateDateDueOn(entitiesRemoved, options);
 
       const updateDueOn = moment().startOf('day').format();
+      const date = moment().startOf('day').format();
 
-      const measureValueEntity = Object.assign({}, measureEntities[0], { updateDueOn });
+      const measureValueEntity = Object.assign({}, measureEntities[0], { updateDueOn, date });
       sinon.assert.calledWith(Entity.import, measureValueEntity, category, categoryFields, options);
 
-      const measureRaygEntity = Object.assign({}, raygEntities[0], { updateDueOn });
+      const measureRaygEntity = Object.assign({}, raygEntities[0], { updateDueOn, date });
       sinon.assert.calledWith(Entity.import, measureRaygEntity, category, categoryFields, options);
     });
 

@@ -87,17 +87,26 @@ describe('helpers/measures', () => {
   });
 
   describe('#getCategory', () => {
-    it('gets and returns category', async () => {
+    it('gets and returns a single category', async () => {
       const category = { name: 'Theme' };
-      Category.findOne.resolves(category);
+      Category.findAll.resolves(category);
 
       const response = await measures.getCategory('Theme');
 
       expect(response).to.eql(category);
     });
 
-    it('gets and returns category', async () => {
-      Category.findOne.resolves();
+    it('gets and returns mutiple categories', async () => {
+      const category = [{ name: 'Theme' }, { name: 'Measure' }];
+      Category.findAll.resolves(category);
+
+      const response = await measures.getCategory('Theme', 'Measure');
+
+      expect(response).to.eql(category);
+    });
+
+    it('throws error when it cannot find category', async () => {
+      Category.findAll.resolves();
 
       let error = {};
       try {
@@ -465,11 +474,11 @@ describe('helpers/measures', () => {
     }]
     let measuresWithLinkStub ;
     let getThemesHierarchyStub;
-    const measureCategory = { id: 3 };
+    const measureCategory = [{ id: 3 }, { id: 4 }];
 
 
     beforeEach(() => {
-      Category.findOne.resolves(measureCategory);
+      Category.findAll.resolves(measureCategory);
       measuresWithLinkStub = sinon.stub(transitionReadinessData, 'measuresWithLink');
       getThemesHierarchyStub = sinon.stub(transitionReadinessData, 'getThemesHierarchy');
     });
@@ -487,7 +496,7 @@ describe('helpers/measures', () => {
         tags: [ 'some-tag' ],
         measures: measuresWithLink,
         themes: allThemes,
-        colors: ["red","amber","yellow","green"]
+        colors: [{ color: 'red', definition: 'High risk' }, { color: 'amber', definition: 'Medium risk' }, { color: 'yellow', definition: 'Low risk' }, { color: 'green', definition: 'Minimal/No risk' }]
       }
 
       const measuresWhichUserHasAccess = await measures.getMeasuresWhichUserHasAccess(entitiesUserCanAccess);

@@ -816,49 +816,34 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       unit: '#',
       value: 333
     }
+
+    const futureUpdateDueOn = "2020-12-28";
     const clonedEntities = [entityToAdd];
     const newEntities = [entityToAdd];
     const errors = [{ error: 'error' }]
     const parsedEntities = [entityToAdd];
-    let entitiesToBeSaved = [{
-      parentStatementPublicId: 'statement-01-01-01',
-      redThreshold: 4,
-      aYThreshold: 5,
-      greenThreshold: 8,
-      groupBy: 'gp1',
-      groupID: 'gp1',
-      metricID: 'gp1',
-      date: '2021-12-23',
-      additionalComment: 'test cmment',
-      frequency: 4,
-      name: 'gp1',
-      description: 'desc 1 gp1',
-      unit: '#',
-      value: 333
-    }
-    ]
+    let entitiesToBeSaved = [{ ...entityToAdd , updateDueOn: futureUpdateDueOn }];
     let allMeasures = [];
 
     measuresEntities.forEach(m => {
-      // eslint-disable-next-line no-unused-vars
-      const { theme, createdAt, updatedAt, colour, ...other } = m;
-      allMeasures.push(other);
+      let { publicId, parentStatementPublicId, date } = m;
+      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push({ publicId, parentStatementPublicId, date });
     });
     raygEntities.forEach(m => {
-      // eslint-disable-next-line no-unused-vars
-      const { theme, createdAt, updatedAt, colour, ...other } = m;
-      allMeasures.push(other);
+      let { publicId, parentStatementPublicId, date } = m;
+      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push({ publicId, parentStatementPublicId, date });
     });
-    
 
     beforeEach(() => {
+      sinon.stub(page, 'getMeasure').returns(getMeasureData);
       sinon.stub(page, 'getEntitiesToBeCloned').returns(clonedEntities)
       sinon.stub(page, 'createEntitiesFromClonedData').returns(newEntities)
+      sinon.stub(measures, 'validateEntities').returns([]);
+      sinon.stub(page, 'updateRaygRowForSingleMeasureWithNoFilter').returns(entitiesToBeSaved)
       sinon.stub(page, 'saveMeasureData').returns({})
       sinon.stub(page, 'renderRequest').returns()
-      sinon.stub(page, 'updateRaygRowForSingleMeasureWithNoFilter').returns(entitiesToBeSaved)
-      sinon.stub(page, 'getMeasure').returns(getMeasureData);
-      sinon.stub(measures, 'validateEntities').returns([]);
     });
 
     afterEach(() => {
@@ -897,7 +882,6 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       measures.validateEntities.returns({ errors: [], parsedEntities })
       const formData = { day: 23, month: 12, year: 2020, type: 'entries', entities: { 1216: 333 } };
       let copyAllMeasures = allMeasures.slice();
-      copyAllMeasures.forEach(m => m.date = moment(m.date, 'DD/MM/YYYY').format('YYYY-MM-DD'));
 
       await page.addMeasureEntityData(formData);
 
@@ -905,7 +889,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       sinon.assert.calledWith(page.createEntitiesFromClonedData, clonedEntities, formData);
       sinon.assert.calledWith(measures.validateEntities, newEntities);
       entitiesToBeSaved = [...entitiesToBeSaved, ...copyAllMeasures];
-      entitiesToBeSaved.forEach(e=>e.updateDueOn = '2020-12-28');
+      entitiesToBeSaved.forEach(e=>e.updateDueOn = futureUpdateDueOn);
       sinon.assert.calledWith(page.saveMeasureData, entitiesToBeSaved, `#data-entries`, { updatedAt: true });
     });
   });
@@ -920,7 +904,6 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       sinon.stub(Category, 'fieldDefinitions').returns(categoryFields);
       Category.findOne.resolves(category);
       sinon.stub(Entity, 'import');
-
     });
 
     afterEach(() => {

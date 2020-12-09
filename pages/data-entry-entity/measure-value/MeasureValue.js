@@ -182,6 +182,8 @@ class MeasureValue extends Page {
 
       entitesToUpdate.forEach(entity => {
         entity.updateDueOn = newDateDueOn;
+        // also revert the date to iso format for saving to database
+        entity.date = moment(entity.date, 'DD/MM/YYYY').format();
       });
 
       const category = await measures.getCategory("Measure");

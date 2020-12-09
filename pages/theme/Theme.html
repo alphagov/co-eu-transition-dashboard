@@ -3,10 +3,12 @@
 {% from "attribute.njk" import ariaCurrent %}
 {% from "searchMeasures.njk" import searchMeasuresForm %}
 {% from "status.njk" import currentStatus %}
+{% from "active-statement-box.njk" import activeStatementBox with context %}
 
 {% set data = data() | await %}
 {% set activeStatement = '' %}
 {% set activeColor = '' %}
+{% set projectedIsSelected = data.selected and data.selected.category and data.selected.category.name === 'Project' %}
 
 {% block pageTitle %}{{ data.theme.name }} - {{ super() }}{% endblock %}
 
@@ -15,7 +17,6 @@
 <div class="govuk-grid-row" id="readiness-theme-page" data-theme-id="{{ req.params.theme }}">
 <div class="govuk-grid-column-full">
 
-  <a href="{{ config.paths.readinessOverview }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.theme }}" style="display: none;">Overview</a>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div class="govuk-grid-column-one-third no-horizontal-padding search-right">{{searchMeasuresForm(searchUrl)}}</div>
@@ -28,6 +29,7 @@
   <p class="govuk-body-s govuk-!-margin-bottom-5 govuk-!-margin-top-5"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'hide-statement' if req.params.statement }}" id="column-statements">
+    <a href="{{ config.paths.readinessOverview }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.theme }}" style="display: none;">Overview</a>
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcomes</h2>
     <div class="top-statements" id="outcome-statements">
     {% for topOutcome in data.topLevelOutcomeStatements %}
@@ -48,16 +50,11 @@
     </div>
   </div>
 
-  <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'show-statement' if req.params.statement and not req.params.selectedPublicId }}" id="column-sub-statements">
-    <a href="{{ themeUrl }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.statement }}" style="display: none;">Back to outcome statements</a>
+  <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'show-statement' if req.params.statement and (projectedIsSelected or not req.params.selectedPublicId) }}" id="column-sub-statements">
+    <a href="{{ themeUrl }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.statement }}" style="display: none;">Outcomes</a>
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Select data</h2>
     <div class="top-statements" id="sub-statements">
-    {% if activeStatement %}
-    <div class="{{ 'show-statement' if req.params.statement }}" style="display:none;"> 
-      {{ currentStatus(activeColor, false) }}
-      <h3 class="govuk-heading-m govuk-!-font-weight-regular govuk-!-margin-top-1">{{ activeStatement }}</h3>
-    </div>
-    {% endif %}
+    {{ activeStatementBox(activeStatement, activeColor) }}
     {% if data.subOutcomeStatementsAndDatas | length > 0 %}
       <div class="readiness-accordion-wrapper">
         {{ buildOutcomeMeasures(data.subOutcomeStatementsAndDatas, 1, req.params.statement) }}
@@ -68,15 +65,13 @@
     </div>
   </div>
 
-  <div class="govuk-grid-column-one-half no-horizontal-padding {{ 'show-measure' if req.params.selectedPublicId }}" id="theme-tableu-placeholder">
-  <a href="{{ themeUrl }}/{{ req.params.statement }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-measure' if req.params.selectedPublicId }}" style="display: none;">Back to {{ activeStatement }}</a>
+  <div class="govuk-grid-column-one-half no-horizontal-padding {{ 'show-measure' if req.params.selectedPublicId and not projectedIsSelected }}" id="theme-tableu-placeholder">
+  <a href="{{ themeUrl }}/{{ req.params.statement }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-measure' if req.params.selectedPublicId }}" style="display: none;">Select data</a>
   <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Data display</h2>
-    {% if data.subOutcomeStatementsAndDatas | length > 0 %}
-      {% for item in data.subOutcomeStatementsAndDatas %}
-        {{ projectDetails(item) }}
-      {% endfor %}
-    {% endif %}
-    {% if not data.iframeUrl.error and not data.iframeUrl.url %}
+    {{ activeStatementBox(activeStatement, activeColor) }}
+    {% if projectedIsSelected %}
+      {{ projectDetails(data.selected) }}
+    {% elseif not data.iframeUrl.error and not data.iframeUrl.url %}
       <p class="govuk-body-s tableu-message">To view data of measures and metrics, select a data grouping or type</p>
     {% elseif data.iframeUrl.error %}
       <p class="govuk-body-s tableu-message">There has been an error accessing this data, please contact The Transition Taskforce Dashboard Team</p>
@@ -90,4 +85,3 @@
 
 
 {% endblock %}
-
