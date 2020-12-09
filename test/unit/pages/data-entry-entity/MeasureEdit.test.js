@@ -11,9 +11,12 @@ const Category = require('models/category');
 const CategoryField = require('models/categoryField');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
+const Tag = require('models/tag');
 const flash = require('middleware/flash');
 const sequelize = require('services/sequelize');
-const measures = require('helpers/measures')
+const measures = require('helpers/measures');
+const tagsHelper = require('helpers/tags');
+const moment = require('moment');
 
 let page = {};
 let res = {};
@@ -55,6 +58,12 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     });
   });
 
+  describe('#tagsUrl', () => {
+    it('returns url for edit measure', () => {
+      expect(page.tagsUrl).to.eql(`${page.url}/${req.params.metricId}/${req.params.groupId}/tags`);
+    });
+  });
+
   describe('#addMeasure', () => {
     it('returns true when type equals add', () => {
       page.req.params = { metricId: '123', successful: 'successful', type: "add" };
@@ -75,6 +84,17 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
 
     it('returns false when type does not equal edit', () => {
       expect(page.editMeasure).to.be.not.ok;
+    });
+  });
+
+  describe('#editTags', () => {
+    it('returns true when type equals tags', () => {
+      page.req.params = { metricId: '123', type: "tags" };
+      expect(page.editTags).to.be.ok;
+    });
+
+    it('returns false when type does not equal tags', () => {
+      expect(page.editTags).to.be.not.ok;
     });
   });
 
@@ -125,6 +145,8 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     const entities = {
       id: 'some-id',
       publicId: 'some-public-id-1',
+      created_at: '2020-11-05T13:15:30Z',
+      updated_at: '2020-11-06T13:15:30Z',
       parents: [
         {
           publicId: 'parent-1',
@@ -168,11 +190,13 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       expect(response).to.eql({ 
         groupEntities: [{
           id: 'some-id',
-          parentPublicId: 'parent-1',
+          parentStatementPublicId: 'parent-1',
           publicId: 'some-public-id-1',
           colour: 'green',
           theme: 'borders',
           test: 'new value',
+          createdAt: '2020-11-05T13:15:30Z',
+          updatedAt: '2020-11-06T13:15:30Z'
         }],
         raygEntities: []
       });
@@ -202,6 +226,8 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
               model: Category
             }]
           }]
+        }, {
+          model: Tag
         }]
       });
     });
@@ -210,7 +236,12 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
   describe('#getMeasure', () => {
     const measureCategory = { id: 'some-category' };
     const measureEntities = {
-      groupEntities : [{ metricID: 'measure-1', id: 'new-id', publicId: 'pubId', parents: [], entityFieldEntries: [{ categoryField: { name: 'test' }, value: 'new value' }] }],
+      groupEntities : [
+        { 
+          metricID: 'measure-1', id: 'new-id', publicId: 'pubId', parents: [], entityFieldEntries: [{ categoryField: { name: 'test' }, value: 'new value' }],
+          createdAt: '2020-11-05T13:15:30Z',
+          updatedAt: '2020-11-06T13:15:30Z'
+        }],
       raygEntities: [{ publicId: 'rayg1', filter: 'RAYG' }]
     };
 
@@ -238,7 +269,8 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       expect(response).to.eql({
         measuresEntities: measureEntities.groupEntities,
         raygEntities: measureEntities.raygEntities,
-        uniqMetricIds: ['measure-1']
+        uniqMetricIds: ['measure-1'],
+        updatedAt: moment('2020-11-06T13:15:30Z')
       });
     });
 
@@ -311,9 +343,13 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
 
   describe('#getMeasureData', () => {
     const measureEntities = {
-      measuresEntities: [{ metricID: 'metric1', date: '05/10/2020', value: 2, filter: 'test' }, { metricID: 'metric1', date: '04/10/2020', value: 1, filter: 'test'  }],
+      measuresEntities: [
+        { metricID: 'metric1', date: '05/10/2020', value: 2, filter: 'test' }, 
+        { metricID: 'metric1', date: '04/10/2020', value: 1, filter: 'test'  }
+      ],
       raygEntities: [{ value: 1 }],
-      uniqMetricIds: ['metric1']
+      uniqMetricIds: ['metric1'],
+      updatedAt: moment('2020-11-06T13:15:30Z')
     };
 
     beforeEach(() => {
@@ -325,7 +361,27 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     });
 
     it('getMeasureData should call getMeasure', async () => {
-      await page.getMeasureData();
+      const md = await page.getMeasureData();
+      expect(md).to.eql({
+        latest: { metricID: 'metric1', date: '04/10/2020', value: 1, filter: 'test' },
+        grouped: { 
+          '05/10/2020': [ { metricID: 'metric1', date: '05/10/2020', value: 2, filter: 'test' } ], 
+          '04/10/2020': [ { metricID: 'metric1', date: '04/10/2020', value: 1, filter: 'test' } ] },
+        fields: [
+          {
+            metricID: 'metric1',
+            date: '05/10/2020',
+            value: 2,
+            filter: 'test'
+          }
+        ],
+        raygEntity: { value: 1 },
+        displayOverallRaygDropdown: true,
+        displayRaygValueCheckbox: false,
+        uniqMetricIds: [ 'metric1' ],
+        preventDeleteForGroupMeasure: 0,
+        updatedAt: '06/11/2020'
+      });
       sinon.assert.calledOnce(page.getMeasure);
     });
 
@@ -423,6 +479,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     beforeEach(() => {
       sinon.stub(page, 'addMeasureEntityData').returns([])
       sinon.stub(page, 'updateMeasureInformation').returns([])
+      sinon.stub(page, 'updateEntityTags').returns([])
     });
 
     afterEach(() => {
@@ -456,6 +513,15 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       await page.postRequest(req, res);
 
       sinon.assert.calledWith(page.updateMeasureInformation, req.body);
+    });
+
+    it('should call updateEntityTags when type is tags', async () => {
+      page.req.params = { metricId: '123', successful: 'successful', type: "tags" };
+      req.user = { isAdmin: true, getPermittedMetricMap: sinon.stub().returns({}) }
+
+      await page.postRequest(req, res);
+
+      sinon.assert.calledWith(page.updateEntityTags, req.body);
     });
 
     it('should call redirect if no error and not add or Edit Measure', async () => {
@@ -499,14 +565,14 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
 
       await page.updateMeasureInformation(formData);
 
-      sinon.assert.calledWith(page.saveMeasureData, UpdatedEntities, '#measure-information', { ignoreParents: true, updatedAt: true });
+      sinon.assert.calledWith(page.saveMeasureData, UpdatedEntities, '#measure-information', { ignoreParents: true, updatedAt: false });
     });
   });
 
   describe('#updateRaygRowForSingleMeasureWithNoFilter', () => {
     const entities = [{ id: 1, value: 'hello again', parentStatementPublicId: 'state-1'  }];
     const measuresEntities = [{ metricID: 'metric1', date: '05/10/2020', value: 2 }];
-    const raygEntities = [{ value: 1, publicId: 'pub-1', parentPublicId: 'state-1' }];
+    const raygEntities = [{ value: 1, publicId: 'pub-1', parentStatementPublicId: 'state-1' }];
     const uniqMetricIds = ['metric1'];
 
     it('should return an array when measure is the only item in the group and that has not filter values set', async () => {
@@ -654,25 +720,130 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
 
 
   describe('#addMeasureEntityData', () => {
-    const clonedEntities = [{ id: 1, value: 'hello' }];
-    const newEntities = [{ id: 1, value: 'hello again' }];
-    const errors = [{ error: 'error' }]
-    const parsedEntities = [{ id: 1, value: 'parsed again' }];
+    const measuresEntities = [{
+      id: 1216,
+      publicId: 'measure-534',
+      theme: 'Borders',
+      parentStatementPublicId: 'statement-01-01-01',
+      createdAt: '2020-12-03T15:59:39.000Z',
+      updatedAt: '2020-12-04T10:47:40.000Z',
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 2,
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '20/12/2020',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      updateDueOn: '24/12/2020',
+      colour: 'red'
+    },
+    {
+      id: 1230,
+      publicId: 'measure-548',
+      theme: 'Borders',
+      parentStatementPublicId: 'statement-01-01-01',
+      createdAt: '2020-12-04T10:47:40.000Z',
+      updatedAt: '2020-12-04T10:47:40.000Z',
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 222,
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '21/12/2020',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      updateDueOn: '24/12/2020',
+      colour: 'green'
+    }
+    ]
+
+    const raygEntities = [{
+      id: 1217,
+      publicId: 'measure-535',
+      theme: 'Borders',
+      parentStatementPublicId: 'statement-01-01-01',
+      createdAt: '2020-12-03T15:59:39.000Z',
+      updatedAt: '2020-12-04T10:47:40.000Z',
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 2,
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '20/12/2020',
+      filter: 'RAYG',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      updateDueOn: '24/12/2020',
+      colour: 'red'
+    }
+    ]
 
     const getMeasureData = {
-      measuresEntities: [{ metricID: 'metric1', date: '05/10/2020', value: 2 }],
-      raygEntities: [{ value: 1, publicId: 'pub-1', parentPublicId: 'state-1' }],
-      uniqMetricIds: ['metric1']
+      measuresEntities,
+      raygEntities,
+      uniqMetricIds: ['gp1']
     };
+  
+    const entityToAdd = {
+      parentStatementPublicId: 'statement-01-01-01',
+      redThreshold: 4,
+      aYThreshold: 5,
+      greenThreshold: 8,
+      groupBy: 'gp1',
+      groupID: 'gp1',
+      metricID: 'gp1',
+      date: '2021-12-23',
+      additionalComment: 'test cmment',
+      frequency: 4,
+      name: 'gp1',
+      description: 'desc 1 gp1',
+      unit: '#',
+      value: 333
+    }
+
+    const futureUpdateDueOn = "2020-12-28";
+    const clonedEntities = [entityToAdd];
+    const newEntities = [entityToAdd];
+    const errors = [{ error: 'error' }]
+    const parsedEntities = [entityToAdd];
+    let entitiesToBeSaved = [{ ...entityToAdd , updateDueOn: futureUpdateDueOn }];
+    let allMeasures = [];
+
+    measuresEntities.forEach(m => {
+      let { publicId, parentStatementPublicId, date } = m;
+      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push({ publicId, parentStatementPublicId, date });
+    });
+    raygEntities.forEach(m => {
+      let { publicId, parentStatementPublicId, date } = m;
+      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push({ publicId, parentStatementPublicId, date });
+    });
 
     beforeEach(() => {
+      sinon.stub(page, 'getMeasure').returns(getMeasureData);
       sinon.stub(page, 'getEntitiesToBeCloned').returns(clonedEntities)
       sinon.stub(page, 'createEntitiesFromClonedData').returns(newEntities)
+      sinon.stub(measures, 'validateEntities').returns([]);
+      sinon.stub(page, 'updateRaygRowForSingleMeasureWithNoFilter').returns(entitiesToBeSaved)
       sinon.stub(page, 'saveMeasureData').returns({})
       sinon.stub(page, 'renderRequest').returns()
-      sinon.stub(page, 'updateRaygRowForSingleMeasureWithNoFilter').returns()
-      sinon.stub(page, 'getMeasure').returns(getMeasureData);
-      sinon.stub(measures, 'validateEntities').returns([]);
     });
 
     afterEach(() => {
@@ -687,7 +858,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     });
 
     it('should return errors when validateFormData return errors', async () => {
-      const formData = { day: 1,  year: 2020, type: 'entries', entities: { 123: 100 } };
+      const formData = { day: 23, month: 12, year: 2020, type: 'entries', entities: { 1216: 333 } };
       sinon.stub(measures, 'validateFormData').returns(["error"])
 
       await page.addMeasureEntityData(formData);
@@ -709,15 +880,17 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     it('should call saveMeasureData with parsedEntities data', async () => {
       sinon.stub(measures, 'validateFormData').returns([])
       measures.validateEntities.returns({ errors: [], parsedEntities })
-      page.updateRaygRowForSingleMeasureWithNoFilter.returns(parsedEntities);
-      const formData = { day: 1, month: 2, year: 2020, type: 'entries', entities: { 123: 100 } };
+      const formData = { day: 23, month: 12, year: 2020, type: 'entries', entities: { 1216: 333 } };
+      let copyAllMeasures = allMeasures.slice();
 
       await page.addMeasureEntityData(formData);
 
-      sinon.assert.calledWith(page.getEntitiesToBeCloned, ["123"]);
+      sinon.assert.calledWith(page.getEntitiesToBeCloned, ["1216"]);
       sinon.assert.calledWith(page.createEntitiesFromClonedData, clonedEntities, formData);
       sinon.assert.calledWith(measures.validateEntities, newEntities);
-      sinon.assert.calledWith(page.saveMeasureData, parsedEntities);
+      entitiesToBeSaved = [...entitiesToBeSaved, ...copyAllMeasures];
+      entitiesToBeSaved.forEach(e=>e.updateDueOn = futureUpdateDueOn);
+      sinon.assert.calledWith(page.saveMeasureData, entitiesToBeSaved, `#data-entries`, { updatedAt: true });
     });
   });
 
@@ -731,7 +904,6 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       sinon.stub(Category, 'fieldDefinitions').returns(categoryFields);
       Category.findOne.resolves(category);
       sinon.stub(Entity, 'import');
-
     });
 
     afterEach(() => {
@@ -761,6 +933,77 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       await page.saveMeasureData(entities, URLHash);
 
       sinon.assert.calledWith(page.res.redirect, `${page.url}/${req.params.metricId}/${req.params.groupId}${URLHash}`);
+      sinon.assert.calledOnce(transaction.rollback);
+    });
+  });
+
+  describe('#getTags', () => {
+    const getMeasureData = {
+      raygEntities: [{ id: 123, tags: ['15', '16'] }],
+    };
+
+    beforeEach(() => {
+      sinon.stub(page, 'getMeasure').returns(getMeasureData);
+      Tag.findAll.returns([ { dataValues: { id: '15', name: 'test' } }, { dataValues: { id: '17', name: 'test2' } }]);
+    });
+
+    afterEach(() => {
+      page.getMeasure.restore();
+    });
+
+    it('should call getTags and return data in the correct format', async () => {
+
+      const response = await page.getTags();
+
+      expect(response).to.eql([{
+        value: '15',
+        text: 'test',
+        checked: true
+      }, {
+        value: '17',
+        text: 'test2',
+        checked: false
+      }]);
+    });
+  });
+
+  describe('#updateEntityTags', () => {
+    const entityId = 345;
+    const getMeasureData = {
+      raygEntities: [{ id: entityId }],
+    };
+    const transaction = sequelize.transaction();
+
+    beforeEach(() => {
+      sinon.stub(page, 'getMeasure').returns(getMeasureData);
+      sinon.stub(tagsHelper, 'removeEntitiesTags')
+      sinon.stub(tagsHelper, 'createEntityTags')
+    });
+
+    afterEach(() => {
+      page.getMeasure.restore();
+      tagsHelper.removeEntitiesTags.restore();
+      tagsHelper.createEntityTags.restore();
+      transaction.commit.reset();
+      transaction.rollback.reset();
+    });
+
+    it('should call removeEntitiesTags and not createEntityTags when tagsData is empty ', async () => {
+      const formData = { tags: [] }
+      await page.updateEntityTags(formData);
+
+      sinon.assert.calledWith(tagsHelper.removeEntitiesTags, entityId, transaction);
+      sinon.assert.notCalled(tagsHelper.createEntityTags);
+      sinon.assert.calledOnce(transaction.commit);
+      sinon.assert.calledWith(page.res.redirect, `${page.url}/${req.params.metricId}/${req.params.groupId}/successful`);
+    });
+
+    it('should rollback transaction on error', async () => {
+      tagsHelper.removeEntitiesTags.throws(new Error('error'));
+
+      await page.updateEntityTags({});
+
+      sinon.assert.calledWith(page.res.redirect, `${page.url}/${req.params.metricId}/${req.params.groupId}#tags`);
       sinon.assert.calledOnce(transaction.rollback);
     });
   });

@@ -33,7 +33,7 @@
                 <p class="govuk-body govuk-!-font-size-16">
                   <strong>Group status</strong>: <span class="rayg-status rayg-block {{ group.colour }} govuk-!-margin-right-5" alt="RAYG status is: {{ group.colour }}"></span>
                   <strong>Group theme</strong>: <span class="govuk-!-margin-right-5">{{ group.theme }}</span>
-                  <strong>Last updated</strong>: <span>{{ group.date }}</span>
+                  <strong>Last updated</strong>: <span>{{ group.updatedAt }}</span>
                 </p>
               </td>
               <td class="govuk-table__cell govuk-table__cell__actions govuk-!-padding-0" style="max-width: 150px">
@@ -53,6 +53,7 @@
               <th scope="col" class="govuk-table__header govuk-table__cell__small">Status</th>
               <th scope="col" class="govuk-table__header">Comment only</th>
               <th scope="col" class="govuk-table__header">Last updated</th>
+              <th scope="col" class="govuk-table__header">Update due on</th>
               <th scope="col" class="govuk-table__header"></th>
             </tr>
           </thead>
@@ -65,7 +66,8 @@
                   <div class="rayg-status rayg-block {{ measure.colour }}" alt="RAYG status is: {{ measure.colour }}"></div>
                 </td>
                 <td class="govuk-table__cell">{{ "Yes" if measure.commentsOnly else "No" }}</td>
-                <td class="govuk-table__cell">{{ measure.date }}</td>
+                <td class="govuk-table__cell">{{ measure.updatedAtDate }}</td>
+                <td class="govuk-table__cell">{{ measure.updateDueOn }}</td>
                 <td class="govuk-table__cell govuk-table__cell__actions">
                   <a href="{{ config.paths.dataEntryEntity.measureEdit }}/{{ measure.metricID }}/{{ measure.groupID }}" class="govuk-link">Edit</a>
                 </td>
@@ -110,6 +112,7 @@
             <th scope="col" class="govuk-table__header govuk-table__cell__small">Status</th>
             <th scope="col" class="govuk-table__header">Comment only</th>
             <th scope="col" class="govuk-table__header">Last updated</th>
+            <th scope="col" class="govuk-table__header">Update due on</th>
             <th scope="col" class="govuk-table__header"></th>
           </tr>
         </thead>
@@ -122,7 +125,8 @@
                 <div class="rayg-status rayg-block {{ measure.colour }}" alt="RAYG status is: {{ measure.colour }}"></div>
               </td>
               <td class="govuk-table__cell">{{ "Yes" if measure.commentsOnly else "No" }}</td>
-              <td class="govuk-table__cell">{{ measure.date }}</td>
+              <td class="govuk-table__cell">{{ measure.updatedAt }}</td>
+              <td class="govuk-table__cell">{{ measure.updateDueOn }}</td>
               <td class="govuk-table__cell govuk-table__cell__actions">
                 <a href="{{ config.paths.dataEntryEntity.measureEdit }}/{{ measure.metricID }}/{{ measure.groupID }}" class="govuk-link">Edit</a>
               </td>

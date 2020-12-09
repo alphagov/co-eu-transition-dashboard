@@ -177,6 +177,8 @@ class TableauExport extends Page {
       }, {});
 
       entityFieldMap['Public ID'] = { value: entity.publicId, type: 'string' };
+      const lastUpdatedOrCreated = entity.updated_at || entity.created_at;      
+      entityFieldMap['LastUpdate'] = { value: moment(lastUpdatedOrCreated, 'YYYY-MM-DD').format('DD/MM/YYYY'), type: 'date' };
 
       if(entity.parents.length) {
         await this.addParents(entity, entityFieldMap);

@@ -1,0 +1,22 @@
+.govuk-accordion__section.last-level-expandable {
+  &:hover, &.govuk-accordion__section--expanded {
+    .govuk-accordion__section-header {
+      background-color: white;
+    }
+
+    .govuk-accordion__icon__arrow {
+      display: block;
+    }
+  }
+
+  .govuk-accordion__icon__arrow {
+    background: url(/assets/images/arrow.png) no-repeat;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    display: none;
+  }
+}

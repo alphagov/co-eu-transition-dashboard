@@ -3,6 +3,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "searchMeasures.njk" import searchMeasures %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "status.njk" import currentStatus %}
 
 {% set data = getData() | await %}
 
@@ -38,7 +40,7 @@
           {{ govukButton({
                 text: "Apply filters",
                 preventDoubleClick: true
-              }) 
+              })
           }}
           {{ govukButton({
                 text: "Clear all filters",
@@ -46,7 +48,7 @@
                 preventDoubleClick: true,
                 href: url,
                 type: "reset"
-              }) 
+              })
           }}
         </div>
       </div>
@@ -59,23 +61,42 @@
               </td>
             </tr>
             {% for measure in data.measures %}
-              <tr class="govuk-table__row searchable-row" data-theme="{{ measure.theme }}" data-color="{{ measure.color }}">
-                <td class="govuk-table__cell" style="width: 50px; padding-top: 20px"><span class="measure-rayg {{ measure.color }}"></span></td>
+              {%- set tags -%}
+                {%- for tag in measure.tags -%}
+                  {{ tag.name }}{{ "," if not loop.last }}
+                {%- endfor -%}
+              {%- endset -%}
+              <tr class="govuk-table__row searchable-row" data-theme="{{ measure.theme }}" data-color="{{ measure.color }}" data-tags="{{ tags }}">
+                <td class="govuk-table__cell search-current-status">{{ currentStatus(measure.color, false) }}</td>
                 <td class="govuk-table__cell govuk-!-width-full">
                   <table class="govuk-table no-borders govuk-!-margin-0">
                     <tbody class="govuk-table__body">
                       <tr class="govuk-table__row">
                         <td colspan="2" class="govuk-table__cell">
-                          <a href="{{ measure.link }}" class="govuk-link">{{ measure.name }}</a>
+                          <a href="{{ measure.link }}" class="govuk-link">{{ measure.name }} </a>
                         </td>
                       </tr>
                       <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">
+                        <td class="govuk-table__cell govuk-!-padding-0">
                           <table class="govuk-table no-borders govuk-!-margin-0 govuk-!-width-one-half">
                             <tbody class="govuk-table__body">
                               <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">{{ measure.metricID }}</td>
-                                <td class="govuk-table__cell">{{ measure.theme }}</td>
+                                <td class="govuk-table__cell govuk-!-padding-top-0">{{ measure.metricID }}</td>
+                                <td class="govuk-table__cell govuk-!-padding-top-0">{{ measure.theme }}</td>
+                              </tr>
+                              <tr class="govuk-table__row">
+                                <td class="govuk-table__cell govuk-!-padding-0" colspan="2">
+                                  {% if measure.tags.length %}
+                                    {% for tag in measure.tags %}
+                                      {{
+                                        govukTag({
+                                          text: tag.name,
+                                          classes: 'govuk-!-margin-right-1 govuk-!-margin-bottom-1'
+                                        })
+                                      }}
+                                    {% endfor %}
+                                  {% endif %}
+                                </td>
                               </tr>
                             </tbody>
                           </table>

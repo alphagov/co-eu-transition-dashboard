@@ -16,6 +16,7 @@ const tableau = require('services/tableau');
 const cache = require('services/cache');
 const config = require('config');
 const uniq = require('lodash/uniq');
+const Tag = require('models/tag');
 
 const rags = ['red', 'amber', 'yellow', 'green'];
 
@@ -100,6 +101,11 @@ const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project
 
 const applyRagRollups = (entity) => {
   let color = '';
+  
+  if (entity.raygStatus && entity.raygStatus !== 'default') {
+    entity.color = entity.raygStatus;
+    return entity.color;
+  }
 
   if (entity.category) {
     // entity is a project
@@ -115,7 +121,9 @@ const applyRagRollups = (entity) => {
       }
 
       entity.color = color;
-      entity.children.forEach(applyRagRollups);
+      if (entity.children) {
+        entity.children.forEach(applyRagRollups);
+      }
       return color;
 
     // entity is a milestone
@@ -251,8 +259,7 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
   }
 
   const projects = await dao.getAllData(undefined, {
-    uid: projectUids,
-    complete: ['Yes', 'No'] // Only include milestones that are completed Yes or No ( dont include decommissioned milestones )
+    uid: projectUids
   });
 
   const mapAllEntities = (entity) => {
@@ -269,12 +276,6 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
       });
       for (let i=toDelete.length - 1;i>=0;i--) {
         entity.children.splice(toDelete[i],1);
-      }
-    }
-
-    if (entity.categoryId === projectsCategory.id) {
-      if (!entity.children || entity.children.length === 0) {
-        return false;
       }
     }
 
@@ -298,7 +299,10 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
           break;
         }
       }
-      if (!foundEntity) {
+
+      // dont include decommissioned milestones
+      const milestoneIsDecommissioned = entity.complete === 'Decommissioned';
+      if (!foundEntity || milestoneIsDecommissioned) {
         return false;
       }
     }
@@ -440,6 +444,8 @@ const getAllEntities = async () => {
         model: CategoryField,
         where: { isActive: true }
       }
+    }, {
+      model: Tag
     }]
   });
 
@@ -682,47 +688,50 @@ const getThemesHierarchy = async (entitiesUserCanAccess) => {
   return allThemes;
 }
 
-const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
+const filterTopLevelOutcomeStatementsChildren = async(entities) => {
   const statementCategory = await Category.findOne({
     where: { name: 'Statement' }
   });
 
+  const filterChildren = (entities = []) => {
+    for (var i = entities.length - 1; i >= 0; i--) {
+      const entity = entities[i];
+
+      if(entity.children) {
+        filterChildren(entity.children);
+
+        if(!entity.children.length) {
+          entities.splice(i, 1);
+        }
+        continue;
+      }
+
+      if(entity.categoryId === statementCategory.id) {
+        entities.splice(i, 1);
+      }
+    }
+  };
+
+  entities.forEach(entity => {
+    if(entity.children) {
+      filterChildren(entity.children);
+    }
+  });
+
+  return entities.filter(entity => {
+    const hasChildren = entity.children && entity.children.length;
+    const hasOnlyParentOrLess = entity.parents.length <= 1;
+    return hasChildren && hasOnlyParentOrLess;
+  });
+}
+
+const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
+  
+
   let entities = topLevelEntity.children;
 
   try {
-    const filterChildren = (entities = []) => {
-      for (var i = entities.length - 1; i >= 0; i--) {
-        const entity = entities[i];
-
-        if(entity.children) {
-          filterChildren(entity.children);
-
-          if(!entity.children.length) {
-            // console.log(`Removing ${entity.publicId}`);
-            entities.splice(i, 1);
-          }
-          continue;
-        }
-
-        if(entity.categoryId === statementCategory.id) {
-          // console.log(`Removing ${entity.publicId}`);
-          entities.splice(i, 1);
-        }
-      }
-    };
-
-    entities.forEach(entity => {
-      if(entity.children) {
-        filterChildren(entity.children);
-      }
-    });
-
-    entities = entities.filter(entity => {
-      const hasChildren = entity.children && entity.children.length;
-      const hasOnlyParentOrLess = entity.parents.length <= 1;
-      // console.log(`Removing ${entity.publicId}`);
-      return hasChildren && hasOnlyParentOrLess;
-    });
+    entities = await filterTopLevelOutcomeStatementsChildren(entities)
 
     entities.forEach(entity => {
       groupById(entity);
@@ -778,7 +787,7 @@ const themeDetail = async (entitiesUserCanAccess, pageUrl, req) => {
 
   // set rag information on theme
   const outcomeColors = topLevelOutcomeStatements.map(c => c.color);
-  theme.color = rags.find(rag => outcomeColors.includes(rag));
+  theme.color = theme.raygStatus && theme.raygStatus !== 'default' ? theme.raygStatus : rags.find(rag => outcomeColors.includes(rag));
 
   const selected = subOutcomeStatementsAndDatas.reduce(findSelected, false);
   const iframeUrl = await getIframeUrl(req, selected);
@@ -860,6 +869,7 @@ const measuresWithLink = async (allThemes, publicIds, transitionReadinessThemeDe
 }
 
 module.exports = {
+  filterTopLevelOutcomeStatementsChildren,
   themeDetail,
   overview,
   measuresWithLink,

@@ -160,6 +160,8 @@ describe('pages/tableau-export/TableauExport', () => {
   describe('#getEntitiesFlatStructure', () => {
     const entites = [{
       id: 1,
+      created_at: '2020-12-01',
+      updated_at: '2020-12-04',
       publicId: '1',
       entityFieldEntries: [{
         categoryFieldId: 1,
@@ -172,6 +174,8 @@ describe('pages/tableau-export/TableauExport', () => {
       parents: []
     },{
       id: 2,
+      created_at: '2020-12-01',
+      updated_at: '2020-12-05',
       publicId: '2',
       entityFieldEntries: [{
         categoryFieldId: 1,
@@ -206,11 +210,13 @@ describe('pages/tableau-export/TableauExport', () => {
       expect(entityObjects).to.eql([
         {
           'Field 1': { value: 'some name 1', type: 'string' },
-          'Public ID': { value: '1', type: 'string' }
+          'Public ID': { value: '1', type: 'string' },
+          'LastUpdate': { value: '04/12/2020', type: 'date' }
         },
         {
           'Field 1': { value: 'some name 2', type: 'string' },
-          'Public ID': { value: '2', type: 'string' }
+          'Public ID': { value: '2', type: 'string' },
+          'LastUpdate': { value: '05/12/2020', type: 'date' }
         }
       ]);
     });
@@ -226,7 +232,8 @@ describe('pages/tableau-export/TableauExport', () => {
       expect(entityObjects).to.eql([
         {
           'Field 1': { value: 'some name 1', type: 'string' },
-          'Public ID': { value: '1', type: 'string' }
+          'Public ID': { value: '1', type: 'string' },
+          'LastUpdate': { value: '04/12/2020', type: 'date' }
         }
       ]);
 

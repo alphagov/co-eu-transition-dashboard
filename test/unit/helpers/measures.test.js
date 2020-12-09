@@ -8,6 +8,7 @@ const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 const { paths } = require('config');
+const moment = require('moment');
 
 describe('helpers/measures', () => {
   describe('#applyLabelToEntities', () => {
@@ -229,7 +230,10 @@ describe('helpers/measures', () => {
             value: 'theme name'
           }]
         }]
-      }]
+      }],
+      created_at: '2020-09-05T13:15:30Z',
+      updated_at: '2020-09-06T13:15:30Z',
+      updateDueOn: "2020-11-20T13:15:30Z"
     },{
       id: 'some-id',
       publicId: 'some-public-id-2',
@@ -248,7 +252,10 @@ describe('helpers/measures', () => {
             value: 'theme name'
           }]
         }]
-      }]
+      }],
+      created_at: '2020-10-05T13:15:30Z',
+      updated_at: '2020-11-05T13:15:30Z',
+      updateDueOn: "2020-11-20T13:15:30Z"
     }];
     const category = { id: 1 };
 
@@ -260,7 +267,7 @@ describe('helpers/measures', () => {
       const user = { roles:[{ name: 'admin' }], isAdmin: true };
 
       const response = await measures.getMeasureEntities({
-        measureCategory:category, 
+        measureCategory:category,
         themeCategory:category,
         user
       });
@@ -268,13 +275,19 @@ describe('helpers/measures', () => {
         id: "some-id",
         name: "some name",
         publicId: "some-public-id-1",
-        theme: "theme name"
+        theme: "theme name",
+        createdAt: '2020-09-05T13:15:30Z',
+        updatedAt: '2020-09-06T13:15:30Z',
+        updateDueOn: "2020-11-20T13:15:30Z"
       },{
         filter: "RAYG",
         id: "some-id",
         name: "some name",
         publicId: "some-public-id-2",
-        theme: "theme name"
+        theme: "theme name",
+        createdAt: '2020-10-05T13:15:30Z',
+        updatedAt: '2020-11-05T13:15:30Z',
+        updateDueOn: "2020-11-20T13:15:30Z"
       }]);
 
       sinon.assert.calledWith(Entity.findAll, {
@@ -311,10 +324,13 @@ describe('helpers/measures', () => {
       publicId: "some-public-id-1",
       theme: "theme name",
       groupID: 'Group 1',
+      metricID: 'm1',
       redThreshold: 1,
       aYThreshold: 2,
       greenThreshold: 3,
-      value: 1
+      value: 1,
+      updatedAt: '2020-11-05T13:15:30Z',
+      updateDueOn: "20/11/2020"
     },{
       filter: "RAYG",
       id: "some-id",
@@ -322,40 +338,50 @@ describe('helpers/measures', () => {
       publicId: "some-public-id-2",
       theme: "theme name",
       groupID: 'Group 1',
+      metricID: 'm1',
       redThreshold: 1,
       aYThreshold: 2,
       greenThreshold: 3,
-      value: 1
+      value: 1,
+      updatedAt: '2020-11-06T13:15:30Z',
+      updateDueOn: "20/11/2020"
     }];
 
     it('groups measures by rayg row, sets rayg colour', () => {
       const measureGroups = measures.groupMeasures(msrs);
       expect(measureGroups).to.eql([{
         aYThreshold: 2,
+        colour: "red",
+        filter: 'RAYG',
+        id: 'some-id',
+        name: 'some name',
+        publicId: 'some-public-id-2',
+        theme: 'theme name',
+        groupID: 'Group 1',
+        metricID: 'm1',
+        redThreshold: 1,
+        greenThreshold: 3,
+        value: 1,
+        updatedAt: '05/11/2020',
+        updateDueOn: '20/11/2020',
         children: [
           {
-            aYThreshold: 2,
-            colour: "red",
-            greenThreshold: 3,
-            groupID: "Group 1",
-            id: "some-id",
-            name: "some name",
-            publicId: "some-public-id-1",
+            id: 'some-id',
+            name: 'some name',
+            publicId: 'some-public-id-1',
+            theme: 'theme name',
+            groupID: 'Group 1',
+            metricID: 'm1',
             redThreshold: 1,
-            theme: "theme name",
-            value: 1
+            aYThreshold: 2,
+            greenThreshold: 3,
+            value: 1,
+            updatedAt: moment('2020-11-05T13:15:30Z'),
+            updatedAtDate: '05/11/2020',
+            colour: 'red',
+            updateDueOn: '20/11/2020'
           }
-        ],
-        colour: "red",
-        filter: "RAYG",
-        greenThreshold: 3,
-        groupID: "Group 1",
-        id: "some-id",
-        name: "some name",
-        publicId: "some-public-id-2",
-        redThreshold: 1,
-        theme: "theme name",
-        value: 1
+        ], 
       }]);
     })
   });
@@ -407,7 +433,7 @@ describe('helpers/measures', () => {
     const entitiesUserCanAccess = [{ entity: { dataValues: { publicId: 'm01', id: 600, children: [] } } },
       { entity: { dataValues: { publicId: 'm02', id: 601, children: [] } } },
       { entity: { dataValues: { publicId: 'm03', id: 602, children: [] } } }]
-    
+
     const measuresPublicId = ['m01', 'm02', 'm03'];
     const measuresWithLink = [{
       id: 600,
@@ -416,7 +442,10 @@ describe('helpers/measures', () => {
       color: 'green',
       found: true,
       theme: 'Borders',
-      link: '/transition-readiness-detail/B/st-01/measure1'
+      link: '/transition-readiness-detail/B/st-01/measure1',
+      tags: [{
+        name: 'some-tag'
+      }]
     }, {
       id: 601,
       publicId: 'm02',
@@ -455,9 +484,10 @@ describe('helpers/measures', () => {
       getThemesHierarchyStub.resolves(allThemes);
 
       const expectedMeasures = {
+        tags: [ 'some-tag' ],
         measures: measuresWithLink,
         themes: allThemes,
-        colors: ["red","amber","yellow","green"]
+        colors: [{ color: 'red', definition: 'High risk' }, { color: 'amber', definition: 'Medium risk' }, { color: 'yellow', definition: 'Low risk' }, { color: 'green', definition: 'Minimal/No risk' }]
       }
 
       const measuresWhichUserHasAccess = await measures.getMeasuresWhichUserHasAccess(entitiesUserCanAccess);
@@ -468,4 +498,20 @@ describe('helpers/measures', () => {
       sinon.assert.calledWith(measuresWithLinkStub, allThemes, measuresPublicId, paths.transitionReadinessThemeDetail);
     });
   });
+
+  describe('#getMaxUpdateAtForMeasures', ()=> {
+    it('should return max updated at date for measures', () => {
+      const mockMeasures = [{ updatedAt: '2020-11-05T13:15:30Z' }, { updatedAt: '2020-11-06T13:15:30Z' }]
+      const exectedMaxMeasureUpdatedAt = moment('2020-11-06T13:15:30Z')
+      const maxMeasureUpdatedAt = measures.getMaxUpdateAtForMeasures(mockMeasures);
+      expect(exectedMaxMeasureUpdatedAt).to.eql(maxMeasureUpdatedAt);
+    })
+
+    it('should return createdAt as max updated at date for measures when updatedAt is not set', () => {
+      const mockMeasures = [{ createdAt: '2020-11-05T13:15:30Z' }, { createdAt: '2020-11-06T13:15:30Z' }]
+      const exectedMaxMeasureUpdatedAt = moment('2020-11-06T13:15:30Z')
+      const maxMeasureUpdatedAt = measures.getMaxUpdateAtForMeasures(mockMeasures);
+      expect(exectedMaxMeasureUpdatedAt).to.eql(maxMeasureUpdatedAt);
+    })
+  })
 });

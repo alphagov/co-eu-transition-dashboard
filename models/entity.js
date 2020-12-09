@@ -7,6 +7,8 @@ const RoleEntity = require('./roleEntity');
 const RoleEntityBlacklist = require('./roleEntityBlacklist');
 const pick = require('lodash/pick');
 const sprintf = require('sprintf-js').sprintf;
+const Tag = require('./tag');
+const TagEntity = require('./tagEntity');
 
 class Entity extends Model {
   static async import(entity, category, entityFields, options) {
@@ -96,7 +98,6 @@ class Entity extends Model {
 
   static async importFieldEntries(entity, entityFields, options) {
     const attributes = Object.keys(entity);
-
     const entityFieldEntryAttributes = attributes.filter(attribute => {
       const isRawField = this.rawAttributes[attribute];
       const entityField = entityFields.find(entityField => entityField.name === attribute);
@@ -189,5 +190,8 @@ Entity.hasMany(RoleEntity, { foreignKey: 'entityId' });
 Entity.hasMany(RoleEntityBlacklist, { foreignKey: 'entityId' });
 RoleEntity.belongsTo(Entity, { foreignKey: 'entityId' });
 RoleEntityBlacklist.belongsTo(Entity, { foreignKey: 'entityId' });
+
+Entity.belongsToMany(Tag, { through: TagEntity, foreignKey: 'entityId' });
+Tag.belongsToMany(Entity, { through: TagEntity, foreignKey: 'tagId' });
 
 module.exports = Entity;

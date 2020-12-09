@@ -2,14 +2,14 @@
 
 
 {{ govukCheckboxes({
-    name: "colorFilter",
+    name: "tagFilter",
     items: [
       {
-        id: "colorFilter-" + option.color,
-        value: option.color,
-        text: option.definition,
+        id: "tagFilter-" + option,
+        value: option,
+        text: option,
         checked: false
       }
     ]
-  }) 
+  })
 }}

@@ -96,9 +96,13 @@
             font-weight: normal;
             display: inline !important;
         }
-    
-        #themes {
-            margin-top: 20px;
+
+        #headline-figures, #themes {
+            margin-top: 10px;
+            margin-bottom: 10px !important;
+            ~ hr {
+                display: none;
+            }
         }
     }
 
@@ -118,17 +122,14 @@
         display: block !important;
     }
 
-    .theme-name.show-statement::before {
-        top: 5px;
+    .tableu-message {
+        width: 100%;
     }
 
-    @media only screen and (max-width:640px) {
-        .theme-name::before {
-            top: 3px;
-        }
-        .theme-name.show-statement::before {
-            top: 0px;
-        }
+    .selected-statement {
+        border-top: 1px solid #b1b4b6;
+        border-bottom: 1px solid #b1b4b6;
+        padding:10px 0;
     }
   }
 

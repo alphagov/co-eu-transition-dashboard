@@ -1,0 +1,24 @@
+{% macro currentStatus(color, status) %}
+
+<div class="current-status">
+{% if status == true %}
+{% set style = "govuk-body govuk-!-font-size-14 govuk-!-font-weight-bold govuk-!-display-inline" %}
+<span class="govuk-caption-m govuk-!-font-size-14">Current status</span>
+{% else %}
+{% set style = "govuk-body govuk-!-font-size-16 govuk-!-font-weight-bold govuk-!-display-inline" %}
+{% endif %}
+
+{% if color == 'red' %}
+    <img src="/assets/images/highrisk-icon.png" class="rayg-img" alt="High risk"/><p class="{{ style }}">HIGH RISK</p>
+{% elseif color == 'amber' %}
+    <img src="/assets/images/mediumrisk-icon.png" class="rayg-img" alt="Medium risk"/><p class="{{ style }}">MEDIUM RISK</p>
+{% elseif color == 'yellow' %}
+    <img src="/assets/images/lowrisk-icon.png" class="rayg-img" alt="Low risk"/><p class="{{ style }}">LOW RISK</p>
+{% elseif color == 'green' %}
+    <img src="/assets/images/low-norisk-icon.png" class="rayg-img" alt="Minimal/no risk"/><p class="{{ style }}">MINIMAL/NO RISK</p>
+{% elseif color == 'grey' %}
+    <img src="/assets/images/unknownrisk-icon.png" class="rayg-img" alt="Unassigned risk"/><p class="{{ style }}">UNASSIGNED RISK</p>  
+{% endif %}
+</div>
+
+{% endmacro %}

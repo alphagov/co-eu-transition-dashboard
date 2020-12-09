@@ -11,6 +11,7 @@ const CategoryField = require('models/categoryField');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const sequelize = require('services/sequelize');
+const moment = require('moment');
 
 let page = {};
 let res = {};
@@ -51,14 +52,14 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
       const { metricId, groupId, date } = req.params;
       expect(page.editUrl).to.eql(`${page.url}/edit/${metricId}/${groupId}/${encodeURIComponent(date)}`);
     });
-  });  
+  });
 
   describe('#deleteUrl', () => {
     it('returns url for delete measure value', () => {
       const { metricId, groupId, date } = req.params;
       expect(page.deleteUrl).to.eql(`${page.url}/delete/${metricId}/${groupId}/${encodeURIComponent(date)}`);
     });
-  });  
+  });
 
   describe('#middleware', () => {
     it('only uploaders are allowed to access this page', () => {
@@ -113,7 +114,7 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
 
       const response = await page.getGroupEntities(category);
 
-      expect(response).to.eql({ 
+      expect(response).to.eql({
         groupEntities: [{
           id: 'some-id',
           parentStatementPublicId: 'parent-1',
@@ -186,11 +187,11 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
 
   describe('#getPublicIdFromExistingEntity', () => {
     const measureEntities = [
-      { id: '123', value: 'value 1', label: 'test', label2: 'test2' }, 
+      { id: '123', value: 'value 1', label: 'test', label2: 'test2' },
       { id: '456', value: 'value 2', label: 'test2' },
       { id: '789', value: 'value 3' }
     ];
-      
+
     it('should return publicId for entitiy when label and label2 are set and match' , async () => {
       const entitiesForSelectedDate = [{ id: '456', publicId: 'test-1',  label: 'test', label2: 'test2' }]
       const response =  page.getPublicIdFromExistingEntity(measureEntities, entitiesForSelectedDate)
@@ -223,7 +224,7 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
     const entitiesForSelectedDate = [{ id: '890', publicId: 'test-3' }]
 
     it('should return the correct data structure', async () => {
-      
+
       const response = await page.createEntitiesFromClonedData(entities, formData, entitiesForSelectedDate);
 
       expect(response).to.eql([{
@@ -456,7 +457,7 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
     it('should call updateMeasureValues when editMeasure is true', async () => {
       req.params = { groupId: 'measure-1', metricId: 'measure-1', date: '12/10/2020', type: 'delete' }
       req.user = { isAdmin: true, getPermittedMetricMap: sinon.stub().returns({}) }
-      
+
       await page.postRequest(req, res);
 
       sinon.assert.calledOnce(page.deleteMeasureValues);
@@ -514,11 +515,11 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
 
       const response = await page.onDeleteUpdateRaygRowForSingleMeasureWithNoFilter(measureEntities, raygEntities, uniqMetricIds);
 
-      expect(response).to.eql([{ 
-        value: 456, 
+      expect(response).to.eql([{
+        value: 456,
         date: '2020-10-04',
-        publicId: 'pub-1', 
-        parentStatementPublicId: 'statement1' 
+        publicId: 'pub-1',
+        parentStatementPublicId: 'statement1'
       }]);
     });
 
@@ -534,6 +535,87 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
     });
   });
 
+  describe('#updateDateDueOn', () => {
+    let entitiesRemoved;
+    let options;
+    let measureEntities;
+    let raygEntities;
+    const categoryFields = [{ id: 1 }];
+    const category = { name: 'Measure' };
+
+    beforeEach(() => {
+      entitiesRemoved = [{
+        date: moment().format('DD/MM/YYYY')
+      }];
+      options = { some: 'options' };
+
+      page.req.params.metricId = 'metricId';
+
+      measureEntities = [{
+        metricID: 'metricId',
+        updateDueOn: moment().add(5, 'days').format('DD/MM/YYYY'),
+        date: moment().format('DD/MM/YYYY'),
+        frequency: 5
+      }];
+
+      raygEntities = [{
+        metricID: 'metricId',
+        updateDueOn: moment().add(5, 'days').format('DD/MM/YYYY'),
+        frequency: 5,
+        date: moment().format('DD/MM/YYYY')
+      }]
+
+      sinon.stub(page, 'getMeasure').returns({
+        measureEntities,
+        raygEntities
+      });
+
+      sinon.stub(Entity, 'import');
+      sinon.stub(Category, 'fieldDefinitions').returns(categoryFields);
+      Category.findOne.resolves(category);
+    });
+
+    afterEach(() => {
+      Entity.import.restore();
+      Category.fieldDefinitions.restore();
+    });
+
+    it('updates all entities updateDueOn', async () => {
+      await page.updateDateDueOn(entitiesRemoved, options);
+
+      const updateDueOn = moment().startOf('day').format();
+      const date = moment().startOf('day').format();
+
+      const measureValueEntity = Object.assign({}, measureEntities[0], { updateDueOn, date });
+      sinon.assert.calledWith(Entity.import, measureValueEntity, category, categoryFields, options);
+
+      const measureRaygEntity = Object.assign({}, raygEntities[0], { updateDueOn, date });
+      sinon.assert.calledWith(Entity.import, measureRaygEntity, category, categoryFields, options);
+    });
+
+    it('does not update if no updateDueOn or frequency set', async () => {
+      delete measureEntities[0].frequency;
+      delete measureEntities[0].updateDueOn;
+
+      await page.updateDateDueOn(entitiesRemoved, options);
+
+      sinon.assert.notCalled(Entity.import);
+    });
+
+    it('does not update the entity removed was not the latest one', async () => {
+      measureEntities.push({
+        metricID: 'metricId',
+        updateDueOn: moment().add(5, 'days').format('DD/MM/YYYY'),
+        frequency: 5,
+        date: moment().add(5, 'days').format('DD/MM/YYYY')
+      });
+
+      await page.updateDateDueOn(entitiesRemoved, options);
+
+      sinon.assert.notCalled(Entity.import);
+    });
+  });
+
   describe('#deleteAndUpdateRaygMeasureData', () => {
     const categoryFields = [{ id: 1 }];
     const category = { name: 'Measure' };
@@ -545,6 +627,7 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
       Category.findOne.resolves(category);
       sinon.stub(Entity, 'delete');
       sinon.stub(Entity, 'import');
+      sinon.stub(page, 'updateDateDueOn');
     });
 
     afterEach(() => {
@@ -559,13 +642,12 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
       transaction.commit.reset();
       transaction.rollback.reset();
 
-      
-
       await page.deleteAndUpdateRaygMeasureData(entities);
 
       sinon.assert.calledWith(Entity.delete, entities[0].id, { transaction });
       sinon.assert.notCalled(Entity.import)
       sinon.assert.calledOnce(transaction.commit);
+      sinon.assert.calledOnce(page.updateDateDueOn);
       const { metricId, groupId, date } = req.params;
       sinon.assert.calledWith(page.res.redirect, `${page.url}/delete/${metricId}/${groupId}/${encodeURIComponent(date)}/successful`);
     });
@@ -580,6 +662,7 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
       sinon.assert.calledWith(Entity.delete, entities[0].id, { transaction });
       sinon.assert.calledWith(Entity.import, raygEntities[0], category, categoryFields, { transaction, ignoreParents: true, updatedAt: true });
       sinon.assert.calledOnce(transaction.commit);
+      sinon.assert.calledOnce(page.updateDateDueOn);
       const { metricId, groupId, date } = req.params;
       sinon.assert.calledWith(page.res.redirect, `${page.url}/delete/${metricId}/${groupId}/${encodeURIComponent(date)}/successful`);
     });

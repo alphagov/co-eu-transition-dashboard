@@ -8,10 +8,12 @@ const Category = require('models/category');
 const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
 const EntityFieldEntry = require('models/entityFieldEntry');
+const Tag = require('models/tag');
 const logger = require('services/logger');
 const sequelize = require('services/sequelize');
 const flash = require('middleware/flash');
 const rayg = require('helpers/rayg');
+const tagsHelper = require('helpers/tags');
 const filterMetricsHelper = require('helpers/filterMetrics');
 const { buildDateString } = require('helpers/utils');
 const get = require('lodash/get');
@@ -42,6 +44,10 @@ class MeasureEdit extends Page {
     return `${this.measureUrl}/edit`
   }
 
+  get tagsUrl() {
+    return `${this.measureUrl}/tags`
+  }
+
   get pathToBind() {
     return `${this.url}/:metricId/:groupId/:type?`;
   }
@@ -52,6 +58,10 @@ class MeasureEdit extends Page {
 
   get editMeasure() {
     return this.req.params && this.req.params.type == 'edit';
+  }
+
+  get editTags() {
+    return this.req.params && this.req.params.type == 'tags';
   }
 
   get deleteMeasureUrl() {
@@ -118,6 +128,8 @@ class MeasureEdit extends Page {
             model: Category
           }]
         }]
+      },{
+        model: Tag
       }]
     });
 
@@ -125,14 +137,12 @@ class MeasureEdit extends Page {
       entity['entityFieldEntries'] = await measures.getEntityFields(entity.id)
     }
 
-    entities = await filterMetricsHelper.filterMetrics(this.req.user,entities);
-
-
-    const measureEntitiesMapped = this.mapMeasureFieldsToEntity(entities, themeCategory);
+    entities = await filterMetricsHelper.filterMetrics(this.req.user,entities); 
+    const measureEntitiesMapped = this.mapMeasureFieldsToEntity(entities, themeCategory); 
 
     // In certain case when a measure is the only item in the group, we need to up allow users to update the
     // overall value which is stored in the RAYG row.
-    return measureEntitiesMapped.reduce((data, entity) => {
+    const groupedEntitnes =  measureEntitiesMapped.reduce((data, entity) => {
       if(entity.filter === 'RAYG') {
         data.raygEntities.push(entity)
       } else {
@@ -140,14 +150,11 @@ class MeasureEdit extends Page {
       }
       return data;
     }, { groupEntities: [], raygEntities: [] });
+    return groupedEntitnes;
   }
 
-
-
-
-
-  mapMeasureFieldsToEntity(measureEntities, themeCategory) {
-    return measureEntities.map(entity => {
+  mapMeasureFieldsToEntity(measureEntities, themeCategory) {    
+    let entities = measureEntities.map(entity => {
       const theme = get(entity, 'parents[0].parents').find(parentEntity => {
         return parentEntity.categoryId === themeCategory.id;
       });
@@ -156,23 +163,28 @@ class MeasureEdit extends Page {
         return fieldEntry.categoryField.name === 'name';
       });
 
-      const parentPublicId = get(entity, 'parents[0].publicId')
-
+      const parentStatementPublicId = get(entity, 'parents[0].publicId');
       const entityMapped = {
         id: entity.id,
         publicId: entity.publicId,
         theme: themeName.value,
-        parentPublicId
+        parentStatementPublicId,
+        createdAt: entity.created_at,
+        updatedAt: entity.updated_at
       };
+
+      if (entity.tags && entity.tags.length) {
+        entityMapped.tags = entity.tags.map(tag => tag.id)
+      }
 
       entity.entityFieldEntries.map(entityfieldEntry => {
         entityMapped[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
       });
-
       entityMapped.colour = rayg.getRaygColour(entityMapped);
 
       return entityMapped;
     });
+    return entities;
   }
 
 
@@ -180,19 +192,19 @@ class MeasureEdit extends Page {
     const measureCategory = await measures.getCategory('Measure');
     const themeCategory = await measures.getCategory('Theme');
     const { groupEntities, raygEntities }  = await this.getGroupEntities(measureCategory, themeCategory);
-
     const measuresEntities = await measures.getMeasureEntitiesFromGroup(groupEntities, this.req.params.metricId);
-
+    const updatedAt = measures.getMaxUpdateAtForMeasures(measuresEntities);
     if (measuresEntities.length === 0) {
       return this.res.redirect(paths.dataEntryEntity.measureList);
     }
 
     const uniqMetricIds = uniq(groupEntities.map(measure => measure.metricID));
-
+    
     return {
       measuresEntities,
       raygEntities,
-      uniqMetricIds
+      uniqMetricIds,
+      updatedAt
     }
   }
 
@@ -223,7 +235,7 @@ class MeasureEdit extends Page {
   
 
   async getMeasureData() {
-    const { measuresEntities, raygEntities, uniqMetricIds }  = await this.getMeasure();
+    const { measuresEntities, raygEntities, uniqMetricIds, updatedAt }  = await this.getMeasure();
     measures.applyLabelToEntities(measuresEntities)
     const groupedMeasureEntities = groupBy(measuresEntities, measure => measure.date);
     const uiInputs = measures.calculateUiInputs(measuresEntities);
@@ -241,7 +253,6 @@ class MeasureEdit extends Page {
     // If measure is part of a group, and the measure id is used as both metricId and groupId hide the delete button
     // This item will be able to be deleted after the rest of the group items have been removed.
     const preventDeleteForGroupMeasure = !isOnlyMeasureInGroup & this.req.params.metricId === this.req.params.groupId
-
     return {
       latest: measuresEntities[measuresEntities.length - 1],
       grouped: groupedMeasureEntities,
@@ -250,7 +261,8 @@ class MeasureEdit extends Page {
       displayOverallRaygDropdown,
       displayRaygValueCheckbox,
       uniqMetricIds,
-      preventDeleteForGroupMeasure
+      preventDeleteForGroupMeasure,
+      updatedAt: updatedAt.format('DD/MM/YYYY')
     }
   }
 
@@ -296,6 +308,17 @@ class MeasureEdit extends Page {
     });
   }
 
+  calculateUpdateDueOn(formData, latestEntityDate, currentUpdateDueOn, frequency) {
+    if (!currentUpdateDueOn || !frequency) {
+      return null;
+    }
+    const mCurrentUpdateDueOn = moment(currentUpdateDueOn, "DD/MM/YYYY");
+    const mLatestEntityDate = moment(latestEntityDate, "DD/MM/YYYY");
+    const entityDate = moment(buildDateString(formData), "YYYY-MM-DD");
+    const entityUpdateDueOn = entityDate.isSameOrAfter(mLatestEntityDate) ? mCurrentUpdateDueOn.add(frequency, 'd') : mCurrentUpdateDueOn;
+    return entityUpdateDueOn.format('YYYY-MM-DD');
+  }
+
   createEntitiesFromClonedData(merticEntities, formData) {
     const { entities } = formData;
     return merticEntities.map(entity => {
@@ -325,6 +348,10 @@ class MeasureEdit extends Page {
       return await this.updateMeasureInformation(req.body)
     }
 
+    if (this.editTags) {
+      return await this.updateEntityTags(req.body)
+    }
+
     return res.redirect(this.measureUrl);
   }
 
@@ -337,7 +364,7 @@ class MeasureEdit extends Page {
     }
 
     const updatedEntites = await this.updateMeasureEntities(formData);
-    return await this.saveMeasureData(updatedEntites, URLHash, { ignoreParents: true, updatedAt: true });
+    return await this.saveMeasureData(updatedEntites, URLHash, { ignoreParents: true, updatedAt: false });
   }
 
   async updateMeasureEntities(data) {
@@ -458,7 +485,7 @@ class MeasureEdit extends Page {
       raygEntities.forEach(raygEntity => {
         newEntities.push({
           publicId: raygEntity.publicId,
-          parentStatementPublicId: raygEntity.parentPublicId,
+          parentStatementPublicId: raygEntity.parentStatementPublicId,
           date: newDate,
           value
         })
@@ -468,9 +495,22 @@ class MeasureEdit extends Page {
     return newEntities
   }
 
+
   async addMeasureEntityData (formData) {
     const { measuresEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
+    let allMeasures = [];
+    measuresEntities.forEach(m => {
+      let { publicId, parentStatementPublicId, date, updateDueOn } = m;
+      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push({ publicId, parentStatementPublicId, date, updateDueOn });
+    });
+    raygEntities.forEach(m => {
+      let { publicId, parentStatementPublicId, date, updateDueOn } = m;
+      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+      allMeasures.push({ publicId, parentStatementPublicId, date, updateDueOn });
+    });
 
+    const latestmeasure = measuresEntities[measuresEntities.length - 1];
     formData.entities = utils.removeNulls(formData.entities)
 
     const formValidationErrors = await measures.validateFormData(formData, measuresEntities);
@@ -478,18 +518,32 @@ class MeasureEdit extends Page {
       return this.renderRequest(this.res, { errors: formValidationErrors });
     }
 
-    const clonedEntities = await this.getEntitiesToBeCloned(Object.keys(formData.entities))
-    const newEntities = await this.createEntitiesFromClonedData(clonedEntities, formData)
+    const clonedEntities = await this.getEntitiesToBeCloned(Object.keys(formData.entities));
+    const newEntities = await this.createEntitiesFromClonedData(clonedEntities, formData);
+    const updateDueOn = this.calculateUpdateDueOn(
+      formData, latestmeasure.date, 
+      latestmeasure.updateDueOn, latestmeasure.frequency);
+    newEntities.forEach(e=> {
+      if (e.updateDueOn) {
+        e.updateDueOn = updateDueOn
+      }
+    });
+    
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
-
-    const entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measuresEntities, raygEntities, uniqMetricIds)
-
+    // These are the entities which is being added by the form
+    let entitiesToBeSaved = await this.updateRaygRowForSingleMeasureWithNoFilter(parsedEntities, formData, measuresEntities, raygEntities, uniqMetricIds)
+    entitiesToBeSaved = [...entitiesToBeSaved, ...allMeasures];
+    entitiesToBeSaved.forEach(e=> {
+      if (e.updateDueOn) {
+        e.updateDueOn = updateDueOn
+      }
+    });
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ['Error in entity data'] });
     }
 
     const URLHash = `#data-entries`;
-    return await this.saveMeasureData(entitiesToBeSaved, URLHash, { updatedAt: true });
+    return this.saveMeasureData(entitiesToBeSaved, URLHash, { updatedAt: true });
   }
 
   async saveMeasureData(entities, URLHash, options = {}) {
@@ -514,6 +568,46 @@ class MeasureEdit extends Page {
     }
     return this.res.redirect(`${redirectUrl}${URLHash}`);
   }
+
+  async getTags() {
+    const { raygEntities } = await this.getMeasure();
+
+    // In the event we have multiple RAYG rows the tags would be the same for each row so it is safe 
+    // to use the first entry to populate the selected items
+    const raygRow = raygEntities[0].tags || [];
+
+    const tags = await Tag.findAll().map(tag => ({
+      value: tag.dataValues.id,
+      text: tag.dataValues.name,
+      checked: raygRow.includes(tag.dataValues.id)
+    }));
+    
+    return tags;
+  }
+
+  async updateEntityTags({ tags }) {
+    const { raygEntities } = await this.getMeasure();
+    const transaction = await sequelize.transaction();
+    let redirectUrl = `${this.measureUrl}/successful`
+
+    try {
+      for(const entity of raygEntities) {
+        await tagsHelper.removeEntitiesTags(entity.id, transaction);
+        if (tags && tags.length) {
+          await tagsHelper.createEntityTags(entity.id, tags, transaction);
+        }
+      }
+      await transaction.commit();
+    } catch (error) {
+      redirectUrl = `${this.measureUrl}#tags`
+      logger.error(error);
+      this.req.flash(['Error saving tags']);
+      await transaction.rollback();
+    }
+    return this.res.redirect(`${redirectUrl}`);
+  }
+
+ 
 }
 
 module.exports = MeasureEdit;

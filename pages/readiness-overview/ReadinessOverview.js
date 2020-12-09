@@ -6,7 +6,6 @@ const transitionReadinessData = require('helpers/transitionReadinessData');
 const HeadlineMeasures = require('models/headlineMeasures');
 const { ipWhiteList } = require('middleware/ipWhitelist');
 const entityUserPermissions = require('middleware/entityUserPermissions');
-
 class ReadinessOverview extends Page {
   get url() {
     return paths.readinessOverview;

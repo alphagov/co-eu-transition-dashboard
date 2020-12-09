@@ -8,6 +8,7 @@
 {% from "data-entry-content.njk" import dataEntriesContent %}
 {% from "measure-information.njk" import measureInformation %}
 {% from "measure-heading.njk" import measureHeading %}
+{% from "measure-tags.njk" import measureTags %}
 
 {% block beforeContent %}
   {% include "navigation.njk" %}
@@ -22,6 +23,7 @@
 {% set measure = getMeasureData() | await %}
 {% set latestMeasure = measure.latest %}
 {% set raygEntity = measure.raygEntity %}
+{% set updatedAt = measure.updatedAt %}
 {% set groupedMeasures = measure.grouped %}
 {% set formFields = measure.fields %}
 {% set displayOverallRaygDropdown = measure.displayOverallRaygDropdown %}
@@ -29,6 +31,7 @@
 {% set uniqMetricIds = measure.uniqMetricIds %}
 {% set preventDeleteForGroupMeasure = measure.preventDeleteForGroupMeasure %}
 {% set errorMessages = errors if errors else flash %}
+{% set tags = getTags() | await %}
 
 {% block content %}
 

@@ -2,7 +2,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 
-{% set themeFilters  %}
+{% set themeFilters %}
     {% if (data.themes) %}
         {% for option in data.themes %}
             {% if option.name !== null %}
@@ -12,10 +12,18 @@
     {% endif %}
 {% endset -%}
 
-{% set statusFilters%}
+{% set statusFilters %}
   {% if (data.colors) %}
     {% for option in data.colors %}
       {% include "search-transition-readiness/partials/colorFilters.njk" %}
+    {% endfor %}
+  {% endif %}
+{% endset -%}
+
+{% set tagFilters %}
+  {% if (data.tags) %}
+    {% for option in data.tags %}
+      {% include "search-transition-readiness/partials/tagFilters.njk" %}
     {% endfor %}
   {% endif %}
 {% endset -%}
@@ -38,6 +46,14 @@
       },
       content: {
         html: statusFilters
+      }
+    },
+    {
+      heading: {
+        text: "Tags"
+      },
+      content: {
+        html: tagFilters
       }
     }
   ]

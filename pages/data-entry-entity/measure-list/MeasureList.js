@@ -28,8 +28,8 @@ class MeasureList extends Page {
       themeCategory, 
       user: this.req.user
     });
+    
     const measureEntitiesGrouped = await measures.groupMeasures(measureEntities);
-
     return {
       grouped: measureEntitiesGrouped.filter(measure => measure.children.length > 1),
       notGrouped: measureEntitiesGrouped.filter(measure => measure.children.length === 1)
