@@ -15,6 +15,7 @@ const { paths } = require('config');
 const groupBy = require('lodash/groupBy');
 const get = require('lodash/get');
 const uniq = require('lodash/uniq');
+const { Op } = require('sequelize');
 
 const applyLabelToEntities = (entities) => {
   entities.forEach(entity => {
@@ -57,14 +58,20 @@ const getEntityFields = async (entityId) => {
   return entityFieldEntries;
 }
 
-const getCategory = async (name) => {
-  const category = await Category.findOne({
-    where: { name }
+const getCategory = async (...categoryNames) => {
+  const category = await Category.findAll({
+    where: {
+      name: { [Op.in]: categoryNames }
+    }
   });
 
   if (!category) {
     logger.error(`Category export, error finding Measure category`);
     throw new Error(`Category export, error finding Measure category`);
+  }
+
+  if(category.length === 1) {
+    return category[0];
   }
 
   return category;
@@ -229,13 +236,13 @@ const groupMeasures = (measures) => {
 }
 
 const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
-  const measureCategory  = await getCategory('Measure');
-  const projectCategory  = await getCategory('Project');
+  const categories = await getCategory('Measure', 'Project', 'Communication');
+  const categoryIds = categories.map(category => category.id);
 
   const allThemes = await transitionReadinessData.getThemesHierarchy(entitiesUserCanAccess);
 
   const findEntities = (allEntites, entity) => {
-    if([projectCategory.id, measureCategory.id].includes(entity.categoryId)) {
+    if(categoryIds.includes(entity.categoryId)) {
       allEntites.push(entity.publicId);
     }
     if(entity.children){
