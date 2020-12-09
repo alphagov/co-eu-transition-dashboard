@@ -230,20 +230,21 @@ const groupMeasures = (measures) => {
 
 const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
   const measureCategory  = await getCategory('Measure');
+  const projectCategory  = await getCategory('Project');
 
   const allThemes = await transitionReadinessData.getThemesHierarchy(entitiesUserCanAccess);
 
   const findEntities = (allEntites, entity) => {
-    if(entity.categoryId === measureCategory.id) {
+    if([projectCategory.id, measureCategory.id].includes(entity.categoryId)) {
       allEntites.push(entity.publicId);
-    } else if(entity.children){
+    }
+    if(entity.children){
       return entity.children.reduce(findEntities, allEntites);
     }
     return allEntites;
   };
   const measuresPublicId = uniq(allThemes.reduce(findEntities, []));
   const measuresWithLink = await transitionReadinessData.measuresWithLink(allThemes, measuresPublicId, paths.transitionReadinessThemeDetail)
-
   let tags = measuresWithLink.reduce((tags, measure) => {
     if(!measure.tags) {
       return tags;
