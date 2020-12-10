@@ -1,9 +1,10 @@
 import Navigation from '../Pages/Navigation';
 import Login from '../Pages/Login';
+//const logger = require('middleware/logger');
 const nav = new Navigation(); 
 const login = new Login();
 
-const username = "cy_auto@test.com";;
+const username = "cy_auto@test.com";
 
 function testSetup() {
   //Create User
@@ -34,8 +35,8 @@ describe('Verify accessible Menus as an Admin User', () => {
     testCleanup();
     testSetup();
     //Catch Exceptions 
-    cy.on('uncaught:exception', (err) => {
-      console.log("Error Caught");
+    cy.on('uncaught:exception', () => {
+      //logger.error("Error Caught");
       return false;
     });
   
@@ -47,7 +48,10 @@ describe('Verify accessible Menus as an Admin User', () => {
     addrole("admin");
     //Add all data role to user
     addrole("all_data");
-    addrole("devolved_administrations");
+    addrole("uploader");
+    addrole("viewer");
+    addrole("management_overview");
+    addrole("management");
     //Add department to user
     addDepartment("BEIS");
 
@@ -55,11 +59,39 @@ describe('Verify accessible Menus as an Admin User', () => {
     
   });
 
-  //Verify that I am allowed to access all menus
-  it("I can see and access 'Tranistion Readiness' and all submenus underneath", function () {
-    nav.selectMainmenu(Navigation.Menu_Tranistion_Readiness);
-    nav.selectSubmenu(Navigation.SubMenu_Overview);
-    //nav.verifyAllThemes();
+  //Verify that I am allowed to access 'Tranistion Readiness' mneu and all submenus underneath
+  it("I can see and access 'Tranistion Readiness' menu and all submenus underneath", function () {
+    nav.selectMainmenu(nav.Menu_Tranistion_Readiness);
+    nav.verifySubmenu(nav.SubMenu_Overview);
+    nav.verifyAllThemes();
+  });
+
+  //Verify that I am allowed to access 'HMG delivery management information' menu and all submenus underneath
+  it("I can see and access 'HMG delivery management information' menu and all submenus underneath", function () {
+    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
+    nav.verifySubmenu(nav.SubMenu_Reporting_overview);
+    nav.verifySubmenu(nav.SubMenu_Alldata);
+    nav.verifySubmenu(nav.SubMenu_Missedmilestones);
+    nav.verifySubmenu(nav.SubMenu_Upcomingmilestones);
+  });
+
+  //Verify that I am allowed to access 'Add data' menu and all submenus underneath
+  it("I can see and access 'Add data' menu and all submenus underneath", function () {
+    nav.selectMainmenu(nav.Menu_Adddata);
+    nav.verifySubmenu(nav.SubMenu_Managementinformation);
+    nav.verifySubmenu(nav.SubMenu_Measures);
+  });
+
+  //Verify that I am allowed to access 'Admin' mneu and all submenus underneath
+  it("I can see and access 'Admin' menu and all submenus underneath", function () {
+    nav.selectMainmenu(nav.Menu_Admin);
+    nav.verifySubmenu(nav.SubMenu_MIdatastructure);
+    nav.verifySubmenu(nav.SubMenu_Managecategories);
+    nav.verifySubmenu(nav.SubMenu_ManageHeadlineMeasures);
+    nav.verifySubmenu(nav.SubMenu_ManageUsers);
+    nav.verifySubmenu(nav.SubMenu_Entitydataimport);
+    nav.verifySubmenu(nav.SubMenu_StaticExport);
+    nav.verifySubmenu(nav.SubMenu_RAYGValues);
   });
 
 });

@@ -23,9 +23,18 @@ module.exports = (on, config) => {
 const mysql = require('mysql2')
 const dbconfig = require('config')
 
-function queryTestDb(query, config) {
-  // creates a new mysql connection using credentials from cypress.json env's
+module.exports = (on) => {
   const env = dbconfig.services.mysql;
+  // Usage: cy.task('queryDb', query)
+  on('task', {
+    queryDb: query => {
+      return queryTestDb(query, env)
+    },
+  })
+}
+
+function queryTestDb(query, env) {
+  // creates a new mysql connection using credentials from cypress.json env's
   const connection = mysql.createConnection(
     {
       "uri": env.uri,
@@ -48,13 +57,5 @@ function queryTestDb(query, config) {
   })
 }
 
-module.exports = (on, config) => {
-  // Usage: cy.task('queryDb', query)
-  on('task', {
-    queryDb: query => {
-      return queryTestDb(query, config)
-    },
-  })
-}
 
 
