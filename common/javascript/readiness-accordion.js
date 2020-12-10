@@ -84,26 +84,8 @@ ReadinessAccordion.prototype.clearActiveAccordionsWithoutChildren = function () 
 // Set section attributes when opened/closed
 ReadinessAccordion.prototype.hideShowProjectDetails = function (expanded, section) {
   const button = section.querySelector('.' + this.sectionButtonClass);
-  const projectDetailsId = button.getAttribute('data-project-details-id');
-
-  const tableauMessageOrIframe = document.querySelector(`.${this.tableauMessageClass}, .${this.tableauiFrameClass}`);
-  const projectDetailsView = document.getElementById(projectDetailsId);
-  const projectInformationOpen = document.querySelector(`.${this.projectInformationClass}:not(.${this.hiddenClass})`);
-
-  if(projectDetailsView){
-    if(expanded) {
-      projectDetailsView.classList.remove(this.hiddenClass);
-      tableauMessageOrIframe.classList.add(this.hiddenClass);
-
-      if(projectInformationOpen) {
-        projectInformationOpen.classList.add(this.hiddenClass);
-      }
-    } else {
-      if(projectInformationOpen) {
-        projectInformationOpen.classList.add(this.hiddenClass);
-      }
-      tableauMessageOrIframe.classList.remove(this.hiddenClass);
-    }
+  if(button.getAttribute('data-project-link') && expanded){
+    window.location.href = button.getAttribute('data-project-link');
   }
 }
 
