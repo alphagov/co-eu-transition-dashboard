@@ -13,7 +13,13 @@ const sequelize = new Sequelize(services.mysql.uri.replace(/^mysql2:\/\//,'mysql
   dialectOptions: {
     ssl: services.mysql.sslCertificate
   },
-  logging: false
+  logging: true,
+  pool: {
+    max: 5,
+    min: 1,
+    acquire: 30000,
+    idle: 10000
+  }
 });
 
 const umzug = new Umzug({
