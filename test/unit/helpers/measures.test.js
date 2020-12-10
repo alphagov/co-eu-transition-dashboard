@@ -523,4 +523,30 @@ describe('helpers/measures', () => {
       expect(exectedMaxMeasureUpdatedAt).to.eql(maxMeasureUpdatedAt);
     })
   })
+
+  describe('#isMeasurePastUpdateDue', ()=>{
+    it('should return due when updateDueOn lesser than today', ()=>{
+      const measure = { updateDueOn: moment().subtract(1, 'd').format("DD/MM/YYYY") };
+
+      const isDue = measures.isMeasurePastUpdateDue(measure);
+
+      expect(isDue).to.eql('due');
+    });
+
+    it('should return notDue when updateDueOn undefined', ()=>{
+      const measure = { updateDueOn: undefined };
+
+      const isDue = measures.isMeasurePastUpdateDue(measure);
+
+      expect(isDue).to.eql('notDue');
+    });
+
+    it('should return notDue when updateDueOn is in future', ()=>{
+      const measure = { updateDueOn: moment().add(1, 'd').format("DD/MM/YYYY") }
+
+      const isDue = measures.isMeasurePastUpdateDue(measure);
+
+      expect(isDue).to.eql('notDue');
+    });
+  })
 });
