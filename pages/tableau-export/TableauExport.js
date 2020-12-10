@@ -159,6 +159,7 @@ class TableauExport extends Page {
     });
 
     if(this.restrictExportByRole) {
+      logger.info('restricting entities', { headers: this.req.headers });
       // remove any entities role cannot access
       const entityIdsRoleCanAccess = await this.entitiesRoleCanAccess(this.restrictExportByRole);
       entities = entities.filter(entity => entityIdsRoleCanAccess.includes(entity.id));
@@ -275,6 +276,7 @@ class TableauExport extends Page {
 
   async getRequest(req, res) {
     if (this.showForm) {
+      logger.info(`Print tableau request page`, { headers: req.headers });
       return super.getRequest(req, res);
     }
 
@@ -288,10 +290,10 @@ class TableauExport extends Page {
     }
     if (data && data.length) {
       if (this.exportSchema) {
-        logger.info(`Exporting schema ${this.req.params.type}: ${Object.keys(data[0])}`);
+        logger.info(`Exporting schema ${this.req.params.type}: ${Object.keys(data[0])}`, { headers: req.headers });
         return res.json(data[0]);
       } else {
-        logger.info(`Exporting data ${this.req.params.type}: ${Object.keys(data[0])}`);
+        logger.info(`Exporting data ${this.req.params.type}: ${Object.keys(data[0])}`, { headers: req.headers });
         return res.json(data)
       }
     }
