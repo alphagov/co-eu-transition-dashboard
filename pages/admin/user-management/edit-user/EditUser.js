@@ -11,8 +11,6 @@ const authentication = require('services/authentication');
 const logger = require('services/logger');
 const usersHelper = require('helpers/users');
 
-const VALIDATION_ERROR_MESSSAGE = 'VALIDATION_ERROR';
-
 class EditUser extends Page {
   get url() {
     return paths.admin.editUser;
@@ -53,9 +51,9 @@ class EditUser extends Page {
   async getRoles(userRoles = []) {
     const currentRoles = userRoles.map(role => role.id);
     const roles = await Role.findAll().map(role => ({
-      value: role.dataValues.id,
-      text: role.dataValues.name,
-      checked: currentRoles.includes(role.dataValues.id)
+      value: role.id,
+      text: role.name,
+      checked: currentRoles.includes(role.id)
     }));
     return roles;
   }
@@ -63,9 +61,9 @@ class EditUser extends Page {
   async getDepartments(userDepartments = []) {
     const currentDepartments = userDepartments.map(department => department.name)
     const departments = await Department.findAll().map(dept => ({
-      value: dept.dataValues.name,
-      text: dept.dataValues.name,
-      checked: currentDepartments.includes(dept.dataValues.name)
+      value: dept.name,
+      text: dept.name,
+      checked: currentDepartments.includes(dept.name)
     }));
     return departments;
   }
@@ -83,7 +81,7 @@ class EditUser extends Page {
     }, { where: { id }, transaction });
   }
 
-  formadDataToSave(userId, formFieldData, columnId) {
+  formatDataToSave(userId, formFieldData, columnId) {
     let dataToSave = []; 
     //roles can be a string or array based on selection count
     if (Array.isArray(formFieldData)) {
@@ -101,7 +99,7 @@ class EditUser extends Page {
   }
 
   async updateUserRoles(userId, roles, transaction) {
-    const userRoleData = this.formadDataToSave(userId, roles, 'roleId');
+    const userRoleData = this.formatDataToSave(userId, roles, 'roleId');
 
     await UserRole.destroy({
       where: { userId },
@@ -112,7 +110,7 @@ class EditUser extends Page {
   }
 
   async updateUserDepartments(userId, departments, transaction) {
-    const departmentsData = this.formadDataToSave(userId, departments, 'departmentName');
+    const departmentsData = this.formatDataToSave(userId, departments, 'departmentName');
 
     await DepartmentUser.destroy({
       where: { userId },
@@ -144,10 +142,8 @@ class EditUser extends Page {
       return res.redirect(`${this.req.originalUrl}/success`);
     } catch (error) {
       let flashMessages ;
-      if (error.message && error.message === VALIDATION_ERROR_MESSSAGE) {
-        flashMessages= error.messages;
-      } else if (error.message) {
-        flashMessages = [{ text: error.message }]; 
+      if (error.messages) {
+        flashMessages = error.messages;
       } else {
         flashMessages =[{ text:"something went wrong" }];
       }

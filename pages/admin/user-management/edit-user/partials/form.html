@@ -5,7 +5,7 @@
 
 {% block content %}
   <h1 class="govuk-heading-l">Edit user</h1>
-  
+
   {% if flash %}
       {{ govukErrorSummary({
         titleText: "There is a problem",
@@ -67,8 +67,18 @@
       govukButton({
         text: "Update User",
         type: "submit",
-        preventDoubleClick: true
+        preventDoubleClick: true,
+        classes: "edit-user-button"
       })
     }}
+
+    {{ 
+      govukButton({
+        text: "Reset password",
+        href:  config.paths.admin.userManagementAuthentication + "/" + req.params.userId,
+        classes: "govuk-button--secondary edit-user-button"
+      }) 
+    }}
+
   </form>
 {% endblock %}
