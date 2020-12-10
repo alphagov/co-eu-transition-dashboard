@@ -11,6 +11,7 @@ const User = require("models/user");
 const authentication = require('services/authentication');
 const notify = require('services/notify');
 const logger = require('services/logger');
+const usersHelper = require('helpers/users');
 
 const VALIDATION_ERROR_MESSSAGE = 'VALIDATION_ERROR';
 
@@ -110,7 +111,7 @@ class CreateUser extends Page {
       const user = await this.createUserDB(email, tempPassword, t);
       const userRoles = await this.createRolesDB(user.id,roles, t);
       const departmentUser = await this.createDepartmentUserDB(user.id, departments, t);
-      await notify.sendEmailWithTempPassword({ email: user.email, userId: user.id, password: tempPassword } )
+      // await notify.sendEmailWithTempPassword({ email: user.email, userId: user.id, password: tempPassword } )
       
       await t.commit();
 
@@ -129,33 +130,9 @@ class CreateUser extends Page {
     }
   }
 
-  async errorValidations({ email, roles, departments }) {
-    let error = new Error(VALIDATION_ERROR_MESSSAGE);
-    error.messages = [];
-    let userExists;
-    if (!email) {
-      error.messages.push({ text:'Email cannot be empty', href: '#username' });
-    } else {
-      // Check if user exists
-      userExists = await User.findOne({ where: { email } });
-    }
-    if (userExists) {
-      error.messages.push({ text:'Email exists', href: '#username' });
-    }
-    if (!roles) {
-      error.messages.push({ text:'Roles cannot be empty', href: '#roles' });
-    }
-    if(!departments) {
-      error.messages.push({ text:'Departments cannot be empty', href: '#departments' });
-    }
-    if (error.messages.length > 0) {
-      throw error;
-    } 
-  }
-
   async postRequest(req, res) {
     try{
-      await this.errorValidations({ ...req.body });
+      await usersHelper.errorValidations({ ...req.body });
       await this.createUser({ ...req.body });
       return res.redirect(`${this.req.originalUrl}/success`);
     } catch (error) {

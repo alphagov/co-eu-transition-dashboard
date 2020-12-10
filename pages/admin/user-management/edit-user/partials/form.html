@@ -4,69 +4,71 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block content %}
-    <h1 class="govuk-heading-l">Edit user</h1>
-    {% if flash %}
-        {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: flash
-        }) }}
-    {% endif %}
+  <h1 class="govuk-heading-l">Edit user</h1>
+  
+  {% if flash %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: flash
+      }) }}
+  {% endif %}
 
-    <form action="{{ editUrl }}" method="post">
-        {{
-            govukInput({
-                label: {
-                    html: "<strong>Email</strong>"
-                },
-                hint: {
-                    text: "Use valid email address"
-                },
-                classes: "govuk-input--width-20",
-                id: "username",
-                name: "email",
-                autocomplete: "username"
-            })
-        }}
-        {{ 
-            govukCheckboxes({
-                idPrefix: "roles",
-                name: "roles",
-                classes: "govuk-checkboxes--small",
-                fieldset: {
-                    legend: {
-                        html: "<strong>Select roles</strong>"
-                    }
-                },
-                hint: {
-                    text: "Select all that apply."
-                },
-                items: roles
-            }) 
-        }}
+  <form action="{{ editUrl }}" method="post">
+    {{
+      govukInput({
+        label: {
+          html: "<strong>Email</strong>"
+        },
+        hint: {
+          text: "Use valid email address"
+        },
+        classes: "govuk-input--width-20",
+        id: "username",
+        name: "email",
+        value: user.email,
+        autocomplete: "username"
+      })
+    }}
+    {{ 
+      govukCheckboxes({
+        idPrefix: "roles",
+        name: "roles",
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+          legend: {
+            html: "<strong>Select roles</strong>"
+          }
+        },
+        hint: {
+          text: "Select all that apply."
+        },
+        items: roles
+      }) 
+    }}
 
-        {{ 
-            govukCheckboxes({
-                idPrefix: "departments",
-                name: "departments",
-                classes: "govuk-checkboxes--small",
-                fieldset: {
-                    legend: {
-                        html: "<strong>Select departments</strong>"
-                    }
-                },
-                hint: {
-                    text: "Select all that apply."
-                },
-                items: departments
-            }) 
-        }}
+    {{ 
+      govukCheckboxes({
+        idPrefix: "departments",
+        name: "departments",
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+          legend: {
+            html: "<strong>Select departments</strong>"
+          }
+        },
+        hint: {
+          text: "Select all that apply."
+        },
+        items: departments
+      }) 
+    }}
 
-        {{
-            govukButton({
-                text: "Create User",
-                type: "submit",
-                preventDoubleClick: true
-            })
-        }}
-    </form>
+    {{
+      govukButton({
+        text: "Update User",
+        type: "submit",
+        preventDoubleClick: true
+      })
+    }}
+  </form>
 {% endblock %}

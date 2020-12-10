@@ -9,6 +9,7 @@ const DepartmentUser = require("models/departmentUser");
 const User = require("models/user");
 const authentication = require('services/authentication');
 const logger = require('services/logger');
+const usersHelper = require('helpers/users');
 
 const VALIDATION_ERROR_MESSSAGE = 'VALIDATION_ERROR';
 
@@ -60,11 +61,11 @@ class EditUser extends Page {
   }
 
   async getDepartments(userDepartments = []) {
-    const currentDepartments = userDepartments.map(department => department.id)
+    const currentDepartments = userDepartments.map(department => department.name)
     const departments = await Department.findAll().map(dept => ({
       value: dept.dataValues.name,
       text: dept.dataValues.name,
-      checked: currentDepartments.includes(dept.dataValues.id)
+      checked: currentDepartments.includes(dept.dataValues.name)
     }));
     return departments;
   }
@@ -76,65 +77,58 @@ class EditUser extends Page {
     return { user, roles, departments };
   }
 
-  async createUserDB(id, email, transaction) {
-    const user = await User.update({
+  async updateUser(id, email, transaction) {
+    return User.update({
       email,
     }, { where: { id }, transaction });
-    return user;
   }
 
-  async createRolesDB(userId, roles, transaction) {
-    let rolesToInsert = [];
-    
+  formadDataToSave(userId, formFieldData, columnId) {
+    let dataToSave = []; 
     //roles can be a string or array based on selection count
-    if (Array.isArray(roles)) {
-      roles.forEach(role => rolesToInsert.push({
+    if (Array.isArray(formFieldData)) {
+      formFieldData.forEach(role => dataToSave.push({
         userId,
-        roleId: role
+        [columnId]: role
       }));
     } else {
-      rolesToInsert.push({
+      dataToSave.push({
         userId,
-        roleId: roles
+        [columnId]: formFieldData
       });
     }
-    
-    return UserRole.bulkCreate(rolesToInsert, { transaction });
+    return dataToSave;
   }
 
-  async createDepartmentUserDB(userId, departments, transaction) {
-    let departmentsToInsert = [];
+  async updateUserRoles(userId, roles, transaction) {
+    const userRoleData = this.formadDataToSave(userId, roles, 'roleId');
 
-    //departments can be a string or array based on selection count
-    if (Array.isArray(departments) ) {
-      departments.forEach(department => (
-        departmentsToInsert.push({
-          userId,
-          departmentName: department
-        })
-      ));
-    } else {
-      departmentsToInsert.push({
-        userId,
-        departmentName: departments
-      });
-    }
+    await UserRole.destroy({
+      where: { userId },
+      transaction
+    });
 
-    return DepartmentUser.bulkCreate(departmentsToInsert, { transaction });
+    await UserRole.bulkCreate(userRoleData, { transaction });
   }
 
-  async createUser({ email, roles, departments }) {
+  async updateUserDepartments(userId, departments, transaction) {
+    const departmentsData = this.formadDataToSave(userId, departments, 'departmentName');
+
+    await DepartmentUser.destroy({
+      where: { userId },
+      transaction
+    });
+    await DepartmentUser.bulkCreate(departmentsData, { transaction });
+  }
+
+  async updateData({ email, roles, departments }) {
     const transaction = await sequelize.transaction();
     try {
-      const user = await this.createUserDB(this.req.params.userId, email, transaction);
-      // const userRoles = await this.createRolesDB(user.id,roles, t);
-      // const departmentUser = await this.createDepartmentUserDB(user.id, departments, t);
-      console.log('CRERE', email, roles, departments)
-      
+      const { userId } = this.req.params;
+      await this.updateUser(userId, email, transaction);
+      await this.updateUserRoles(userId, roles, transaction);
+      await this.updateUserDepartments(userId, departments, transaction); 
       await transaction.commit();
-
-
-      return user;
     } catch(error) {
       logger.error(error);
       await transaction.rollback();
@@ -142,35 +136,11 @@ class EditUser extends Page {
     }
   }
 
-  async errorValidations({ email, roles, departments }) {
-    let error = new Error(VALIDATION_ERROR_MESSSAGE);
-    error.messages = [];
-    let userExists;
-    if (!email) {
-      error.messages.push({ text:'Email cannot be empty', href: '#username' });
-    } else {
-      // Check if user exists
-      userExists = await User.findOne({ where: { email } });
-    }
-    if (userExists) {
-      error.messages.push({ text:'Email exists', href: '#username' });
-    }
-    if (!roles) {
-      error.messages.push({ text:'Roles cannot be empty', href: '#roles' });
-    }
-    if(!departments) {
-      error.messages.push({ text:'Departments cannot be empty', href: '#departments' });
-    }
-    console.log('ererer', error)
-    if (error.messages.length > 0) {
-      throw error;
-    } 
-  }
-
   async postRequest(req, res) {
-    try{
-      await this.errorValidations({ ...req.body });
-      await this.createUser({ ...req.body });
+    try {
+      const { userId } = req.params
+      await usersHelper.errorValidations({ ...req.body, userId });
+      await this.updateData({ ...req.body });
       return res.redirect(`${this.req.originalUrl}/success`);
     } catch (error) {
       let flashMessages ;
