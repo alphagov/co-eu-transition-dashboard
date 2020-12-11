@@ -36,7 +36,7 @@ class EditUser extends Page {
   }
 
   async getUser() {
-    return await User.findOne({
+    return User.findOne({
       where: {
         id: this.req.params.userId
       },
