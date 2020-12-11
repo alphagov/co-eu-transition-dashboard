@@ -38,7 +38,8 @@
       "createUser": "/admin/create-user",
       "editUser": "/admin/edit-user",
       "staticExports": "/admin/static-exports",
-      "raygValues": "/admin/rayg-values"
+      "raygValues": "/admin/rayg-values",
+      "tagManagementList": "/admin/manage-tags-list"
     },
     "allData": "/all-data",
     "filterExample": "/filter-example",

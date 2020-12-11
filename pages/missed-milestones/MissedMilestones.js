@@ -27,20 +27,24 @@ class MissedMilestones extends Page {
     ];
   }
 
-  async getChartData() {
-    const departments = await this.req.user.getDepartmentsWithProjects({
-      date: { to: moment().subtract(1, 'days').format('DD/MM/YYYY') },
-      complete: ['No'],
-      impact: [0, 1]
-    });
+  get searchFilters() {
+    const filters = this.data.filters || {};
+    filters.complete = ['No'];
+    filters.impact = [0, 1];
+    filters.date = { to: moment().subtract(1, 'days').format('DD/MM/YYYY') };
+    return filters;
+  }
 
+  async getChartData() {
+    const filters = this.searchFilters
+    
+    const departments = await this.req.user.getDepartmentsWithProjects(filters);
     for(const department of departments) {
       department.totalMilestones = await this.totalMilestones(department);
       department.totalMilestonesMissed = department.projects.reduce((total, project) => {
         return total + project.milestones.length;
       }, 0);
     }
-
     return {
       departments: departments.sort((a, b) => (a.totalMilestonesMissed < b.totalMilestonesMissed) ? 1 : -1)
     }
@@ -77,13 +81,10 @@ class MissedMilestones extends Page {
   }
 
   async getDepartmentsWithMissedMilestones() {
-    const filters = this.data.filters || {};
-    filters.complete = ['No'];
-    filters.impact = [0, 1];
-    filters.date = { to: moment().subtract(1, 'days').format('DD/MM/YYYY') };
+    const filters = this.searchFilters
     const departments = await this.req.user.getDepartmentsWithProjects(filters);
-
-    return this.groupDataByDate(departments);
+    const  groupDataByDate = await this.groupDataByDate(departments);
+    return groupDataByDate;
   }
 
   projectsWithMilestonesForDate(projects, date) {
@@ -156,7 +157,7 @@ class MissedMilestones extends Page {
   }
 
   async filters() {
-    return await getFilters(this.data.filters, this.req.user);
+    return getFilters(this.data.filters, this.req.user);
   }
 
   applyFormatting(attribute, value = "") {

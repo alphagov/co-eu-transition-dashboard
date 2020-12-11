@@ -387,7 +387,7 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
 
     beforeEach(() => {
       sinon.stub(Category, 'fieldDefinitions').returns(categoryFields);
-      Category.findOne.resolves(category);
+      Category.findAll.resolves(category);
       sinon.stub(Entity, 'import');
     });
 
