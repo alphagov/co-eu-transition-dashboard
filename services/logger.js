@@ -1,10 +1,21 @@
 const winston = require('winston');
 
 const format = winston.format.printf(info => {
-  if (info && info instanceof Error) {
-    return `${info.timestamp} ${info.level}: ${info.message}\n\nStack Trace:\n\n${info.stack}`;
+  let messageAsString = `${info.timestamp} ${info.level}:`;
+
+  if(info.headers) {
+    Object.keys(info.headers).forEach(headerName => {
+      messageAsString += ` ${headerName}: ${info.headers[headerName]}`;
+    });
   }
-  return `${info.timestamp} ${info.level}: ${info.message}`;
+
+  messageAsString += ` ${info.message}`;
+
+  if (info && info instanceof Error) {
+    messageAsString += ` Stack Trace: ${info.stack}`;
+  }
+
+  return messageAsString;
 });
 
 const config = {
@@ -12,6 +23,7 @@ const config = {
     new winston.transports.Console()
   ],
   format: winston.format.combine(
+    winston.format.splat(),
     winston.format.timestamp(),
     winston.format.colorize(),
     format
