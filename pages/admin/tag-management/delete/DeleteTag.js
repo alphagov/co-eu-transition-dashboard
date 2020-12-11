@@ -8,6 +8,7 @@ const EntityFieldEntry = require('models/entityFieldEntry');
 const CategoryField = require('models/categoryField');
 const logger = require('services/logger');
 const config = require('config');
+const uniqBy = require('lodash/uniqBy')
 
 class DeleteTag extends Page {
   get url() {
@@ -47,6 +48,10 @@ class DeleteTag extends Page {
       }, {});
 
       return entityMapped;
+    });
+
+    tag.entities = uniqBy(tag.entities, function(entity) {
+      return entity.metricID || entity.publicId;
     });
 
     return tag;

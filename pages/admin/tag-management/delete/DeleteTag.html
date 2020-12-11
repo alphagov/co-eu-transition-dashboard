@@ -43,13 +43,15 @@
     <table class="govuk-table">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header">Entity name</th>
+          <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Measure ID / Public ID</th>
+          <th scope="col" class="govuk-table__header govuk-!-width-three-quarters">Entity name</th>
         </tr>
       </thead>
       <tbody class="govuk-table__body">
         {% for entity in tag.entities %}
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell">{{ entity.name }}</td>
+            <td class="govuk-table__cell govuk-!-width-one-quarter">{{ entity.metricID or entity.publicId }}</td>
+            <td class="govuk-table__cell govuk-!-width-three-quarters">{{ entity.name }}</td>
           </tr>
         {% endfor %}
       </tbody>
