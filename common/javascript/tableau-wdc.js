@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-
+/* eslint-disable no-prototype-builtins */
 const getTableauDataType = type => {
   switch (type) {
   case 'string':
