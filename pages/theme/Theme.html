@@ -31,7 +31,7 @@
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'hide-statement' if req.params.statement }}" id="column-statements">
     <a href="{{ config.paths.readinessOverview }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.theme }}" style="display: none;">Overview</a>
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcomes</h2>
-    <div class="top-statements" id="outcome-statements">
+    <div id="outcome-statements">
     {% for topOutcome in data.topLevelOutcomeStatements %}
     <div class="overview-card {{ topOutcome.color }}">
       <div class="overview-card--inner {{ 'active-statement' if topOutcome.active }}">   
@@ -53,7 +53,7 @@
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'show-statement' if req.params.statement and (projectedIsSelected or not req.params.selectedPublicId) }}" id="column-sub-statements">
     <a href="{{ themeUrl }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.statement }}" style="display: none;">Outcomes</a>
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Select data</h2>
-    <div class="top-statements" id="sub-statements">
+    <div id="sub-statements">
     {{ activeStatementBox(activeStatement, activeColor) }}
     {% if data.subOutcomeStatementsAndDatas | length > 0 %}
       <div class="readiness-accordion-wrapper">

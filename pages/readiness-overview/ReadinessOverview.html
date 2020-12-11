@@ -26,7 +26,7 @@
         <h2 class="govuk-heading-m govuk-!-margin-bottom-0" id="headline-figures">Headline figures<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0" aria-hidden="true">
 
-        <div class="overview-card-holder headline-figure top-statements">
+        <div class="overview-card-holder headline-figure">
           {% for item in data.headlineMeasures %}
             <div class="overview-card {{ item.color }}">
               <div class="overview-card--inner">    
@@ -50,7 +50,7 @@
           {# High risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
             <h3 class="govuk-body govuk-!-margin-bottom-2">High risk</h3>
-            <div class="overview-card-holder top-statements">
+            <div class="overview-card-holder">
               {% for item in data.themes.red %}
                 {{ readinessThemeCard(item) }}
               {% endfor %}
@@ -60,7 +60,7 @@
           {# Medium risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
           <h3 class="govuk-body govuk-!-margin-bottom-2">Medium risk</h3>
-            <div class="overview-card-holder top-statements">
+            <div class="overview-card-holder">
               {% for item in data.themes.amber %}
                 {{ readinessThemeCard(item) }}
               {% endfor %}
@@ -70,7 +70,7 @@
            {# Low risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
           <h3 class="govuk-body govuk-!-margin-bottom-2">Low risk</h3>
-            <div class="overview-card-holder top-statements">
+            <div class="overview-card-holder">
               {% for item in data.themes.yellow %}
                 {{ readinessThemeCard(item) }}
               {% endfor %}
@@ -80,7 +80,7 @@
            {# Minimal risk column #}
           <div class="govuk-grid-column-one-quarter risk-col">
           <h3 class="govuk-body govuk-!-margin-bottom-2">Minimal/No risk</h3>
-            <div class="overview-card-holder top-statements">
+            <div class="overview-card-holder">
               {% for item in data.themes.green %}
                 {{ readinessThemeCard(item) }}
               {% endfor %}

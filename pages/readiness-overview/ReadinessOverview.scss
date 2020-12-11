@@ -1,7 +1,5 @@
 .overview-card-holder {
   display: block;
-  overflow-y: auto;
-  overflow-x: hidden;
   width: 100%;
 }
 
@@ -52,9 +50,7 @@
 	border-top: 20px solid #B1B4B6;
 }
 
-.headline-figure .overview-card:hover, 
-.risk-col .overview-card:not(.inactive):hover,
-.top-statements .overview-card:hover {
+.overview-card:not(.inactive):hover {
 	cursor: pointer;
 	background-color: #ffffff;
 }
