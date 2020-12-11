@@ -67,7 +67,8 @@
                 </td>
                 <td class="govuk-table__cell">{{ "Yes" if measure.commentsOnly else "No" }}</td>
                 <td class="govuk-table__cell">{{ measure.updatedAtDate }}</td>
-                <td class="govuk-table__cell">{{ measure.updateDueOn }}</td>
+                {% set isDue = isMeasurePastUpdateDue(measure) %}
+                <td class="govuk-table__cell {{isDue}}">{{ measure.updateDueOn }}</td>
                 <td class="govuk-table__cell govuk-table__cell__actions">
                   <a href="{{ config.paths.dataEntryEntity.measureEdit }}/{{ measure.metricID }}/{{ measure.groupID }}" class="govuk-link">Edit</a>
                 </td>
@@ -126,7 +127,8 @@
               </td>
               <td class="govuk-table__cell">{{ "Yes" if measure.commentsOnly else "No" }}</td>
               <td class="govuk-table__cell">{{ measure.updatedAt }}</td>
-              <td class="govuk-table__cell">{{ measure.updateDueOn }}</td>
+              {% set isDue = isMeasurePastUpdateDue(measure) %}
+              <td class="govuk-table__cell {{isDue}}">{{ measure.updateDueOn }}</td>
               <td class="govuk-table__cell govuk-table__cell__actions">
                 <a href="{{ config.paths.dataEntryEntity.measureEdit }}/{{ measure.metricID }}/{{ measure.groupID }}" class="govuk-link">Edit</a>
               </td>
