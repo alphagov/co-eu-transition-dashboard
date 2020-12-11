@@ -43,7 +43,7 @@
             </td>
             <td class="govuk-table__cell">{{ user.lastLoginAt | date('DD/MM/YYYY HH:MM') }}</td>
             <td class="govuk-table__cell">
-              <a href="{{ config.paths.admin.userManagementAuthentication }}/{{ user.id }}" class="govuk-link">Reset password</a>
+              <a href="{{ config.paths.admin.editUser }}/{{ user.id }}" class="govuk-link">Edit user</a>
             </td>
           </tr>
         {% endfor %}

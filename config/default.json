@@ -38,6 +38,7 @@
       "userManagementAuthentication": "/admin/manage-users-authentication",
       "clearCache": "/admin/clear-cache",
       "createUser": "/admin/create-user",
+      "editUser": "/admin/edit-user",
       "staticExports": "/admin/static-exports",
       "raygValues": "/admin/rayg-values",
       "tagManagementList": "/admin/manage-tags-list"

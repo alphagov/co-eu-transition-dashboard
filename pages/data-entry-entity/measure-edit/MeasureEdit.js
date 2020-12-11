@@ -187,6 +187,9 @@ class MeasureEdit extends Page {
     return entities;
   }
 
+  isMeasurePastUpdateDue(measure) {
+    return measures.isMeasurePastUpdateDue(measure);
+  }
 
   async getMeasure() {
     const measureCategory = await measures.getCategory('Measure');
