@@ -875,6 +875,7 @@ const measuresWithLink = async (allThemes, publicIds, transitionReadinessThemeDe
 }
 
 module.exports = {
+  applyRagRollups,
   filterTopLevelOutcomeStatementsChildren,
   themeDetail,
   overview,
