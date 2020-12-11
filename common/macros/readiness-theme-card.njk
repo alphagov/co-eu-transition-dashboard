@@ -8,7 +8,7 @@
       {{ currentStatus(item.color if item.active else "grey", true) }}
     </div>
     {% if item.active %}
-      <hr class="govuk-section-break govuk-section-break--visible">
+      <hr class="govuk-section-break govuk-section-break--visible" aria-hidden="true">
       <a href="{{ item.link }}" aria-label="{{ item.name }}" class="overview-card--link govuk-link">All theme data</a>
     {% endif %}
   </div>

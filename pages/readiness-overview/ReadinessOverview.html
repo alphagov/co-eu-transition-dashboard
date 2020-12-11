@@ -24,7 +24,7 @@
 
       <div class="govuk-grid-column-one-quarter">
         <h2 class="govuk-heading-m govuk-!-margin-bottom-0" id="headline-figures">Headline figures<a class="govuk-link govuk-!-margin-left-6 overview-link" style="display:none" href="#themes">Themes</a></h2>
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0" aria-hidden="true">
 
         <div class="overview-card-holder headline-figure top-statements">
           {% for item in data.headlineMeasures %}
@@ -34,7 +34,7 @@
                 <span class="overview-card--tag-theme govuk-heading-s govuk-!-margin-bottom-3">{{ item.theme }}</span>
                 {{ currentStatus(item.color, true) }}
               </div>
-                <hr class="govuk-section-break govuk-section-break--visible">
+                <hr class="govuk-section-break govuk-section-break--visible" aria-hidden="true">
                 <a href="{{ item.link }}" aria-label="{{ item.name }}" class="overview-card--link govuk-link">Data visualisation</a>
             </div>
           {% endfor %}
@@ -43,7 +43,7 @@
 
       <div class="govuk-grid-column-three-quarters">
         <h2 class="govuk-heading-m govuk-!-margin-bottom-0" id="themes"><a class="govuk-link govuk-!-margin-right-6 overview-link" style="display:none" href="#headline-figures">Headline figures</a>Themes</h2>
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0" aria-hidden="true">
 
         <div class="govuk-grid-row">
 
