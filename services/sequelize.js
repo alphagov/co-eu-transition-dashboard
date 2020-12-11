@@ -3,7 +3,6 @@ const Sequelize = require('sequelize');
 const logger = require('services/logger');
 const Umzug = require('umzug');
 const path = require('path');
-const config = require('config');
 
 // Something in cloudfoundry is replacing mysql:// with mysql2:// which is causing some issues
 const sequelize = new Sequelize(services.mysql.uri.replace(/^mysql2:\/\//,'mysql://'),{
@@ -14,7 +13,7 @@ const sequelize = new Sequelize(services.mysql.uri.replace(/^mysql2:\/\//,'mysql
   dialectOptions: {
     ssl: services.mysql.sslCertificate
   },
-  logging: config.services.mysql.logsActive,
+  logging: services.mysql.logsActive,
   pool: {
     max: 5,
     min: 1,
