@@ -1,7 +1,6 @@
 const { expect, sinon } = require('test/unit/util/chai');
 const { paths } = require('config');
 const authentication = require('services/authentication');
-const flash = require('middleware/flash');
 const Tag = require('models/tag');
 
 let page = {};
@@ -31,8 +30,7 @@ describe('pages/admin/tag-management/list/TagManagementList', () => {
   describe('#middleware', () => {
     it('only admins are aloud to access this page', () => {
       expect(page.middleware).to.eql([
-        ...authentication.protect(['admin']),
-        flash
+        ...authentication.protect(['admin'])
       ]);
 
       sinon.assert.calledWith(authentication.protect, ['admin']);
