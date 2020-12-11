@@ -268,6 +268,12 @@ const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
   };
 }
 
+const isMeasurePastUpdateDue = (measure) => {
+  const today = moment();
+  const status = (measure.updateDueOn && moment(measure.updateDueOn, "DD/MM/YYYY").isBefore(today)) ? "due" : "notDue";
+  return status;
+}
+
 module.exports = {
   applyLabelToEntities,
   calculateUiInputs,
@@ -278,6 +284,7 @@ module.exports = {
   getMeasureEntities,
   getMeasuresWhichUserHasAccess,
   groupMeasures,
+  isMeasurePastUpdateDue,
   validateFormData,
   validateEntities
 };
