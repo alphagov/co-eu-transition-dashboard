@@ -1,0 +1,75 @@
+{% extends "template.njk" %}
+
+{% set tag = getTag() | await %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/accordion/macro.njk" import govukAccordion %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% block pageTitle %}Delete Tag{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+
+    {% if flash %}
+      <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+          There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+          <ul class="govuk-list govuk-error-summary__list">
+            <li>{{ flash }}</li>
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+
+    {{ govukPanel({
+      titleText: "Are you sure you want to delete the following tag?",
+      html: tag.name,
+      classes: 'red-panel'
+    }) }}
+    <br>
+    <h2 class="govuk-heading-l">
+      Entities with this tag:
+      <span class="govuk-caption-l">This tag will be removed from these entities</span>
+    </h2>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Measure ID / Public ID</th>
+          <th scope="col" class="govuk-table__header govuk-!-width-three-quarters">Entity name</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for entity in tag.entities %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell govuk-!-width-one-quarter">{{ entity.metricID or entity.publicId }}</td>
+            <td class="govuk-table__cell govuk-!-width-three-quarters">{{ entity.name }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <form type="{{ req.originalUrl }}" method="POST">
+      {{ govukButton({
+        text: "Back to tag list",
+        href: config.paths.admin.tagManagementList,
+        classes: "govuk-button--secondary"
+      }) }}
+
+      {{ govukButton({
+        text: "Confirm delete",
+        classes: "back-measure-button"
+      }) }}
+    </form>
+  </div>
+</div>
+
+{% endblock %}

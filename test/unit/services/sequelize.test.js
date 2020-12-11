@@ -16,7 +16,7 @@ describe('services/sequelize', () => {
       dialectOptions: {
         ssl: null
       },
-      logging: true,
+      logging: services.mysql.logsActive,
       pool: {
         max: 5,
         min: 1,
