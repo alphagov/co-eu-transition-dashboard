@@ -21,46 +21,50 @@ const getTableauDataType = type => {
 const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
 
 (function() {
+  let data;
   // Create the connector object
   var myConnector = tableau.makeConnector();
 
   // Define the schema
   myConnector.getSchema = function (schemaCallback) {
-    $.getJSON(`${tableau.connectionData}/schema`, function (data) {
-      var cols = [];
-      for (const [key, value] of Object.entries(data)) {
-        cols.push({
-          id: formatKey(key),
-          dataType: getTableauDataType(value.type),
-          alias: key
-        });
-      }
+    if(!data || !data.length) {
+      throw new Error('Data is not valid');
+    }
+    var cols = [];
+    for (const [key, value] of Object.entries(data[0])) {
+      cols.push({
+        id: formatKey(key),
+        dataType: getTableauDataType(value.type),
+        alias: key
+      });
+    }
 
-      var tableSchema = {
-        id: `${formatKey(tableau.connectionName)}feed`,
-        alias: `${tableau.connectionName} feed`,
-        columns: cols
-      };
+    var tableSchema = {
+      id: `${formatKey(tableau.connectionName)}feed`,
+      alias: `${tableau.connectionName} feed`,
+      columns: cols
+    };
 
-      schemaCallback([tableSchema]);
-    });
+    schemaCallback([tableSchema]);
   };
 
   myConnector.getData = function (table, doneCallback) {
-    $.getJSON(`${tableau.connectionData}/data`, function (data) {
-      var tableData = [];
+    if(!data || ! data.length) {
+      throw new Error('Data is not valid');
+    }
 
-      for (var i = 0, len = data.length; i < len; i++) {
-        const tableEntry = {};
-        for (const [key, entryValue] of Object.entries(data[i])) {
-          tableEntry[formatKey(key)] = entryValue.value !== undefined ? entryValue.value : entryValue
-        }
-        tableData.push(tableEntry);
+    var tableData = [];
+
+    for (var i = 0, len = data.length; i < len; i++) {
+      const tableEntry = {};
+      for (const [key, entryValue] of Object.entries(data[i])) {
+        tableEntry[formatKey(key)] = entryValue.value !== undefined ? entryValue.value : entryValue
       }
+      tableData.push(tableEntry);
+    }
 
-      table.appendRows(tableData);
-      doneCallback();
-    });
+    table.appendRows(tableData);
+    doneCallback();
   };
 
   tableau.registerConnector(myConnector);
@@ -74,10 +78,43 @@ const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
   //   });
   // });
 
+  const validateResponse = response => {
+    // validate response
+    if (!response || !response.length) {
+      throw new Error('No data returned');
+    }
+
+    // validate first item for data issues
+    const item = response[0];
+    if(!item.hasOwnProperty('Public ID')) {
+      throw new Error('Missing columns in response');
+    }
+
+    if(!item['Public ID'].value.length) {
+      throw new Error('Missing data in response');
+    }
+  };
+
   myConnector.init = function(initCallback) {
     tableau.connectionData = $("#ConnectionURL").val();
     tableau.connectionName = $("#ConnectionName").val();
-    initCallback();
-    tableau.submit();
+
+    const success = response => {
+      validateResponse(response);
+      data = response;
+      initCallback();
+      tableau.submit();
+    };
+
+    const error = (xhr, status, errorThrown) => {
+      throw errorThrown;
+    };
+
+    $.ajax({
+      dataType: "json",
+      url: `${tableau.connectionData}/data`,
+      success,
+      error
+    });
   };
 })();
