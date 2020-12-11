@@ -39,12 +39,12 @@
         {% set activeStatement = topOutcome.name %} 
         {% set activeColor = topOutcome.color %} 
       {% endif %}
-        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ topOutcome.name }}</p>
+       <h3 class="govuk-heading-s govuk-!-margin-bottom-2"><a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>{{ topOutcome.name }}</a></h3>
         <p class="govuk-body-s govuk-!-margin-bottom-2">{{ topOutcome.description }}</p>
         {{ currentStatus(topOutcome.color, true) }}
         </div>
         <hr class="govuk-section-break govuk-section-break--visible" aria-hidden="true">
-        <a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" aria-label="{{ topOutcome.name }}" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>Explore data</a>
+        <p class="govuk-body-s overview-card--display">Explore data</p>
       </div>
     {% endfor %}
     </div>

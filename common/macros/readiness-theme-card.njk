@@ -3,13 +3,13 @@
 {% macro readinessThemeCard(item) %}
   <div class="overview-card {{ item.color if item.active else "grey inactive" }}">
     <div class="overview-card--inner">
-      <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ item.name }}</p>
-      <p>{{ item.description }}</p>
+      <h3 class="govuk-heading-s govuk-!-margin-bottom-2"><a href="{{ item.link }}" class="overview-card--link govuk-link">{{ item.name }}</a></h3>
+        <p class="govuk-body-s govuk-!-margin-bottom-2">{{ item.description }}</p>
       {{ currentStatus(item.color if item.active else "grey", true) }}
     </div>
     {% if item.active %}
       <hr class="govuk-section-break govuk-section-break--visible" aria-hidden="true">
-      <a href="{{ item.link }}" aria-label="{{ item.name }}" class="overview-card--link govuk-link">All theme data</a>
+      <p class="govuk-body-s overview-card--display">All theme data</p>
     {% endif %}
   </div>
 {% endmacro %}

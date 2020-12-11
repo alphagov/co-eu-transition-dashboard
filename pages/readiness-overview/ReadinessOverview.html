@@ -30,12 +30,12 @@
           {% for item in data.headlineMeasures %}
             <div class="overview-card {{ item.color }}">
               <div class="overview-card--inner">    
-                <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ item.name }}</p>
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-2"><a href="{{ item.link }}" class="overview-card--link govuk-link">{{ item.name }}</a></h3>
                 <span class="overview-card--tag-theme govuk-heading-s govuk-!-margin-bottom-3">{{ item.theme }}</span>
                 {{ currentStatus(item.color, true) }}
               </div>
                 <hr class="govuk-section-break govuk-section-break--visible" aria-hidden="true">
-                <a href="{{ item.link }}" aria-label="{{ item.name }}" class="overview-card--link govuk-link">Data visualisation</a>
+                <p class="govuk-body-s overview-card--display">Data visualisation</p>
             </div>
           {% endfor %}
         </div>
