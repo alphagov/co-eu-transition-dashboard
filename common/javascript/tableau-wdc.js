@@ -21,17 +21,16 @@ const getTableauDataType = type => {
 const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
 
 (function() {
-  let data = [];
   // Create the connector object
   var myConnector = tableau.makeConnector();
 
   // Define the schema
   myConnector.getSchema = function (schemaCallback) {
-    if(!data || !data.length) {
+    if(!tableau.connectionData || !tableau.connectionData.length) {
       throw new Error('Data is not valid');
     }
     var cols = [];
-    for (const [key, value] of Object.entries(data[0])) {
+    for (const [key, value] of Object.entries(tableau.connectionData[0])) {
       cols.push({
         id: formatKey(key),
         dataType: getTableauDataType(value.type),
@@ -49,15 +48,15 @@ const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
   };
 
   myConnector.getData = function (table, doneCallback) {
-    if(!data || !data.length) {
+    if(!tableau.connectionData || ! tableau.connectionData.length) {
       throw new Error('Data is not valid');
     }
 
     var tableData = [];
 
-    for (var i = 0, len = data.length; i < len; i++) {
+    for (var i = 0, len = tableau.connectionData.length; i < len; i++) {
       const tableEntry = {};
-      for (const [key, entryValue] of Object.entries(data[i])) {
+      for (const [key, entryValue] of Object.entries(tableau.connectionData[i])) {
         tableEntry[formatKey(key)] = entryValue.value !== undefined ? entryValue.value : entryValue
       }
       tableData.push(tableEntry);
@@ -96,12 +95,12 @@ const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
   };
 
   myConnector.init = function(initCallback) {
-    tableau.connectionData = $("#ConnectionURL").val();
+    const url = $("#ConnectionURL").val();
     tableau.connectionName = $("#ConnectionName").val();
 
     const success = response => {
       validateResponse(response);
-      data = response;
+      tableau.connectionData = response;
       initCallback();
       tableau.submit();
     };
@@ -112,7 +111,7 @@ const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
 
     $.ajax({
       dataType: "json",
-      url: `${tableau.connectionData}/data`,
+      url: `${url}/data`,
       success,
       error
     });
