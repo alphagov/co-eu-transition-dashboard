@@ -6,7 +6,9 @@
   },
   "services": {
     "redis": {},
-    "mysql": {},
+    "mysql": {
+      "logsActive": false
+    },
     "s3": {},
     "tfa": {
       "name": "Transition Taskforce Dashboard"

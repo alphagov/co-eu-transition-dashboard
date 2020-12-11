@@ -252,6 +252,9 @@ const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
   };
   const measuresPublicId = uniq(allThemes.reduce(findEntities, []));
   const measuresWithLink = await transitionReadinessData.measuresWithLink(allThemes, measuresPublicId, paths.transitionReadinessThemeDetail)
+
+  measuresWithLink.forEach(transitionReadinessData.applyRagRollups);
+
   let tags = measuresWithLink.reduce((tags, measure) => {
     if(!measure.tags) {
       return tags;
