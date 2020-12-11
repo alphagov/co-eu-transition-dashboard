@@ -111,7 +111,7 @@ class CreateUser extends Page {
       const user = await this.createUserDB(email, tempPassword, t);
       const userRoles = await this.createRolesDB(user.id,roles, t);
       const departmentUser = await this.createDepartmentUserDB(user.id, departments, t);
-      // await notify.sendEmailWithTempPassword({ email: user.email, userId: user.id, password: tempPassword } )
+      await notify.sendEmailWithTempPassword({ email: user.email, userId: user.id, password: tempPassword } )
       
       await t.commit();
 

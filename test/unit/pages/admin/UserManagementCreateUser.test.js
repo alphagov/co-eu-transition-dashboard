@@ -11,6 +11,7 @@ const sequelize = require('services/sequelize');
 const notify = require('services/notify');
 const CreateUser = require('pages/admin/user-management/create-user/CreateUser');
 const randomString = require('randomstring');
+const usersHelper = require('helpers/users');
 
 let page = {};
 
@@ -194,31 +195,6 @@ describe('pages/admin/user-management/create-user/CreateUser', ()=>{
     })
   })
 
-  describe('#errorValidations',  () => {
-    it('throws validation errors', async()=>{
-      try{
-        await page.errorValidations({ email:null, roles:null, departments:null })
-      } catch (err) {
-        const usernameEmptyError = { text:'Email cannot be empty', href: '#username' }
-        const rolesEmptyError = { text:'Roles cannot be empty', href: '#roles' }
-        const departmentsError = { text:'Departments cannot be empty', href: '#departments' }
-        expect(err.message).to.be.equal('VALIDATION_ERROR')
-        expect(err.messages).to.deep.include.members([usernameEmptyError, rolesEmptyError, departmentsError])
-
-      }
-    })
-    it('throws email exists', async()=>{
-      try{
-        User.findOne = sinon.stub().returns({ id:1 })
-        await page.errorValidations({ email:'some@email', roles:'1', departments:'BIS' })
-      } catch (err) {
-        const userExistsError = { text:'Email exists', href: '#username' }
-        expect(err.message).to.be.equal('VALIDATION_ERROR')
-        expect(err.messages).to.deep.include.members([userExistsError])
-      }
-    })
-  })
-
   describe('#postRequest', () => {
     const roles = ['t1', 't2'];
     const departments = 'd1';
@@ -229,21 +205,21 @@ describe('pages/admin/user-management/create-user/CreateUser', ()=>{
     beforeEach(() => {
       page.createUser = sinon.stub().returns(user);
     });
-    
+
     it('creates new user', async () => {
-      page.errorValidations = sinon.stub().returns([]);
+      const errorValidationsStub = sinon.stub(usersHelper, 'errorValidations').returns([]);
       page.req.body = { email, departments, roles }
       await page.postRequest(page.req, page.res);
         
-      sinon.assert.calledWith(page.errorValidations, { email, departments, roles });
+      sinon.assert.calledWith(usersHelper.errorValidations, { email, departments, roles });
       sinon.assert.calledWith(page.createUser, { email, departments, roles });
     
       sinon.assert.calledWith(page.res.redirect, `${page.req.originalUrl}/success`);
+      errorValidationsStub.restore()
     });
     
     it('redirects to original url if error and sets error to flash', async () => {
       const expectedErrors = [{ href: "#username", text: "Email cannot be empty" }, { href: "#roles", text: "Roles cannot be empty" }, { href: "#departments", text: "Departments cannot be empty" }]
-    
       await page.postRequest(page.req, page.res);
     
       sinon.assert.calledWith(page.req.flash, expectedErrors);

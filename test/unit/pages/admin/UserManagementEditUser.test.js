@@ -9,6 +9,7 @@ const Department = require('models/department');
 const DepartmentUser = require("models/departmentUser");
 const sequelize = require('services/sequelize');
 const EditUser = require('pages/admin/user-management/edit-user/EditUser');
+const usersHelper = require('helpers/users');
 
 let page = {};
 
@@ -226,6 +227,74 @@ describe('pages/admin/user-management/edit-user/EditUser', () => {
     });
   });
 
-  
+  describe('#updateData', () => {
+    const email = 'some@email.com'
+    const roles = [1,2]
+    const departments = ['DIT']
+
+    const transaction = sequelize.transaction()
+
+    beforeEach(() => {
+      page.updateUserRoles = sinon.stub().returns();
+      page.updateUserDepartments = sinon.stub().returns();
+      sequelize.transaction = sinon.stub().returns(transaction);
+    });
+
+    it('should call all functions and commit transation', async () => {
+      page.updateUser = sinon.stub().returns();
+
+      await page.updateData({ email, roles, departments })
+
+      const { userId } = page.req.params;
+
+      sinon.assert.calledWith(page.updateUser, userId, email, transaction);
+      sinon.assert.calledWith(page.updateUserRoles, userId, roles, transaction);
+      sinon.assert.calledWith(page.updateUserDepartments, userId,  departments, transaction);
+      sinon.assert.called(transaction.commit);
+    })
+
+    it('should call transaction rollback on error', async () => {
+      try{
+        page.updateUser = sinon.stub().throws(new Error('error'));
+        await page.updateData({ email, roles, departments });
+      } catch(error){
+        expect(error.message).to.equal('error');
+      }
+      sinon.assert.called(transaction.rollback);
+      sinon.assert.notCalled(page.updateUserRoles);
+      sinon.assert.notCalled(page.updateUserDepartments);
+    });
+  });
+
+  describe('#postRequest', () => {
+    const roles = ['t1', 't2'];
+    const departments = ['depart-1'];
+    const email = 'some@email.com';
+    
+    beforeEach(() => {
+      page.updateData = sinon.stub()
+    });
+    
+    it('should call validation and updateData ', async () => {
+      const errorValidationsStub = sinon.stub(usersHelper, 'errorValidations')
+      page.req.body = { email, departments, roles }
+      const { userId } = page.req.params;
+      await page.postRequest(page.req, page.res);
+        
+      sinon.assert.calledWith(usersHelper.errorValidations, { email, departments, roles, userId });
+      sinon.assert.calledWith(page.updateData, { email, departments, roles });
+    
+      sinon.assert.calledWith(page.res.redirect, `${page.req.originalUrl}/success`);
+      errorValidationsStub.restore()
+    });
+    
+    it('redirects to original url if error and sets error to flash', async () => {
+      page.req.body = { departments, roles }
+      await page.postRequest(page.req, page.res);
+    
+      sinon.assert.called(page.req.flash);
+      sinon.assert.calledWith(page.res.redirect, page.req.originalUrl);
+    });
+  });
   
 });
