@@ -1,5 +1,5 @@
-import Navigation from '../Pages/Navigation';
-import Login from '../Pages/Login';
+import Navigation from '../../Pages/Navigation';
+import Login from '../../Pages/Login';
 //const logger = require('middleware/logger');
 const nav = new Navigation(); 
 const login = new Login();
@@ -29,7 +29,7 @@ beforeEach(() => {
   Cypress.Cookies.preserveOnce('jwt');
 });
 
-describe('Verify accessible Menus as an Admin User', () => {
+describe("Workflow for 'Management' with 'Viewer' User role - Verify accessible Menus", () => {
   before(() => {
     //Setup
     testCleanup();
@@ -43,15 +43,11 @@ describe('Verify accessible Menus as an Admin User', () => {
   });
 
   //Log into Dashboard 
-  it("Can Login into Dashboard as an Admin User", function () {
-    //Add Admin role to user
-    addrole("admin");
-    //Add all data role to user
-    addrole("all_data");
-    addrole("uploader");
+  it("Can Login into Dashboard as an 'Management & Viewer' User", function () {
+    //Add Uploader role to user
     addrole("viewer");
-    addrole("management_overview");
-    addrole("management");
+    addrole("management");    //Add all data role to user
+    //addrole("all_data");
     //Add department to user
     addDepartment("BEIS");
 
@@ -59,39 +55,39 @@ describe('Verify accessible Menus as an Admin User', () => {
     
   });
 
-  //Verify that I am allowed to access 'Tranistion Readiness' mneu and all submenus underneath
-  it("I can see and access 'Tranistion Readiness' menu and all submenus underneath", function () {
+  //Verify that I am allowed to access 'Tranistion Readiness' menu and all submenus underneath
+  it("Can see and access 'Tranistion Readiness' menu and all submenus underneath", function () {
     nav.selectMainmenu(nav.Menu_Tranistion_Readiness);
     nav.verifySubmenu(nav.SubMenu_Overview);
     nav.verifyAllThemes();
   });
 
   //Verify that I am allowed to access 'HMG delivery management information' menu and all submenus underneath
-  it("I can see and access 'HMG delivery management information' menu and all submenus underneath", function () {
+  it("Can see and access 'HMG delivery management information' menu and all submenus underneath", function () {
     nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
-    nav.verifySubmenu(nav.SubMenu_Reporting_overview);
+    nav.verifyMainmenuNotExist(nav.SubMenu_Reporting_overview);
     nav.verifySubmenu(nav.SubMenu_Alldata);
     nav.verifySubmenu(nav.SubMenu_Missedmilestones);
     nav.verifySubmenu(nav.SubMenu_Upcomingmilestones);
   });
 
   //Verify that I am allowed to access 'Add data' menu and all submenus underneath
-  it("I can see and access 'Add data' menu and all submenus underneath", function () {
-    nav.selectMainmenu(nav.Menu_Adddata);
-    nav.verifySubmenu(nav.SubMenu_Managementinformation);
-    nav.verifySubmenu(nav.SubMenu_Measures);
+  it("Can NOT see and access 'Add data' menu and all submenus underneath", function () {
+    nav.verifyMainmenuNotExist(nav.Menu_Adddata);
+    nav.verifyMainmenuNotExist(nav.SubMenu_Managementinformation);
+    nav.verifyMainmenuNotExist(nav.SubMenu_Measures);
   });
 
   //Verify that I am allowed to access 'Admin' mneu and all submenus underneath
-  it("I can see and access 'Admin' menu and all submenus underneath", function () {
-    nav.selectMainmenu(nav.Menu_Admin);
-    nav.verifySubmenu(nav.SubMenu_MIdatastructure);
-    nav.verifySubmenu(nav.SubMenu_Managecategories);
-    nav.verifySubmenu(nav.SubMenu_ManageHeadlineMeasures);
-    nav.verifySubmenu(nav.SubMenu_ManageUsers);
-    nav.verifySubmenu(nav.SubMenu_Entitydataimport);
-    nav.verifySubmenu(nav.SubMenu_StaticExport);
-    nav.verifySubmenu(nav.SubMenu_RAYGValues);
+  it("Can NOT see and access 'Admin' menu and all submenus underneath", function () {
+    nav.verifyMainmenuNotExist(nav.Menu_Admin);
+    nav.verifyMainmenuNotExist(nav.SubMenu_MIdatastructure);
+    nav.verifyMainmenuNotExist(nav.SubMenu_Managecategories);
+    nav.verifyMainmenuNotExist(nav.SubMenu_ManageHeadlineMeasures);
+    nav.verifyMainmenuNotExist(nav.SubMenu_ManageUsers);
+    nav.verifyMainmenuNotExist(nav.SubMenu_Entitydataimport);
+    nav.verifyMainmenuNotExist(nav.SubMenu_StaticExport);
+    nav.verifyMainmenuNotExist(nav.SubMenu_RAYGValues);
   });
 
 });

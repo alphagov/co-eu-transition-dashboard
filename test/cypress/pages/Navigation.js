@@ -124,6 +124,15 @@ class Navigation {
     cy.get(Main_Menu).contains(menuname).should('exist');
   }
 
+  //Select Main menu
+  verifyMainmenuNotExist(menuname) {
+    //logger.infoger.info("menuname " + menuname);
+    //logger.info("this.Main_Menu " + Main_Menu);
+    //var regexMenu = new RegExp("/^\s*" + menuname+ "\s*$/");
+    //cy.get(Main_Menu).contains(regexMenu).click();
+    cy.get(Main_Menu).contains(menuname).should('not.exist');
+  }
+
   //Select sub meny
   verifySubmenu(submenuname) {
     //var regexMenu = new RegExp("^\s*" + submenuname+ "\s*$/");
@@ -144,6 +153,30 @@ class Navigation {
       allThemes.forEach(element => {
         //logger.info("element " + element.value);
         cy.xpath("//li/a[normalize-space() = '" + element.value + "']").should('exist');
+      });
+    })
+  }
+
+  verifyDAThemes() {
+    var daThemes = [];
+    cy.getDAThemes().as('dbResultDAThemes');
+    cy.get('@dbResultDAThemes').then((res) => {
+      daThemes = res
+      daThemes.forEach(element => {
+        //logger.info("element " + element.value);
+        cy.xpath("//li/a[normalize-space() = '" + element.value + "']").should('exist');
+      });
+    })
+  }
+
+  verifyNonDAThemes() {
+    var nondaThemes = [];
+    cy.getNonDAThemes().as('dbResultNonDAThemes');
+    cy.get('@dbResultNonDAThemes').then((res) => {
+      nondaThemes = res
+      nondaThemes.forEach(element => {
+        //logger.info("element " + element.value);
+        cy.xpath("//li/a[normalize-space() = '" + element.value + "']").should('not.exist');
       });
     })
   }
