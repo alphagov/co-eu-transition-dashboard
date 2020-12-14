@@ -21,6 +21,10 @@ class SearchTransitionReadiness extends Page {
   async getData() {
     return measures.getMeasuresWhichUserHasAccess(this.res.locals.entitiesUserCanAccess);
   }
+
+  getParams() {
+    return this.req.query;
+  }
 }
 
 module.exports = SearchTransitionReadiness;

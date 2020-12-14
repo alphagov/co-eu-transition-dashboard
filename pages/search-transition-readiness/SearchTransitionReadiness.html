@@ -5,8 +5,11 @@
 {% from "searchMeasures.njk" import searchMeasures %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "status.njk" import currentStatus %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% set data = getData() | await %}
+{% set params = getParams() %}
+{% set filterNames = [] %}
 
 {% block beforeContent %}
   {{
@@ -20,20 +23,21 @@
   }}
 {% endblock %}
 
-{% block pageTitle %}Search transition readiness{% endblock %}
+{% block pageTitle %}Search transition readiness - {{ super() }}{% endblock %}
 
 {% block content %}
 
 <form method="GET" action="{{ url }}">
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl">
-              <label class="govuk-label--l" for="term">Search measures</label>
+    <div class="govuk-grid-column-two-thirds govuk-!-margin-bottom-5">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+            <label class="govuk-label--l" for="term">Search measures</label>
           </h1>
       {{ searchMeasures(true) }}
     </div>
   </div>
-  <div class="govuk-grid-row">
+
+    <div class="govuk-grid-row" id="hide-filters">
       <div class="govuk-grid-column-one-quarter hidden" id="search-filters" >
         {% include "search-transition-readiness/partials/filters.njk" %}
         <div class="govuk-grid-row actions">
@@ -52,7 +56,38 @@
           }}
         </div>
       </div>
-      <div class="govuk-grid-column-two-thirds">
+
+      <div class="govuk-grid-column-full" id="dataTable">
+
+        <div id="showFiltersBtn">
+        {% include "all-data/partials/filters/show-filter-btn.njk" %}
+        </div>
+
+        <div id="hideFiltersBtn">
+        {% include "all-data/partials/filters/hide-filter-btn.njk" %}
+        </div>
+
+      {% if params | length %}
+      <div class="search-summary">
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-5">Selected filters</p>
+        {% for key, filter in params %}
+          {% if filter | length %}
+          <div class="search-list">
+          <p class="govuk-body govuk-!-font-weight-bold">{{ key | replace("Filter", "") | capitalize }}</p>
+          {% for option in filter %}
+              {{ govukButton({
+                 html: "<img src='/assets/images/cross.png' class='cross' alt='delete-filter' />" + option,
+                 classes: "govuk-button--secondary filterBtn"
+              }) }}
+          {% endfor %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+        <hr class="govuk-section-break govuk-section-break--m govuk-!-margin-top-0" aria-hidden="true">
+
         <table class="govuk-table" id="search-table">
           <tbody class="govuk-table__body">
             <tr class="result-count hidden">
