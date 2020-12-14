@@ -1,22 +1,16 @@
-.top-statements {
-    height: 100vh;
-    overflow-y: scroll;
-}
-
 .active-statement {
-    background-color: white !important;
+    background-color: #ffffff !important;
+    a {
+        color: #0b0c0c !important;
+    }
 }
 
-.active-statement ~ .overview-card--link {
-    color: #003078 !important;
-    &:hover {
-        background-color: #f8f8f8;
-    }
+.active-statement + hr + .overview-card--display {
+    background-color: #f8f8f8;
 }
 
 .no-horizontal-padding {
     padding-left: 0;
-    padding-right: 0;
 }
 
 .readiness-accordion-wrapper {
@@ -303,4 +297,8 @@
     border-top: 10px solid #B1B4B6;
     border-right: 10px solid transparent;
     border-bottom: 10px solid transparent;
+}
+
+#readiness-theme-page .govuk-grid-column-full {
+    background-color: #ffffff;
 }
