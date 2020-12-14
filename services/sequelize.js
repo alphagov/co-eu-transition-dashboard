@@ -13,7 +13,7 @@ const sequelize = new Sequelize(services.mysql.uri.replace(/^mysql2:\/\//,'mysql
   dialectOptions: {
     ssl: services.mysql.sslCertificate
   },
-  logging: true,
+  logging: services.mysql.logsActive,
   pool: {
     max: 5,
     min: 1,

@@ -252,6 +252,9 @@ const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
   };
   const measuresPublicId = uniq(allThemes.reduce(findEntities, []));
   const measuresWithLink = await transitionReadinessData.measuresWithLink(allThemes, measuresPublicId, paths.transitionReadinessThemeDetail)
+
+  measuresWithLink.forEach(transitionReadinessData.applyRagRollups);
+
   let tags = measuresWithLink.reduce((tags, measure) => {
     if(!measure.tags) {
       return tags;
@@ -268,6 +271,12 @@ const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
   };
 }
 
+const isMeasurePastUpdateDue = (measure) => {
+  const today = moment();
+  const status = (measure.updateDueOn && moment(measure.updateDueOn, "DD/MM/YYYY").isBefore(today)) ? "due" : "notDue";
+  return status;
+}
+
 module.exports = {
   applyLabelToEntities,
   calculateUiInputs,
@@ -278,6 +287,7 @@ module.exports = {
   getMeasureEntities,
   getMeasuresWhichUserHasAccess,
   groupMeasures,
+  isMeasurePastUpdateDue,
   validateFormData,
   validateEntities
 };
