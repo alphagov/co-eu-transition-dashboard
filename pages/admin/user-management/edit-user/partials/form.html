@@ -80,5 +80,13 @@
       }) 
     }}
 
+    {{ 
+      govukButton({
+        text: "Reset 2FA",
+        href:  config.paths.admin.resetUser2Fa + "/" + req.params.userId,
+        classes: "govuk-button--secondary edit-user-button"
+      }) 
+    }}
+
   </form>
 {% endblock %}
