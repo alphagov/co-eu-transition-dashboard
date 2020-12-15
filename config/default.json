@@ -41,8 +41,9 @@
       "editUser": "/admin/edit-user",
       "staticExports": "/admin/static-exports",
       "raygValues": "/admin/rayg-values",
-      "tagManagementList": "/admin/manage-tags-list",
-      "tagManagementDelete": "/admin/manage-tags-delete"
+      "tagManagementAdd": "/admin/manage-tags-add",
+      "tagManagementDelete": "/admin/manage-tags-delete",
+      "tagManagementList": "/admin/manage-tags-list"
     },
     "allData": "/all-data",
     "filterExample": "/filter-example",

@@ -1,0 +1,8 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{{ govukPanel({
+        titleText: "Tag created successfully"
+   }) 
+}}
+
+<a  class="govuk-link" href="{{ config.paths.admin.tagManagementList }}">Back to Tags list</a>

@@ -136,9 +136,9 @@ class CreateUser extends Page {
       await this.createUser({ ...req.body });
       return res.redirect(`${this.req.originalUrl}/success`);
     } catch (error) {
-      let flashMessages ;
+      let flashMessages;
       if (error.message && error.message === VALIDATION_ERROR_MESSSAGE) {
-        flashMessages= error.messages;
+        flashMessages = error.messages;
       } else if (error.message) {
         flashMessages = [{ text: error.message }]; 
       } else {
