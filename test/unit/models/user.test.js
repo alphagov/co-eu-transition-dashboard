@@ -39,6 +39,10 @@ describe('models/user', () => {
       mustChangePassword: {
         type: BOOLEAN,
         field: "must_change_password"
+      },
+      isActive: {
+        type: BOOLEAN,
+        field: "is_active"
       }
     });
   });

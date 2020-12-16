@@ -22,7 +22,10 @@ const hashPassphrase = passphrase => {
 
 const authenticateLogin = async (email, password, done) => {
   const user = await User.findOne({
-    where: { email },
+    where: {
+      email,
+      isActive: true
+    },
     include: Role
   });
 
@@ -36,7 +39,7 @@ const authenticateLogin = async (email, password, done) => {
     error.maximumLoginAttempts = true;
     return done(error);
   }
-  
+
   const passwordMatches = await bcrypt.compare(password, user.hashedPassphrase);
   if (!passwordMatches) {
     await user.increment("loginAttempts");
@@ -63,6 +66,7 @@ const authenticateUser = (jwtPayload = {}, cb) => {
     where: {
       id: jwtPayload.id,
       loginAttempts: { [Op.lte]: config.users.maximumLoginAttempts },
+      isActive: true
     },
     include: [{
       model: Department

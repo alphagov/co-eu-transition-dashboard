@@ -40,6 +40,7 @@
       "clearCache": "/admin/clear-cache",
       "createUser": "/admin/create-user",
       "editUser": "/admin/edit-user",
+      "deactivateUser": "/admin/deactivate-user",
       "staticExports": "/admin/static-exports",
       "raygValues": "/admin/rayg-values",
       "tagManagementAdd": "/admin/manage-tags-add",
