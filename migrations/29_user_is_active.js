@@ -3,20 +3,14 @@ const config = require('config');
 const Sequelize = require('sequelize');
 
 const migrate = async (query) => {
-  const hasColumn = await query.sequelize.query(`SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'user' AND COLUMN_NAME = 'is_active'`);
-  if(hasColumn[0][0] === undefined) {
-    logger.info(`Adding is_active column to user table`);
-    await query.addColumn(
-      'user',
-      'is_active',
-      {
-        type: Sequelize.DataTypes.BOOLEAN,
-        defaultValue: true
-      }
-    );
-  } else {
-    logger.info(`is_active column already exists on user table`);
-  }
+  await query.addColumn(
+    'user',
+    'is_active',
+    {
+      type: Sequelize.DataTypes.BOOLEAN,
+      defaultValue: true
+    }
+  );
 };
 
 const up = async (query) => {
@@ -24,10 +18,20 @@ const up = async (query) => {
     await migrate(query);
   } catch (error) {
     logger.error(`Error migrating ${error}`);
+    logger.error(`Rolling back changes`);
+    await down(query);
     throw error;
   }
 };
 
+const down = async (query) => {
+  await query.removeColumn(
+    'user',
+    'is_active'
+  );
+};
+
 module.exports = {
-  up
+  up,
+  down
 };
