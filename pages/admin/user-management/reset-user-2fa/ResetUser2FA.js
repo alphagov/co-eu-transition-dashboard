@@ -6,7 +6,7 @@ const User = require('models/user');
 
 class ResetUser2FA extends Page {
   get url() {
-    return paths.admin.resetUser2Fa;
+    return paths.admin.resetUser2FA;
   }
 
   get pathToBind() {
@@ -43,7 +43,6 @@ class ResetUser2FA extends Page {
     try {
       const user = await this.getUser();
       await this.resetUser2FA(user);
-
     } catch (error) {
       req.flash(error.message);
       return res.redirect(this.req.originalUrl);

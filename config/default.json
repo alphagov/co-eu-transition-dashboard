@@ -36,7 +36,7 @@
       "headlineMeasures": "/admin/headline-measures",
       "userManagementList": "/admin/manage-users-list",
       "userManagementAuthentication": "/admin/manage-users-authentication",
-      "resetUser2Fa": "/admin/reset-user-2fa",
+      "resetUser2FA": "/admin/reset-user-2fa",
       "clearCache": "/admin/clear-cache",
       "createUser": "/admin/create-user",
       "editUser": "/admin/edit-user",
