@@ -1,5 +1,4 @@
 const logger = require('services/logger');
-const config = require('config');
 const Sequelize = require('sequelize');
 
 const migrate = async (query) => {
