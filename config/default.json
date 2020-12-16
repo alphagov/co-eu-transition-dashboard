@@ -36,13 +36,16 @@
       "headlineMeasures": "/admin/headline-measures",
       "userManagementList": "/admin/manage-users-list",
       "userManagementAuthentication": "/admin/manage-users-authentication",
+      "resetUser2FA": "/admin/reset-user-2fa",
       "clearCache": "/admin/clear-cache",
       "createUser": "/admin/create-user",
       "editUser": "/admin/edit-user",
+      "deactivateUser": "/admin/deactivate-user",
       "staticExports": "/admin/static-exports",
       "raygValues": "/admin/rayg-values",
-      "tagManagementList": "/admin/manage-tags-list",
-      "tagManagementDelete": "/admin/manage-tags-delete"
+      "tagManagementAdd": "/admin/manage-tags-add",
+      "tagManagementDelete": "/admin/manage-tags-delete",
+      "tagManagementList": "/admin/manage-tags-list"
     },
     "allData": "/all-data",
     "filterExample": "/filter-example",
