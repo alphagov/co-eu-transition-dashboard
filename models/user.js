@@ -209,6 +209,10 @@ User.init({
   mustChangePassword: {
     type: BOOLEAN,
     field: "must_change_password"
+  },
+  isActive: {
+    type: BOOLEAN,
+    field: "is_active"
   }
 }, { sequelize, modelName: 'user', tableName: 'user', timestamps: false });
 

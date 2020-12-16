@@ -29,6 +29,7 @@
           <th scope="col" class="govuk-table__header">Email</th>
           <th scope="col" class="govuk-table__header">Roles</th>
           <th scope="col" class="govuk-table__header">Last login</th>
+          <th scope="col" class="govuk-table__header">Is Active</th>
           <th scope="col" class="govuk-table__header"></th>
         </tr>
       </thead>
@@ -42,6 +43,7 @@
               {%- endfor -%}
             </td>
             <td class="govuk-table__cell">{{ user.lastLoginAt | date('DD/MM/YYYY HH:MM') }}</td>
+            <td class="govuk-table__cell">{{ user.isActive }}</td>
             <td class="govuk-table__cell">
               <a href="{{ config.paths.admin.editUser }}/{{ user.id }}" class="govuk-link">Edit user</a>
             </td>
