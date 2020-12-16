@@ -5,16 +5,35 @@ const Umzug = require('umzug');
 const path = require('path');
 
 // Something in cloudfoundry is replacing mysql:// with mysql2:// which is causing some issues
-const sequelize = new Sequelize(services.mysql.uri.replace(/^mysql2:\/\//,'mysql://'),{
-  dialect: 'mysql',
-  define: {
-    charset: services.mysql.charset
-  },
-  dialectOptions: {
-    ssl: services.mysql.sslCertificate
-  },
-  logging: false
-});
+
+let sequelize;
+
+if (services.mysql.socket) {
+  sequelize = new Sequelize(services.mysql.database,services.mysql.user,services.mysql.password,{
+    dialect: 'mysql',
+    define: {
+      charset: services.mysql.charset
+    },
+    dialectOptions: {
+      socketPath: services.mysql.socket,
+    },
+    logging: false
+  });
+} else if (services.mysql.uri) {
+  sequelize = new Sequelize(services.mysql.uri.replace(/^mysql2:\/\//,'mysql://'),{
+    dialect: 'mysql',
+    define: {
+      charset: services.mysql.charset
+    },
+    dialectOptions: {
+      socketPath: services.mysql.socket,
+      ssl: services.mysql.sslCertificate
+    },
+    logging: false
+  });
+} else {
+  throw "Could not find mysql config";
+}
 
 const umzug = new Umzug({
   migrations: {

@@ -5,7 +5,11 @@
   "env": "NODE_ENV",
   "services": {
     "mysql": {
-      "uri": "DATABASE_URL"
+      "uri": "DATABASE_URL",
+      "socket": "DATABASE_SOCKET",
+      "user": "DATABASE_USER",
+      "password": "DATABASE_PASSWORD",
+      "database": "DATABASE_DBNAME"
     },
     "tableau": {
       "url": "TABLEAU_URL",
