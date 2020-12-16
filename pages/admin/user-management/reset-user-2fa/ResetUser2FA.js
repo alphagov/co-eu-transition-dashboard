@@ -25,7 +25,7 @@ class ResetUser2FA extends Page {
   }
 
   async getUser() {
-    return await User.findOne({
+    return User.findOne({
       where: {
         id: this.req.params.userId
       }
