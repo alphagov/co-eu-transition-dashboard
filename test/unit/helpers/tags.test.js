@@ -1,7 +1,8 @@
-const { sinon } = require('test/unit/util/chai');
+const { expect, sinon } = require('test/unit/util/chai');
 const tags = require('helpers/tags');
 const sequelize = require('services/sequelize');
 const TagEntity = require('models/tagEntity');
+const Tag = require('models/tag');
 
 describe('helpers/tags', () => {
   const transaction = sequelize.transaction();
@@ -44,4 +45,32 @@ describe('helpers/tags', () => {
       }, { transaction });
     });
   });
+
+  describe('#createTag', () => {
+    beforeEach(()=>{
+      sequelize.col = sinon.stub().returns();
+      sequelize.fn = sinon.stub().returns();
+      sequelize.where = sinon.stub().returns();
+    });
+
+    it('should create a tag', async ()=> {
+      const mockTag = 'mocktag';
+      Tag.findOne = sinon.stub().returns();
+      Tag.create = sinon.stub().returns({ id:1, name: mockTag })
+
+      await tags.createTag(mockTag);
+
+      sinon.assert.calledWith(Tag.create, { name: mockTag });
+      sinon.assert.called(Tag.findOne);
+    })
+
+    it('should throw an error when tag is already created', async ()=> {
+      try {
+        Tag.findOne = sinon.stub().returns({ id:1, name: '123' });
+        await tags.createTag('test tag');
+      } catch (err) {
+        expect(err.message).to.be.equal('DUPLICATE_TAG');
+      }
+    })
+  })
 });
