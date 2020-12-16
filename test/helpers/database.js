@@ -4,7 +4,6 @@ const { exec, execSync } = require("child_process");
 const fs = require('fs')
 const { services } = require('config');
 const sleep = require("sleep");
-const isRunning = require('is-running');
 const rimraf = require("rimraf");
 
 class TestDatabase {
