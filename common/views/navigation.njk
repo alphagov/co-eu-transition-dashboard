@@ -59,6 +59,13 @@
     ]
 %}
 
+{% set adminTagManagementUrls = [
+    config.paths.admin.tagManagementAdd,
+    config.paths.admin.tagManagementDelete,
+    config.paths.admin.tagManagementList
+    ]
+%}
+
 {% set transitionReadinessUrls = [
     config.paths.readinessOverview,
     config.paths.transitionReadinessThemeDetail
@@ -220,7 +227,7 @@
                 RAYG Values
                 </a>
               </li>
-              <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.tagManagementList }}">
+              <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in adminTagManagementUrls }}">
                 <a class="govuk-header__link child-nav" href="{{ config.paths.admin.tagManagementList }}">
                 Manage Tags
                 </a>
