@@ -11,6 +11,7 @@ const cache = require('middleware/cache');
 const path = require('path');
 const PageNotFound = require('pages/page-not-found/PageNotFound');
 const pageNotFound = new PageNotFound(path.resolve('pages/page-not-found'));
+const httpContext = require('express-cls-hooked');
 require('./notifications');
 
 const app = module.exports = express();
@@ -22,6 +23,12 @@ helmet.attach(app);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use(httpContext.middleware);
+app.use((req, res, next) => {
+  httpContext.set('req', req)
+  next();
+});
 
 nunjucks.attach(app);
 
@@ -42,4 +49,3 @@ app.get('/', (req, res) => res.redirect(startPage()));
 app.use(pageNotFound.router);
 
 logger.attachErrorLogger(app);
-
