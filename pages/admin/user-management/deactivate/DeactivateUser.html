@@ -1,0 +1,64 @@
+{% extends "template.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set user = getUser() | await %}
+
+{% block beforeContent %}
+  {% include "navigation.njk" %}
+  {% if not successMode %}
+    {{ govukBackLink({
+      text: "Back",
+      href: "#",
+      attributes: {
+        onclick: "history.go(-1); return false;"
+      }
+    }) }}
+  {% endif %}
+{% endblock %}
+
+{% block pageTitle %}Deactivate User{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if successMode %}
+        {{ govukPanel({
+          titleText: "Success",
+          text: "User deactivated successfully"
+        }) }}
+
+        <a class="govuk-link" href="{{ config.paths.admin.userManagementList }}">Back to users list</a>
+      {% else %}
+        {% if flash %}
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: flash
+          }) }}
+        {% endif %}
+
+        {{ govukPanel({
+          titleText: "Are you sure you want to deactivate the following user?",
+          html: user.email,
+          classes: 'red-panel'
+        }) }}
+
+        <br>
+
+        <form type="{{ req.originalUrl }}" method="POST">
+          {{ govukButton({
+            text: "Back to edit user",
+            href: config.paths.admin.editUser + "/" + user.id,
+            classes: "govuk-button--secondary edit-user-button"
+          }) }}
+
+          {{ govukButton({
+            text: "Confirm deactivate",
+            classes: "edit-user-button"
+          }) }}
+        </form>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

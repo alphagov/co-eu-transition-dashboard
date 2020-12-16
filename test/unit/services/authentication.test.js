@@ -107,7 +107,7 @@ describe('services/authentication', () => {
 
         it('correctly searches database', () => {
           sinon.assert.calledWith(User.findOne, {
-            where: { email: user.email },
+            where: { email: user.email, isActive: true },
             include: Role
           });
         });
@@ -139,7 +139,7 @@ describe('services/authentication', () => {
 
         it('correctly searches database', () => {
           sinon.assert.calledWith(User.findOne, {
-            where: { email: user.email },
+            where: { email: user.email, isActive: true },
             include: Role
           });
         });
@@ -189,7 +189,11 @@ describe('services/authentication', () => {
         await authentication.authenticateUser(jwtPayload, authenticateUserCallback);
 
         sinon.assert.calledWith(User.findOne, {
-          where: { id: jwtPayload.id, loginAttempts: { [Op.lte]: config.users.maximumLoginAttempts } },
+          where: {
+            id: jwtPayload.id,
+            loginAttempts: { [Op.lte]: config.users.maximumLoginAttempts },
+            isActive: true
+          },
           include: [{
             model: Department
           },{
@@ -208,7 +212,11 @@ describe('services/authentication', () => {
         await authentication.authenticateUser(jwtPayload, authenticateUserCallback);
 
         sinon.assert.calledWith(User.findOne, {
-          where: { id: jwtPayload.id, loginAttempts: { [Op.lte]: config.users.maximumLoginAttempts } },
+          where: {
+            id: jwtPayload.id,
+            loginAttempts: { [Op.lte]: config.users.maximumLoginAttempts },
+            isActive: true
+          },
           include: [{
             model: Department
           },{
