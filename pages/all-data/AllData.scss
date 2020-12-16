@@ -242,7 +242,8 @@ span.date-name {
     margin-bottom: -20px;
 }
 
-button.govuk-button.govuk-button--secondary.filterBtn {
+button.govuk-button.govuk-button--secondary.filterBtn,
+.delete-filter-link, .delete-filter-link:hover {
     box-shadow: none;
     background-color: white;
     margin-bottom: 5px;
