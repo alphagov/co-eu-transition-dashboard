@@ -33,6 +33,7 @@ const SubMenu_ManageUsers = "Manage Users";
 const SubMenu_Entitydataimport = "Entity data import";
 const SubMenu_StaticExport = "Static Export";
 const SubMenu_RAYGValues = "RAYG Values";
+const SubMenu_ManageTags = "Manage Tags";
 
 class Navigation {
 //Menus
@@ -97,6 +98,9 @@ class Navigation {
   }
   get SubMenu_RAYGValues() {
     return SubMenu_RAYGValues;
+  }
+  get SubMenu_ManageTags() {
+    return SubMenu_ManageTags;
   }
 
   //Select Main menu

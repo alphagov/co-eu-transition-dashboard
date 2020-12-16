@@ -92,6 +92,7 @@ describe("Workflow for 'Admin' with all other User roles - Verify accessible Men
     nav.verifySubmenu(nav.SubMenu_Entitydataimport);
     nav.verifySubmenu(nav.SubMenu_StaticExport);
     nav.verifySubmenu(nav.SubMenu_RAYGValues);
+    nav.verifySubmenu(nav.SubMenu_ManageTags);
   });
 
 });

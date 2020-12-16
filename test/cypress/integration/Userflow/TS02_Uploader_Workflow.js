@@ -89,6 +89,7 @@ describe("Workflow for 'Uploader' with 'Viewer' User role - Verify accessible Me
     nav.verifyMainmenuNotExist(nav.SubMenu_Entitydataimport);
     nav.verifyMainmenuNotExist(nav.SubMenu_StaticExport);
     nav.verifyMainmenuNotExist(nav.SubMenu_RAYGValues);
+    nav.verifyMainmenuNotExist(nav.SubMenu_ManageTags);
   });
 
 });

@@ -89,6 +89,7 @@ describe("Workflow for 'Management and Overview' with 'Viewer' User role - Verif
     nav.verifyMainmenuNotExist(nav.SubMenu_Entitydataimport);
     nav.verifyMainmenuNotExist(nav.SubMenu_StaticExport);
     nav.verifyMainmenuNotExist(nav.SubMenu_RAYGValues);
+    nav.verifyMainmenuNotExist(nav.SubMenu_ManageTags);
   });
 
 });
