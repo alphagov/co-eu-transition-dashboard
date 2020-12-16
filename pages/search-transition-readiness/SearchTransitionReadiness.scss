@@ -43,20 +43,20 @@
   }
 }
 
-#search-summary {
+#search-list {
   background-color: #f3f2f1;
   padding: 10px;
-  #search-list {
     &:not(:last-child) {
       margin-bottom: 30px;
     }
     a {
       margin-right: 20px;
+      display: inline-block;
     }
     p {
       text-transform: capitalize;
-      display: block;
+      display: inline;
+      margin-right: 20px;
+      vertical-align: -webkit-baseline-middle;
     }
-  }
 }
-
