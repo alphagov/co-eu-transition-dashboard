@@ -1,5 +1,5 @@
 const winston = require('winston');
-var httpContext = require('express-cls-hooked');
+var httpContext = require('express-http-context');
 
 const format = winston.format.printf(info => {
   const req = httpContext.get('req') || {};
@@ -39,4 +39,3 @@ const config = {
 const logger = winston.createLogger(config);
 
 module.exports = logger;
-
