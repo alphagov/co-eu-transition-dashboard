@@ -36,6 +36,7 @@ Search.prototype.init = function() {
   this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters, this.queryParameters.tagFilters);
   this.updateResultCount();
   this.bindEvents();
+  this.searchSummaryList();
 };
 
 const helper = {
@@ -187,5 +188,44 @@ Search.prototype.bindEvents = function() {
     }
   });
 };
+
+Search.prototype.searchSummaryList = function() {
+  const $searchList = document.getElementById('search-list');
+
+  const $url = `${window.location.href.split('?')[0]}`
+  const $searchParams = window.location.search;
+  const $params = $searchParams.split('&');
+  
+  const $filterTitleList = [];
+
+  $params.forEach(function(item, index) {
+
+    const $filterTitle = item.substring(0, item.indexOf('=')).replace('Filter', '').replace('?', '');
+    const $filterTerm = item.substring(item.indexOf('=') + 1);
+
+    if ($filterTitle.includes('term') || (!$filterTerm)) return false;
+
+    let $tempParams = Array.from($params);
+    $tempParams.splice(index, 1);
+
+    const $label = document.createElement('p');
+    const $button = document.createElement('a');
+
+    $label.className = 'govuk-body govuk-!-font-weight-bold';
+    $label.innerHTML = $filterTitle;
+    $button.className = 'govuk-button govuk-button--secondary delete-filter-link';
+    $button.innerHTML = `<img src='/assets/images/cross.png' class='cross' alt='delete-filter'/>${$filterTerm}`
+    $button.href = `${$url}${$tempParams.join('&')}`;
+
+    $searchList.style.display = 'block';
+
+    if (!$filterTitleList.includes($filterTitle)) {
+      $searchList.appendChild($label);
+    }
+
+    $filterTitleList.push($filterTitle);
+    $searchList.appendChild($button);
+  })
+}
 
 export default Search;

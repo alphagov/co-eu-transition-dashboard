@@ -25,7 +25,7 @@
 
 {% block content %}
 
-<form method="GET" action="{{ url }}">
+<form method="GET" action="{{ url }}" class="search-measure">
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds govuk-!-margin-bottom-5">
       <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
@@ -66,7 +66,7 @@
         </div>
 
         <div id="search-list" style="display:none;">
-          <p class="govuk-body govuk-!-font-weight-bold">Selected filters</p>
+          <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Selected filters</p>
           <hr class="govuk-section-break govuk-section-break--m govuk-!-margin-top-0" aria-hidden="true">
         </div>
 
@@ -129,29 +129,5 @@
       </div>
   </div>
 </form>
-{# 
-{{ params | dump }}
-    {% if params | length %}
-      <div class="search-summary">
-        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-5">Selected filters</p>
-        {% for key, filter in params %}
-          {% if filter | length %}
-          <div class="search-list">
-          <p class="govuk-body govuk-!-font-weight-bold">{{ key | replace("Filter", "") | capitalize }}</p>
-          {% for value in filter %}
-            <form action="{{ req.originalUrl }}" method="post">
-              <input type="hidden" name="key" value="{{ key }}" />
-              <input type="hidden" name="value" value="{{ value }}" />
-              {{ govukButton({
-                 html: "<img src='/assets/images/cross.png' class='cross' alt='delete-filter' />" + value,
-                 classes: "govuk-button--secondary filterBtn"
-              }) }}
-            </form>
-          {% endfor %}
-          </div>
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endif %} #}
 
 {% endblock %}

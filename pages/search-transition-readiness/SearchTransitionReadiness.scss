@@ -46,17 +46,13 @@
 #search-list {
   background-color: #f3f2f1;
   padding: 10px;
-    &:not(:last-child) {
-      margin-bottom: 30px;
-    }
+  margin-bottom: 10px;
     a {
       margin-right: 20px;
       display: inline-block;
     }
-    p {
+    p:not(:first-child) {
       text-transform: capitalize;
-      display: inline;
-      margin-right: 20px;
-      vertical-align: -webkit-baseline-middle;
+      margin: 10px 5px 5px 0;
     }
 }

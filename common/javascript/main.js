@@ -37,47 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var $readinessAccordions = document.querySelectorAll('[data-module="readiness-accordion"]')
 
-  function searchSummaryList() {
-    const $searchList = document.getElementById('search-list');
-
-    const $url = `${window.location.href.split('?')[0]}?`
-    const $searchParams = window.location.search;
-    const $values = $searchParams.split('&');
-    const $filterTitleList = [];
-
-    $values.forEach(function(item, index) {
-
-      const $filterTitle = item.substring(0, item.indexOf('=')).replace('Filter', '').replace('?', '');
-      const $filterTerm = item.substring(item.indexOf('=') + 1);
-
-      if (!$filterTerm) return false;
-
-      let $tempValues = Array.from($values);
-      $tempValues.splice(index, 1);
-
-      const $title = document.createElement('p');
-      const $button = document.createElement('a');
-
-      $title.className = 'govuk-body govuk-!-font-weight-bold';
-      $title.innerHTML = $filterTitle;
-      $button.className = 'govuk-button govuk-button--secondary delete-filter-link';
-      $button.innerHTML = `<img src='/assets/images/cross.png' class='cross' alt='delete-filter'/>${$filterTerm}`
-      $button.href = `${$url}${$tempValues.join('&')}`;
-
-      $searchList.style.display = 'block';
-
-      if (!$filterTitleList.includes($filterTitle)) {
-        $searchList.appendChild($title);
-      }
-
-      $filterTitleList.push($filterTitle);
-      $searchList.appendChild($button);
-    })
-    return $values;
-  }
-
-  searchSummaryList()
-
   if ($readinessAccordions) {
     $readinessAccordions.forEach($accordion => new ReadinessAccordion($accordion).init())
   }
