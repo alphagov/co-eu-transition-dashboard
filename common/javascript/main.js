@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var $readinessAccordions = document.querySelectorAll('[data-module="readiness-accordion"]')
 
 
-  
+
   if ($readinessAccordions) {
     $readinessAccordions.forEach($accordion => new ReadinessAccordion($accordion).init())
   }
