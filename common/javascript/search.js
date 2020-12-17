@@ -190,7 +190,7 @@ Search.prototype.bindEvents = function() {
 };
 
 Search.prototype.updateSearchList = function() {
-  const $searchList = document.getElementById('search-list');
+  const $searchList = document.querySelector('.search-list');
 
   const $url = `${window.location.href.split('?')[0]}`
   const $searchParams = window.location.search;
@@ -217,7 +217,7 @@ Search.prototype.updateSearchList = function() {
     $button.innerHTML = `<img src='/assets/images/cross.png' class='cross' alt='delete-filter'/>${$filterTerm}`
     $button.href = `${$url}${$tempParams.join('&')}`;
 
-    $searchList.style.display = 'block';
+    $searchList.classList.remove('hidden');
 
     if (!$filterTitleList.includes($filterTitle)) {
       $searchList.appendChild($label);
