@@ -99,14 +99,3 @@
     items: outcomeMeasuresData
   }) }}
 {% endmacro %}
-
-{% macro projectDetails(item) %}
-  <div class="govuk-!-padding-left-2 project-information" id="project-information-{{ item.id }}">
-    <h3 class="govuk-heading-m">{{ item.name }}</h3>
-    <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ item.hmgConfidence }}">{{ item.hmgConfidence }}</span></p>
-    <p class="govuk-body">{{ item.description }}</p>
-    {% if req.user.roles | includes(['management']) %}
-      <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', item.publicId | urlencode) }}">View project</a>
-    {% endif %}
-  </div>
-{% endmacro %}
