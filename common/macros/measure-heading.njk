@@ -1,4 +1,4 @@
-{% macro measureHeading(latestMeasure, raygEntity, updatedAt, isPartOfGroup) %}
+{% macro measureHeading(latestMeasure, raygEntity, updatedAt, isPartOfGroup, isUpdateDue) %}
 <table class="govuk-table measures-table">
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
@@ -8,6 +8,7 @@
         <th scope="col" class="govuk-table__header">Status</th>
       {% endif %}
       <th scope="col" class="govuk-table__header">Last updated</th>
+      <th scope="col" class="govuk-table__header">Update due on</th>
     </tr>
   </thead>
   <tbody class="govuk-table__body">
@@ -18,6 +19,7 @@
         <td class="govuk-table__cell "><span class="measure-rayg {{ raygEntity.colour }}"></span></td>
       {% endif %}
       <td class="govuk-table__cell">{{ updatedAt }}</td>
+      <td class="govuk-table__cell {{isUpdateDue}}">{{ latestMeasure.updateDueOn }}</td>
     </tr>
   </tbody>
 </table>

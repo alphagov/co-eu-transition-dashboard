@@ -19,9 +19,8 @@
         <div class="govuk-accordion__section govuk-accordion__section-{{ id }} {{ isLastExpandable }} {{ expanded }} {{ noChildren }}">
           <div class="govuk-accordion__section-header {{ color }} section-header-{{ item.level }}">
             <h2 class="govuk-accordion__section-heading">
-
               {% if item.meta.category.name == 'Project' %}
-                {% set dataAttribute %}data-project-details-id="project-information-{{ item.meta.id }}"{% endset %}
+                {% set dataAttribute %}data-project-link="{{ item.meta.link }}"{% endset %}
               {% endif %}
               <button type="button" id="accordion-default-{{ id }}-heading-{{ loop.index }}" aria-controls="accordion-default-{{ id }}-content-{{ loop.index }}" class="govuk-accordion__section-button" aria-expanded="{{ expanded }}" {{ dataAttribute | safe }}>
                 {{ heading }}
@@ -102,18 +101,12 @@
 {% endmacro %}
 
 {% macro projectDetails(item) %}
-  {% if item.category.name == 'Project' %}
-    <div class="govuk-!-padding-left-2 hidden project-information" id="project-information-{{ item.id }}">
-      <h3 class="govuk-heading-m">{{ item.name }}</h3>
-      <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ item.hmgConfidence }}">{{ item.hmgConfidence }}</span></p>
-      <p class="govuk-body">{{ item.description }}</p>
-      {% if req.user.roles | includes(['management']) %}
-        <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', item.publicId | urlencode) }}">View project</a>
-      {% endif %}
-    </div>
-  {% elseif item.children %}
-    {% for child in item.children %}
-      {{ projectDetails(child) }}
-    {% endfor %}
-  {% endif %}
+  <div class="govuk-!-padding-left-2 project-information" id="project-information-{{ item.id }}">
+    <h3 class="govuk-heading-m">{{ item.name }}</h3>
+    <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ item.hmgConfidence }}">{{ item.hmgConfidence }}</span></p>
+    <p class="govuk-body">{{ item.description }}</p>
+    {% if req.user.roles | includes(['management']) %}
+      <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', item.publicId | urlencode) }}">View project</a>
+    {% endif %}
+  </div>
 {% endmacro %}

@@ -15,6 +15,7 @@
 @import 'pages/data-entry-entity/measure-value/MeasureValue.scss';
 @import 'pages/search-transition-readiness/SearchTransitionReadiness.scss';
 @import 'pages/admin/rayg-values/RaygValues.scss';
+@import 'pages/admin/user-management/edit-user/EditUser.scss';
 @import './small-device.scss';
 @import './search-measures.scss';
 @import './accordion.scss';
@@ -23,6 +24,10 @@
   .govuk-table__header, .govuk-table__cell{
     border-bottom: none;
   }
+}
+
+.due {
+  color: red;
 }
 
 .hidden {

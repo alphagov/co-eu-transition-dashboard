@@ -43,15 +43,29 @@
     config.paths.admin.userManagementList,
     config.paths.admin.userManagementAuthentication,
     config.paths.admin.createUser,
+    config.paths.admin.editUser,
     config.paths.admin.staticExports,
-    config.paths.admin.raygValues
+    config.paths.admin.raygValues,
+    config.paths.admin.resetUser2FA,
+    config.paths.admin.tagManagementAdd,
+    config.paths.admin.tagManagementDelete,
+    config.paths.admin.tagManagementList
     ]
 %}
 
 {% set adminUserManagementUrls = [
     config.paths.admin.userManagementList,
     config.paths.admin.userManagementAuthentication,
-    config.paths.admin.createUser
+    config.paths.admin.resetUser2FA,
+    config.paths.admin.createUser,
+    config.paths.admin.editUser
+    ]
+%}
+
+{% set adminTagManagementUrls = [
+    config.paths.admin.tagManagementAdd,
+    config.paths.admin.tagManagementDelete,
+    config.paths.admin.tagManagementList
     ]
 %}
 
@@ -211,9 +225,14 @@
                 Static Export
                 </a>
               </li>
-              <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.staticExports }}">
+              <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.raygValues }}">
                 <a class="govuk-header__link child-nav" href="{{ config.paths.admin.raygValues }}">
                 RAYG Values
+                </a>
+              </li>
+              <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in adminTagManagementUrls }}">
+                <a class="govuk-header__link child-nav" href="{{ config.paths.admin.tagManagementList }}">
+                Manage Tags
                 </a>
               </li>
             </ul>

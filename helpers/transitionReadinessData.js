@@ -176,13 +176,13 @@ const applyActiveItems = (selectedPublicId) => {
   return (entity) => {
     entity.active = false;
 
-    if(entity.children) {
+    if (entity.hasOwnProperty('publicId') && entity.publicId === selectedPublicId) {
+      entity.active = true;
+    } else if(entity.children) {
       const isActive = entity.children.find(applyActiveItems(selectedPublicId));
       if(isActive) {
         entity.active = true;
       }
-    } else if (entity.publicId === selectedPublicId) {
-      entity.active = true;
     }
 
     return entity.active;
@@ -192,6 +192,8 @@ const applyActiveItems = (selectedPublicId) => {
 const filterEntitiesByCategoryId = (pageUrl, req, entities, categoryIds) => {
   for (var i = entities.length - 1; i >= 0; i--) {
     const entity = entities[i];
+
+    entity.link = `${pageUrl}/${req.params.theme}/${req.params.statement}/${entity.publicId}`;
 
     if(entity.children) {
       filterEntitiesByCategoryId(pageUrl,req, entity.children, categoryIds);
@@ -210,8 +212,6 @@ const filterEntitiesByCategoryId = (pageUrl, req, entities, categoryIds) => {
       entities.splice(i, 1);
       continue;
     }
-
-    entity.link = `${pageUrl}/${req.params.theme}/${req.params.statement}/${entity.publicId}`;
   }
 }
 
@@ -315,7 +315,8 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
 }
 
 const sortById = (entity, property) => {
-  const childrenGrouped = groupBy(entity.children, child => child[property]);
+  const entitiesWithProperty = entity.children.filter(child => child[property]);
+  const childrenGrouped = groupBy(entitiesWithProperty, child => child[property]);
 
   if(childrenGrouped) {
     Object.keys(childrenGrouped).forEach(groupKey => {
@@ -623,11 +624,18 @@ const applyUIFlags = (entity) => {
 }
 
 const groupById = (entity) => {
-  if(entity.children && entity.children.length && entity.children[0].groupID) {
-    sortById(entity, 'groupID');
-  } else if(entity.children && entity.children.length && entity.children[0].commsId) {
-    sortById(entity, 'commsId');
-  } else if(entity.children) {
+  const propertiesToGroupBy = ['groupID', 'commsId'];
+  if(entity.children && entity.children.length) {
+    propertiesToGroupBy.forEach(property => {
+      const hasProperty = entity.children.find(child => child.hasOwnProperty(property));
+
+      if(hasProperty) {
+        sortById(entity, property);
+      }
+    });
+  }
+
+  if (entity.children) {
     entity.children.forEach(groupById);
   }
 }
@@ -753,16 +761,18 @@ const getTopLevelOutcomeStatements = async (pageUrl, req, topLevelEntity) => {
   return entities;
 }
 
-const findSelected = (item, entity) => {
-  if(item) {
+const findSelected = (selectedPublicId) => {
+  return (item, entity) => {
+    if(item) {
+      return item;
+    }
+    if(entity.active && entity.children && entity.publicId !== selectedPublicId) {
+      return entity.children.reduce(findSelected(selectedPublicId), item);
+    } else if(entity.active) {
+      return entity;
+    }
     return item;
   }
-  if(entity.active && entity.children) {
-    return entity.children.reduce(findSelected, item);
-  } else if(entity.active) {
-    return entity;
-  }
-  return item;
 }
 
 const themeDetail = async (entitiesUserCanAccess, pageUrl, req) => {
@@ -789,10 +799,11 @@ const themeDetail = async (entitiesUserCanAccess, pageUrl, req) => {
   const outcomeColors = topLevelOutcomeStatements.map(c => c.color);
   theme.color = theme.raygStatus && theme.raygStatus !== 'default' ? theme.raygStatus : rags.find(rag => outcomeColors.includes(rag));
 
-  const selected = subOutcomeStatementsAndDatas.reduce(findSelected, false);
+  const selected = subOutcomeStatementsAndDatas.reduce(findSelected(req.params.selectedPublicId), false);
   const iframeUrl = await getIframeUrl(req, selected);
 
   return {
+    selected,
     iframeUrl,
     theme,
     topLevelOutcomeStatements,
@@ -817,6 +828,9 @@ const findTopLevelOutcomeStatementFromEntity = (statementCategory, allThemes, pu
   const entity = allThemes.reduce(findEntity, { publicId, found: false });
 
   if (entity.parents) {
+    if (entity.category.name === 'Milestone') {
+      return findTopLevelOutcomeStatementFromEntity(statementCategory, allThemes, entity.parents[0].publicId)
+    }
     const parent = entity.parents.find(parent => parent.categoryId == statementCategory.id);
     if(!parent) {
       return entity;
@@ -869,6 +883,7 @@ const measuresWithLink = async (allThemes, publicIds, transitionReadinessThemeDe
 }
 
 module.exports = {
+  applyRagRollups,
   filterTopLevelOutcomeStatementsChildren,
   themeDetail,
   overview,

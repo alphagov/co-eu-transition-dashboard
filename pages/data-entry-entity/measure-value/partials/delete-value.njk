@@ -2,7 +2,7 @@
 
 {% macro valuesList(formFields, measureValues) %}
   <p class="govuk-body">
-      {{ formFields[0].date }} 
+      {{ measureValues.date[0]}}/{{measureValues.date[1]}}/{{measureValues.date[2]}} 
     </p>
   {% for measure in formFields %}
     {% if measureValues.entities[measure.id] %}

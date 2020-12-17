@@ -20,6 +20,10 @@ class MeasureList extends Page {
     ];
   }
 
+  isMeasurePastUpdateDue(measure) {
+    return measures.isMeasurePastUpdateDue(measure);
+  }
+
   async getMeasures() {
     const measureCategory = await measures.getCategory('Measure');
     const themeCategory = await measures.getCategory('Theme');

@@ -1,0 +1,65 @@
+{% extends "template.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+ {% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set user = getUser() | await %}
+
+{% block beforeContent %}
+{% include "navigation.njk" %}
+{% if not successMode %}
+{{ govukBackLink({
+  text: "Back",
+  href: "#",
+  attributes: {
+    onclick: "history.go(-1); return false;"
+  }
+}) }}
+{% endif %}
+{% endblock %}
+
+{% block pageTitle %}Reset User Authentication{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if successMode %}
+       
+
+        {{ govukPanel({
+          titleText: "Two factor authentication successfully reset"
+        }) }}
+
+        <a  class="govuk-link" href="{{ config.paths.admin.userManagementList }}">Back to user list</a>
+      {% else %}
+       
+
+        <h1 class="govuk-heading-xl">Reset two factor authentication</h1>
+
+        {% if flash %}
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+              {
+                text: flash
+              }
+            ]
+          }) }}
+        {% endif %}
+
+        <p class="govuk-body">Reset two factor authentication for <strong>{{ user.email }}</strong>.<p>
+
+        <form action="{{ url }}/{{ user.id }}" method="post">
+          {{
+            govukButton({
+              text: "Reset",
+              type: "submit",
+              preventDoubleClick: true
+            })
+          }}
+        </form>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
