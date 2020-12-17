@@ -2,10 +2,6 @@ const winston = require('winston');
 const httpContext = require('express-http-context');
 
 const addMeta = winston.format(info => {
-  if (info && info instanceof Error) {
-    info.stack = info.stack;
-  }
-
   const req = httpContext.get('req') || {};
   if(req.headers) {
     Object.keys(req.headers).forEach(headerName => {
