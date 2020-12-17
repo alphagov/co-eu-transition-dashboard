@@ -6,6 +6,8 @@
     "beforeEach": true,
     "afterEach": true,
     "it": true,
-    "context": true
+    "context": true,
+    "cy":true,
+    "Cypress":true
   }
 }
