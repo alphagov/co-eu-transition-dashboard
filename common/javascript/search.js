@@ -36,7 +36,7 @@ Search.prototype.init = function() {
   this.filterTable(this.queryParameters.terms, this.queryParameters.themeFilters, this.queryParameters.colorFilters, this.queryParameters.tagFilters);
   this.updateResultCount();
   this.bindEvents();
-  this.searchSummaryList();
+  this.updateSearchList();
 };
 
 const helper = {
@@ -189,7 +189,7 @@ Search.prototype.bindEvents = function() {
   });
 };
 
-Search.prototype.searchSummaryList = function() {
+Search.prototype.updateSearchList = function() {
   const $searchList = document.getElementById('search-list');
 
   const $url = `${window.location.href.split('?')[0]}`
