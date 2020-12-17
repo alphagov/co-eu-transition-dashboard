@@ -1,16 +1,18 @@
 const winston = require('winston');
 const httpContext = require('express-http-context');
+const set = require('lodash/set');
 
 const addMeta = winston.format(info => {
   const req = httpContext.get('req') || {};
   if(req.headers) {
-    Object.keys(req.headers).forEach(headerName => {
-      info[headerName] = req.headers[headerName];
-    });
+    set(info, 'meta.req.headers', req.headers);
   }
+
   if(req.user) {
     info.userId = req.user.id;
   }
+
+  info.originalMessage = info.message;
 
   return info;
 });
