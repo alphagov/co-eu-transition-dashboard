@@ -31,12 +31,14 @@ document.addEventListener('DOMContentLoaded', function() {
     new Search({
       $search,
       $table,
-      $searchFilters
+      $searchFilters,
     }).init();
   }
 
   var $readinessAccordions = document.querySelectorAll('[data-module="readiness-accordion"]')
 
+
+  
   if ($readinessAccordions) {
     $readinessAccordions.forEach($accordion => new ReadinessAccordion($accordion).init())
   }
