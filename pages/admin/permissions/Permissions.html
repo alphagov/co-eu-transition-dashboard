@@ -1,0 +1,40 @@
+{% extends "template.njk" %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% set roles = getRoles() | await %}
+
+{% block beforeContent %}
+  {% include "navigation.njk" %}
+{% endblock %}
+
+{% block pageTitle %}Permissions{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+    {% if flash %}
+      <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">Update failed</h2>
+        <div class="govuk-error-summary__body">
+          <ul class="govuk-list govuk-error-summary__list">
+            <li>
+              <a href="#headline-measures">{{ flash }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+    <h1 class="govuk-heading-l">Permissions</h1>
+        <h2 class="govuk-heading-m">Select role</h2>
+        <select class="govuk-select" id="selectRoleId" name="groupValue" onchange="TRANSITIONDELIVERYDASHBOARD.selectRole()">
+            {% for role in roles %}
+                <option value='{{role.id}}' >{{role.name}}</option>
+            {% endfor %}
+        </select>
+   </div>
+  </div>
+{% endblock %}
