@@ -1,21 +1,20 @@
 const winston = require('winston');
+const httpContext = require('express-http-context');
+const set = require('lodash/set');
 
-const format = winston.format.printf(info => {
-  let messageAsString = `${info.timestamp} ${info.level}:`;
-
-  if(info.headers) {
-    Object.keys(info.headers).forEach(headerName => {
-      messageAsString += ` ${headerName}: ${info.headers[headerName]}`;
-    });
+const addMeta = winston.format(info => {
+  const req = httpContext.get('req') || {};
+  if(req.headers) {
+    set(info, 'meta.req.headers', req.headers);
   }
 
-  messageAsString += ` ${info.message}`;
-
-  if (info && info instanceof Error) {
-    messageAsString += ` Stack Trace: ${info.stack}`;
+  if(req.user) {
+    info.userId = req.user.id;
   }
 
-  return messageAsString;
+  info.originalMessage = info.message;
+
+  return info;
 });
 
 const config = {
@@ -23,14 +22,12 @@ const config = {
     new winston.transports.Console()
   ],
   format: winston.format.combine(
-    winston.format.splat(),
     winston.format.timestamp(),
-    winston.format.colorize(),
-    format
+    addMeta(),
+    winston.format.json()
   )
 };
 
 const logger = winston.createLogger(config);
 
 module.exports = logger;
-
