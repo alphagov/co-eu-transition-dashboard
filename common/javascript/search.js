@@ -37,6 +37,7 @@ Search.prototype.init = function() {
   this.updateResultCount();
   this.bindEvents();
   this.updateSearchList();
+  this.getStatus();
 };
 
 const helper = {
@@ -50,6 +51,28 @@ const helper = {
       })
     }
     return paramValues;
+  },
+  getStatus: status => {
+    switch(status) {
+    case 'red':
+      status = 'High risk';
+      break;
+    case 'amber':
+      status = 'Medium risk';
+      break;    
+    case 'yellow':
+      status = 'Low risk';
+      break;
+    case 'green':
+      status = 'Minimal/no risk';
+      break;    
+    case 'grey':
+      status = 'Unassigned risk';
+      break;    
+    default:
+      status = 'No risk status found'
+    }
+    return status;
   }
 };
 
@@ -200,10 +223,15 @@ Search.prototype.updateSearchList = function() {
 
   $params.forEach(function(item, index) {
 
-    const $filterTitle = item.substring(0, item.indexOf('=')).replace('Filter', '').replace('?', '');
-    const $filterTerm = item.substring(item.indexOf('=') + 1);
+    let $filterTitle = item.substring(0, item.indexOf('=')).replace('Filter', '').replace('?', '');
+    let $filterTerm = item.substring(item.indexOf('=') + 1);
 
     if ($filterTitle.includes('term') || (!$filterTerm)) return false;
+
+    if ($filterTitle == 'color') {
+      $filterTitle = 'Status';
+      $filterTerm = helper.getStatus($filterTerm);
+    }
 
     let $tempParams = Array.from($params);
     $tempParams.splice(index, 1);
