@@ -37,7 +37,6 @@ Search.prototype.init = function() {
   this.updateResultCount();
   this.bindEvents();
   this.updateSearchList();
-  this.getStatus();
 };
 
 const helper = {
