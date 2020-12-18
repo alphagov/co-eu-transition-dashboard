@@ -93,7 +93,9 @@ const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project
 
   milestone.milestoneFieldEntries.forEach(milestoneFieldEntry => {
     // Prevent entity category field overwriting the category
-    if (milestoneFieldEntry.milestoneField.name != "category") {
+    if (milestoneFieldEntry.milestoneField.name === "category") {
+      entityFieldMap.categoryName = milestoneFieldEntry.value
+    } else {
       entityFieldMap[milestoneFieldEntry.milestoneField.name] = milestoneFieldEntry.value
     }
   });

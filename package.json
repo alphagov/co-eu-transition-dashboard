@@ -14,7 +14,9 @@
     "release": "release-it --no-npm.publish --ci",
     "deploy-staging": "bash deploy.sh staging staging.yml",
     "deploy-research": "bash deploy.sh research research.yml",
-    "deploy-production": "bash deploy.sh production production.yml"
+    "deploy-production": "bash deploy.sh production production.yml",
+    "cypress:open": "cypress open --config-file test/cypress.json",
+    "cypress:run": "cypress run --config-file test/cypress.json"
   },
   "nodemonConfig": {
     "ignore": [
@@ -46,6 +48,7 @@
     "excel4node": "^1.7.2",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.10",
+    "express-http-context": "^1.2.4",
     "express-nunjucks": "^2.2.5",
     "express-winston": "^4.0.5",
     "file-system-cache": "^1.0.5",
@@ -96,6 +99,8 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-jq": "0.0.9",
+    "cypress": "^6.0.1",
+    "cypress-xpath": "^1.6.1",
     "eslint": "^6.8.0",
     "mocha": "^7.2.0",
     "mock-require": "^3.0.3",
