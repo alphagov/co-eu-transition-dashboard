@@ -6,6 +6,7 @@ const sequelize = require('services/sequelize');
 (async () => {
   await sequelize.testConnection();
   await sequelize.runMigrations();
+  
 
   app.listen(config.port, function(){
     logger.info(`App available at http://localhost:${config.port}`);
