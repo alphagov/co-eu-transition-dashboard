@@ -18,6 +18,7 @@ mysql.loadDBCommands();*/
 // Import commands.js using ES2015 syntax:
 import './db_user'
 import './db_entity'
+import './db_project'
 
 // Alternatively you can use CommonJS syntax:
 require('cypress-xpath');

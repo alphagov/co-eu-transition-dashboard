@@ -22,6 +22,19 @@ Cypress.Commands.add('addDepartment', (username, departmentname) => {
   addDepartment(username, departmentname).as('dbResultUserID');
 });
 
+Cypress.Commands.add('getAlldepartment', () => {
+  getAlldepartment().as('dbResultAllDepartment');
+});
+
+Cypress.Commands.add('addAllDepartment', (username) => {
+  cy.getAlldepartment().as('dbResultAllDepartment');
+  cy.get('@dbResultAllDepartment').then((res) => {
+    res.forEach(departmentname => {
+      addDepartment(username, departmentname.name).as('dbResultUserID');
+    });
+  });
+});
+
 Cypress.Commands.add('deletedepartment', (username, departmentname) => {
   deletedepartment(username, departmentname).as('dbResultUserID');
 });
@@ -84,5 +97,11 @@ function deletedepartment(username, departmentname) {
       select id into @l_userid from user where email = @email; 
       DELETE FROM department_user where department_name = '${departmentname}' and user_id = @l_userid ); `;
   //logger.info(query);
+  return cy.task('queryDb', query);
+}
+
+function getAlldepartment() {
+  const query =
+    `SELECT name FROM dashboard.department; `;
   return cy.task('queryDb', query);
 }
