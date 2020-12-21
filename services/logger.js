@@ -1,10 +1,11 @@
 const winston = require('winston');
 const httpContext = require('express-http-context');
 const set = require('lodash/set');
+const config = require('config');
 
 const addMeta = winston.format(info => {
   const req = httpContext.get('req') || {};
-  if(req.headers) {
+  if(req.headers && config.services.logger.includeMeta) {
     set(info, 'meta.req.headers', req.headers);
   }
 
@@ -12,22 +13,25 @@ const addMeta = winston.format(info => {
     info.userId = req.user.id;
   }
 
-  info.originalMessage = info.message;
+  if(config.services.logger.includeMeta) {
+    info.originalMessage = info.message;
+  }
 
   return info;
 });
 
-const config = {
+const loggerConfig = {
   transports: [
     new winston.transports.Console()
   ],
   format: winston.format.combine(
+    winston.format.colorize(),
     winston.format.timestamp(),
     addMeta(),
-    winston.format.json()
+    winston.format[config.services.logger.format]()
   )
 };
 
-const logger = winston.createLogger(config);
+const logger = winston.createLogger(loggerConfig);
 
 module.exports = logger;
