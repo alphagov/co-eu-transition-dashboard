@@ -223,7 +223,7 @@ Search.prototype.updateSearchList = function() {
   $params.forEach(function(item, index) {
 
     let $filterTitle = item.substring(0, item.indexOf('=')).replace('Filter', '').replace('?', '');
-    let $filterTerm = item.substring(item.indexOf('=') + 1);
+    let $filterTerm = item.substring(item.indexOf('=') + 1).replace('+%26+', ' & ');
 
     if ($filterTitle.includes('term') || (!$filterTerm)) return false;
 
