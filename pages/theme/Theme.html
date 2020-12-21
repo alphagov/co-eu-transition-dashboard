@@ -10,6 +10,7 @@
 {% set activeColor = '' %}
 {% set projectedIsSelected = data.selected and data.selected.category and data.selected.category.name === 'Project' %}
 {% set milestoneIsSelected = data.selected and data.selected.category and data.selected.category.name === 'Milestone' %}
+{% set isCommentOnlyMeasure = data.selected and data.selected.category and data.selected.category.name === 'Measure' and data.selected.commentsOnly == "Yes" %}
 
 {% block pageTitle %}{{ data.theme.name }} - {{ super() }}{% endblock %}
 
@@ -75,6 +76,8 @@
       {% include "theme/partials/projectDetails.njk" %}
     {% elseif milestoneIsSelected %}
       {% include "theme/partials/milestoneDetails.njk" %}
+    {% elseif isCommentOnlyMeasure %}
+      {% include "theme/partials/commentOnlyMeasure.njk" %}
     {% elseif not data.iframeUrl.error and not data.iframeUrl.url %}
       <p class="govuk-body-s tableu-message">To view data of measures and metrics, select a data grouping or type</p>
     {% elseif data.iframeUrl.error %}
