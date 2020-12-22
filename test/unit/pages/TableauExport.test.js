@@ -113,7 +113,7 @@ describe('pages/tableau-export/TableauExport', () => {
       const role = 'static';
       const entityIds = await page.entitiesRoleCanAccess(role);
 
-      expect(entityIds).to.eql(entities.map(entity => String(entity.id)));
+      expect(entityIds).to.eql(entities.map(entity => entity.id));
     });
 
     it('throws error if cannot find role', async () => {
