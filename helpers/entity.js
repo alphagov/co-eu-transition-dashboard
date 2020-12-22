@@ -46,12 +46,9 @@ class EntityHelper {
 
   async entitiesWithRoles(roles) {
     return Object.values(await this.entities)
-      .reduce((entitiesWithRoles, entity) => {
+      .filter((entitiesWithRoles, entity) => {
         const entityHasRole = roles.find(role => entity.roles[String(role.id)]);
-        if(entityHasRole) {
-          entitiesWithRoles[entity.id] = entity;
-        }
-        return entitiesWithRoles;
+        return entityHasRole;
       }, {});
   }
 }

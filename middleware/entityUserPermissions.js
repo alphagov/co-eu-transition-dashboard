@@ -21,7 +21,7 @@ async function entitiesUserCanAccess(user) {
     whitelist = await entityHelper.entitiesWithRoles(roles);
   }
 
-  return Object.values(whitelist);
+  return whitelist;
 }
 
 const assignEntityIdsUserCanAccessToLocals = async (req, res, next) => {

@@ -76,7 +76,7 @@ class TableauExport extends Page {
     const entityHelper = new EntityHelper();
     const entities = await entityHelper.entitiesWithRoles([role]);
 
-    return Object.keys(entities);
+    return entities.map(entity => entity.id);
   }
 
   async addParents(entity, entityFieldMap, replaceArraysWithNumberedKeyValues = true) {
