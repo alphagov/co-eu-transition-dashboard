@@ -20,7 +20,7 @@ class Permissions extends Page {
   }
 
   get pathToBind() {
-    return `${this.url}/:roleId/:categoryId?`;
+    return `${this.url}/:roleId?/:categoryId?`;
   }
 
   get selectedCategoryId() {
@@ -38,7 +38,7 @@ class Permissions extends Page {
   async getRoles() {
     let roles = await Role.findAll()
     roles.push({ name: 'Select Role', id:0 });
-    roles = sortBy(roles);
+    roles = sortBy(roles, 'id');
     return roles;
   }
 
