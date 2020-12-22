@@ -5,6 +5,10 @@
     "expires": 3600000
   },
   "services": {
+    "logger": {
+      "format": "simple",
+      "includeMeta": false
+    },
     "redis": {},
     "mysql": {
       "logsActive": false

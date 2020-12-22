@@ -142,4 +142,15 @@
             width: 100%;
         }
     }
+
+    // Search Measure
+    .search-measure {
+        #dataTable, #search-filters {
+            width: 100% !important;
+        }
+    
+        .search-list a {
+            display: inline-flex;
+        }
+    }
 }

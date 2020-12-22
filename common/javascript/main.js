@@ -1,6 +1,7 @@
 import govukFrontend from 'govuk-frontend/govuk/all';
 
 import missedMilestonesChart from './missed-milestones';
+import milestoneTimeline from './milestone-timeline';
 import removeAccordionCross from './remove-accordion-cross';
 import disableButton from './disable-button';
 import groupDisplay from './group-display';
@@ -13,6 +14,7 @@ import { selectRoleOnChange } from './select-role';
 
 window.TRANSITIONDELIVERYDASHBOARD = {
   missedMilestonesChart,
+  milestoneTimeline,
   removeAccordionCross,
   disableButton,
   groupDisplay,
@@ -65,9 +67,15 @@ document.addEventListener('DOMContentLoaded', function() {
     return daysToDate;
   }
 
-  const coundDownElement = document.getElementById('countdown');
-  if(coundDownElement) {
-    coundDownElement.innerHTML = countDownTime();
+  const countDownElement = document.getElementById('countdown');
+  if(countDownElement) {
+    const daysRemaining = countDownTime();
+    if (daysRemaining == 0) {
+      countDownElement.style.setProperty('background', 'none', 'important');
+      countDownElement.parentNode.parentNode.remove();
+    } else {
+      countDownElement.innerHTML = daysRemaining;
+    }
   }
 });
 

@@ -1,30 +1,17 @@
-const winston = require('winston');
+const winstonInstance = require('services/logger');
 const expressWinston = require('express-winston');
+const config = require('config');
 
-const format = winston.format.printf(info => {
-  return `${info.timestamp} ${info.level}: ${info.message}`;
+const routeLogger = expressWinston.logger({
+  winstonInstance,
+  meta: config.services.logger.includeMeta
 });
-
-const config = {
-  transports: [
-    new winston.transports.Console()
-  ],
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.colorize(),
-    winston.format.json(),
-    format
-  )
-};
-
-const routeLogger = expressWinston.logger(config);
 const attachRouteLogger = app => app.use(routeLogger);
 
-const errorLogger = expressWinston.errorLogger(config);
+const errorLogger = expressWinston.errorLogger({ winstonInstance });
 const attachErrorLogger = app => app.use(errorLogger);
 
 module.exports = {
   attachRouteLogger,
   attachErrorLogger
 };
-
