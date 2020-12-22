@@ -3,6 +3,8 @@ const { paths } = require('config');
 const flash = require('middleware/flash');
 const authentication = require('services/authentication');
 const Role = require('models/role');
+const Category = require('models/category');
+const sortBy = require('lodash/sortBy');
 
 
 class Permissions extends Page {
@@ -18,17 +20,33 @@ class Permissions extends Page {
   }
 
   get pathToBind() {
-    return `${this.url}/:roleId?`;
+    return `${this.url}/:roleId/:categoryId?`;
   }
 
+  get selectedCategoryId() {
+    if (this.req.params.categoryId)
+      return this.req.params.categoryId;
+    return 0;
+  }
+
+  get selectedRoleId(){
+    if (this.req.params.roleId)
+      return this.req.params.roleId;
+    return 0;
+  }
   
   async getRoles() {
-    return Role.findAll();
+    let roles = await Role.findAll()
+    roles.push({ name: 'Select Role', id:0 });
+    roles = sortBy(roles);
+    return roles;
   }
 
-//   getRequest(req, res) {
-//     console.log('****req', req);
-//   }
+  async getCategories() {
+    if (this.req.params.roleId && this.req.params.roleId >0)
+      return Category.findAll();
+    return [];
+  }
 }
 
 module.exports = Permissions;

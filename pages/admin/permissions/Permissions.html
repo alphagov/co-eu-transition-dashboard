@@ -3,8 +3,10 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
 
 {% set roles = getRoles() | await %}
+{% set categories = getCategories() | await %}
 
 {% block beforeContent %}
   {% include "navigation.njk" %}
@@ -29,12 +31,19 @@
       </div>
     {% endif %}
     <h1 class="govuk-heading-l">Permissions</h1>
-        <h2 class="govuk-heading-m">Select role</h2>
-        <select class="govuk-select" id="selectRoleId" name="groupValue" onchange="TRANSITIONDELIVERYDASHBOARD.selectRole()">
-            {% for role in roles %}
-                <option value='{{role.id}}' >{{role.name}}</option>
-            {% endfor %}
-        </select>
+    <h2 class="govuk-heading-m">Select role</h2>
+    <select class="govuk-select" id="selectRoleId" name="groupValue" 
+      onchange="TRANSITIONDELIVERYDASHBOARD.selectRoleOnChange()">
+        {% for role in roles %}
+            <option value='{{role.id}}' {{ "selected" if selectedRoleId == role.id }} >{{role.name}}</option>
+        {% endfor %}
+    </select>
+    <div class="govuk-grid-row govuk-body category-group">
+        {% for category in categories %}
+            <a href="{{url}}/{{selectedRoleId}}/{{category.id}}" 
+            class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</option>
+        {% endfor %}
+    </div>
    </div>
   </div>
 {% endblock %}

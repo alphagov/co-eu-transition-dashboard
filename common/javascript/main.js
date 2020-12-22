@@ -9,7 +9,7 @@ import ReadinessAccordion from './readiness-accordion';
 import ClearOrRestoreScroll from './readiness-scroll';
 import Search from './search';
 import sortTable from './sort-table';
-import selectRole from './select-role';
+import { selectRoleOnChange } from './select-role';
 
 window.TRANSITIONDELIVERYDASHBOARD = {
   missedMilestonesChart,
@@ -18,7 +18,7 @@ window.TRANSITIONDELIVERYDASHBOARD = {
   groupDisplay,
   fieldOrder,
   sortTable,
-  selectRole
+  selectRoleOnChange
 };
 
 document.addEventListener('DOMContentLoaded', function() {
