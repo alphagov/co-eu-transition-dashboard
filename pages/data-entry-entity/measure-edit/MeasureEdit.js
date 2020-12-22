@@ -548,7 +548,6 @@ class MeasureEdit extends Page {
     }
 
     const URLHash = `#data-entries`;
-    console.log('***entitiesToBeSaved',entitiesToBeSaved);
     return this.saveMeasureData(entitiesToBeSaved, URLHash, { updatedAt: true });
   }
 
