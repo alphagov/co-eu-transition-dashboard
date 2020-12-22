@@ -498,20 +498,18 @@ class MeasureEdit extends Page {
     return newEntities
   }
 
+  modifyEntityData(e) {
+    let { publicId, parentStatementPublicId, date, updateDueOn } = e;
+    date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
+    let entity = { publicId, parentStatementPublicId, date, updateDueOn };
+    return entity;
+  }
 
   async addMeasureEntityData (formData) {
     const { measuresEntities, raygEntities, uniqMetricIds } = await this.getMeasure();
     let allMeasures = [];
-    measuresEntities.forEach(m => {
-      let { publicId, parentStatementPublicId, date, updateDueOn } = m;
-      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
-      allMeasures.push({ publicId, parentStatementPublicId, date, updateDueOn });
-    });
-    raygEntities.forEach(m => {
-      let { publicId, parentStatementPublicId, date, updateDueOn } = m;
-      date = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD");
-      allMeasures.push({ publicId, parentStatementPublicId, date, updateDueOn });
-    });
+    measuresEntities.forEach(m => allMeasures.push(this.modifyEntityData(m)));
+    raygEntities.forEach(m => allMeasures.push(this.modifyEntityData(m)));
 
     const latestmeasure = measuresEntities[measuresEntities.length - 1];
     formData.entities = utils.removeNulls(formData.entities)
@@ -530,6 +528,10 @@ class MeasureEdit extends Page {
       if (e.updateDueOn) {
         e.updateDueOn = updateDueOn
       }
+
+      if (e.activeFrom) {
+        e.activeFrom = moment(e.activeFrom, "DD/MM/YYYY").format("YYYY-MM-DD");
+      }
     });
     
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
@@ -546,6 +548,7 @@ class MeasureEdit extends Page {
     }
 
     const URLHash = `#data-entries`;
+    console.log('***entitiesToBeSaved',entitiesToBeSaved);
     return this.saveMeasureData(entitiesToBeSaved, URLHash, { updatedAt: true });
   }
 
