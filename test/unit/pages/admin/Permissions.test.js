@@ -56,7 +56,7 @@ describe('pages/admin/permissions/Permissions', ()=>{
       id:0,
       name:'Select Role'
     },
-      {
+    {
       id:1,
       name:'t1'
     },{
@@ -76,17 +76,17 @@ describe('pages/admin/permissions/Permissions', ()=>{
   describe('#getCategories', ()=>{
     const categoriesDb= [{
       id: 1,
-        name: 'Border'
+      name: 'Border'
     },{
       id: 2,
-        name: 'People'
+      name: 'People'
     }];
     const expectedCategories = [{
       id: 1,
-        name: 'Border'
+      name: 'Border'
     },{
       id: 2,
-        name: 'People'
+      name: 'People'
     }]
     beforeEach(()=>{
       Category.findAll = sinon.stub().returns(categoriesDb);
