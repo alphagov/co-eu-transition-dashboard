@@ -1,5 +1,3 @@
-const Category = require('models/category');
-const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const CategoryField = require('models/categoryField');
 

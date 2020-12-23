@@ -18,3 +18,26 @@
         color: black;
     }
 }
+.permissions-radio {
+    padding: 10px;
+    background-color:#f3f2f1;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+    .radio-option{
+        display: flex;
+    }
+}
+.cascade-checkbox {
+    padding: 10px;
+}
+
+#permissionsTable{
+    margin-top: 50px;
+    .header-middle {
+        padding: 10px;
+    }
+    .category-name{
+        font-weight: normal;
+    }
+}

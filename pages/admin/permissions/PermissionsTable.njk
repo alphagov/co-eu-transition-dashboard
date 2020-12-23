@@ -1,0 +1,81 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+
+{% set tableRows = [] %}
+
+
+{% for entity in entities %}
+  {% from "govuk/components/radios/macro.njk" import govukRadios %}
+  {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+  {% set cascadeCheckBox %}
+        {{ govukCheckboxes({
+          idPrefix: "waste",
+          name: "waste",
+          items: [
+            {
+              value: "carcasses",
+              text: " "
+            }
+          ]
+        }) }}
+  {% endset -%}
+
+  {% set permissionRadio %}
+    {{ govukRadios({
+      classes: "govuk-radios--inline radio-option",
+      idPrefix: "changed-name",
+      name: "changed-name",
+      items: [
+        {
+          value: "View",
+          text: "view"
+        },
+        {
+          value: "Edit",
+          text: "edit"
+        },
+        {
+          value: "None",
+          text: "none"
+        }
+      ]
+    }) }}
+  {% endset -%}
+
+  {% set rowItems = [] %}
+  {% set rowItems= (rowItems.push({
+        text: entity.name,
+        classes: "category-name"
+      }, {
+        html: permissionRadio,
+        classes: "permissions-radio"
+      },
+      {
+        html: cascadeCheckBox,
+        classes: "cascade-checkbox"
+      }), rowItems) 
+  %}
+
+  {% set tableRows= (tableRows.push(rowItems), tableRows) %}
+{% endfor %}
+
+<div class="govuk-grid-column-full" id="permissionsTable">
+  {{ govukTable({
+      firstCellIsHeader: true,
+      head: [
+        {
+          text: "Category"
+        },
+        {
+          text: "Permissions",
+          classes: "header-middle"
+        },
+        {
+          text: "Cascade",
+          classes: "header-middle"
+        }
+      ],
+      rows: tableRows
+    }) }}
+</div>

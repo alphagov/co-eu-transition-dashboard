@@ -1,9 +1,7 @@
 {% extends "template.njk" %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
-{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+
 
 {% set roles = getRoles() | await %}
 {% set categories = getCategories() | await %}
@@ -46,9 +44,8 @@
         {% endfor %}
     </div>
     <div class="govuk-grid-row govuk-body">
-        {% for entity in entities %}
-            <div>{{entity.name}}</div>
-        {% endfor %}
+      {% include "admin/permissions/PermissionsTable.njk" %}
+    
     </div>
    </div>
   </div>

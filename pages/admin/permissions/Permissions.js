@@ -40,7 +40,7 @@ class Permissions extends Page {
 
   async entitiesForCategory(){
     if (this.req.params.categoryId) {
-        return categories.getEntitesForCategory(this.req.params.categoryId);
+      return categories.getEntitesForCategory(this.req.params.categoryId);
     }
     return [];
   }
