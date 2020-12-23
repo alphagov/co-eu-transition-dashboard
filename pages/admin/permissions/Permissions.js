@@ -25,14 +25,16 @@ class Permissions extends Page {
   }
 
   get selectedCategoryId() {
-    if (this.req.params.categoryId)
+    if (this.req.params.categoryId) {
       return this.req.params.categoryId;
+    }
     return 0;
   }
 
   get selectedRoleId(){
-    if (this.req.params.roleId)
+    if (this.req.params.roleId) {
       return this.req.params.roleId;
+    }
     return 0;
   }
 
@@ -51,8 +53,9 @@ class Permissions extends Page {
   }
 
   async getCategories() {
-    if (this.req.params.roleId && this.req.params.roleId >0)
+    if (this.req.params.roleId && this.req.params.roleId >0) {
       return Category.findAll();
+    }
     return [];
   }
 }
