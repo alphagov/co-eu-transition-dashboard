@@ -7,6 +7,7 @@
 
 {% set roles = getRoles() | await %}
 {% set categories = getCategories() | await %}
+{% set entities = entitiesForCategory() | await %}
 
 {% block beforeContent %}
   {% include "navigation.njk" %}
@@ -41,7 +42,12 @@
     <div class="govuk-grid-row govuk-body category-group">
         {% for category in categories %}
             <a href="{{url}}/{{selectedRoleId}}/{{category.id}}" 
-            class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</option>
+            class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</a>
+        {% endfor %}
+    </div>
+    <div class="govuk-grid-row govuk-body">
+        {% for entity in entities %}
+            <div>{{entity.name}}</div>
         {% endfor %}
     </div>
    </div>

@@ -5,6 +5,7 @@ const authentication = require('services/authentication');
 const Role = require('models/role');
 const Category = require('models/category');
 const sortBy = require('lodash/sortBy');
+const categories = require('helpers/categories');
 
 
 class Permissions extends Page {
@@ -33,6 +34,13 @@ class Permissions extends Page {
     if (this.req.params.roleId)
       return this.req.params.roleId;
     return 0;
+  }
+
+  async entitiesForCategory(){
+    if (this.req.params.categoryId) {
+        return categories.getEntitesForCategory(this.req.params.categoryId);
+    }
+    return [];
   }
   
   async getRoles() {
