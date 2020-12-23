@@ -1,29 +1,15 @@
-const Entity = require('models/entity');
 const UserRole = require('models/userRole');
 const Role = require('models/role');
-const RoleEntity = require('models/roleEntity');
 const transitionReadinessData = require('helpers/transitionReadinessData');
-
-async function entitiesRoleCanAccess(role) {
-  // Returns a promise, no need to await
-  return Entity.findAll({
-    attributes: ['publicId', 'id'],
-    include: {
-      model: RoleEntity,
-      where: {
-        roleId: role.id
-      }
-    }
-  });
-}
+const EntityHelper = require('helpers/entity.js');
 
 async function entitiesUserCanAccess(user) {
+  const entityHelper = new EntityHelper();
+
   let whitelist = [];
   if (user.canViewAllData) {
     //console.log("Allowing user to view all data");
-    whitelist = await Entity.findAll({
-      attributes: ['publicId', 'id']
-    });
+    whitelist = await entityHelper.getAllEntities();
   } else {
     let roles = await Role.findAll({
       include: {
@@ -32,9 +18,7 @@ async function entitiesUserCanAccess(user) {
       }
     });
 
-    for (const role of roles) {
-      whitelist = whitelist.concat(await entitiesRoleCanAccess(role));
-    }
+    whitelist = await entityHelper.entitiesWithRoles(roles);
   }
 
   return whitelist;
@@ -47,4 +31,4 @@ const assignEntityIdsUserCanAccessToLocals = async (req, res, next) => {
   next();
 };
 
-module.exports = { assignEntityIdsUserCanAccessToLocals, entitiesRoleCanAccess };
+module.exports = { assignEntityIdsUserCanAccessToLocals };
