@@ -94,7 +94,7 @@
             border-bottom: 1px solid #f3f2f1;
             padding-bottom: 5px;
         }
-        
+
         > .govuk-accordion__section--expanded > .govuk-accordion__section-header {
             background-color: #ffffff;
             border-bottom: none;
@@ -157,7 +157,7 @@
         text-decoration: none;
         color: #1d70b8;
         ~ .current-status {
-            margin-top: 8px;   
+            margin-top: 8px;
         }
 
         &:before {
@@ -301,4 +301,8 @@
 
 #readiness-theme-page .govuk-grid-column-full {
     background-color: #ffffff;
+}
+
+#milestone-timeline {
+  max-height: 250px;
 }

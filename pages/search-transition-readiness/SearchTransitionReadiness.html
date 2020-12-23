@@ -35,7 +35,7 @@
   </div>
 
     <div class="govuk-grid-row" id="hide-filters">
-      <div class="govuk-grid-column-one-quarter hidden" id="search-filters" >
+      <div class="govuk-grid-column-one-quarter" id="search-filters" >
         {% include "search-transition-readiness/partials/filters.njk" %}
         <div class="govuk-grid-row actions">
           {{ govukButton({
@@ -71,7 +71,7 @@
 
         <table class="govuk-table" id="search-table">
           <tbody class="govuk-table__body">
-            <tr class="result-count hidden">
+            <tr class="result-count">
               <td class="govuk-table__cell" colspan="2">
                 <p class="govuk-body govuk-!-margin-0 count"></p>
               </td>

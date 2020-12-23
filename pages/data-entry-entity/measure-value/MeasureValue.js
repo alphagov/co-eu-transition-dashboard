@@ -341,6 +341,9 @@ class MeasureValue extends Page {
       if (e.updateDueOn) {
         e.updateDueOn = moment(e.updateDueOn, "DD/MM/YYYY").format("YYYY-MM-DD")
       }
+      if (e.activeFrom) {
+        e.activeFrom = moment(e.activeFrom, "DD/MM/YYYY").format("YYYY-MM-DD");
+      }
     });
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
 
