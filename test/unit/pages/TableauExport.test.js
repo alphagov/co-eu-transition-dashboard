@@ -4,7 +4,6 @@ const Entity = require('models/entity');
 const Category = require('models/category');
 const proxyquire = require('proxyquire');
 const Milestone = require('models/milestone');
-const entityUserPermissions = require('middleware/entityUserPermissions');
 const Role = require('models/role');
 const CategoryField = require('models/categoryField');
 
@@ -96,16 +95,18 @@ describe('pages/tableau-export/TableauExport', () => {
   });
 
   describe('#entitiesRoleCanAccess', () => {
-    const entities = [{ id: 1, publicId: 'public-id-1' }];
+    const entities = [{
+      id: 1,
+      publicId: 'public-id-1',
+      children: [],
+      parents: [],
+      roleEntities: [{ roleId: 1 }]
+    }];
     const publicRole = { id: 1, name: 'static' };
 
     beforeEach(() => {
       Role.findOne.returns(publicRole);
-      sinon.stub(entityUserPermissions, 'entitiesRoleCanAccess').returns(entities);
-    });
-
-    afterEach(() => {
-      entityUserPermissions.entitiesRoleCanAccess.restore();
+      Entity.findAll.resolves(entities);
     });
 
     it('returns ids of entities role can access', async () => {
@@ -113,7 +114,6 @@ describe('pages/tableau-export/TableauExport', () => {
       const entityIds = await page.entitiesRoleCanAccess(role);
 
       expect(entityIds).to.eql(entities.map(entity => entity.id));
-      sinon.assert.calledWith(entityUserPermissions.entitiesRoleCanAccess, publicRole);
     });
 
     it('throws error if cannot find role', async () => {
