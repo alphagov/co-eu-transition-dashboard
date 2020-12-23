@@ -73,7 +73,7 @@ class TableauExport extends Page {
       throw new Error(`Cannot find role: ${roleName}`);
     }
 
-    const entityHelper = new EntityHelper();
+    const entityHelper = new EntityHelper({ roles: true });
     const entities = await entityHelper.entitiesWithRoles([role]);
 
     return entities.map(entity => entity.id);

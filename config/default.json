@@ -50,7 +50,8 @@
       "tagManagementAdd": "/admin/manage-tags-add",
       "tagManagementDelete": "/admin/manage-tags-delete",
       "tagManagementList": "/admin/manage-tags-list",
-      "permissions": "/admin/permissions"
+      "permissions": "/admin/permissions",
+      "entityList": "/admin/entity-list"
     },
     "allData": "/all-data",
     "filterExample": "/filter-example",

@@ -4,7 +4,7 @@ const transitionReadinessData = require('helpers/transitionReadinessData');
 const EntityHelper = require('helpers/entity.js');
 
 async function entitiesUserCanAccess(user) {
-  const entityHelper = new EntityHelper();
+  const entityHelper = new EntityHelper({ roles: true });
 
   let whitelist = [];
   if (user.canViewAllData) {

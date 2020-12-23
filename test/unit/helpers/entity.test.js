@@ -57,7 +57,7 @@ describe('helpers/entityHelper', () => {
       roleEntities: [{ roleId: 2 }]
     }];
     Entity.findAll.resolves(entities);
-    entityHelper = new EntityHelper();
+    entityHelper = new EntityHelper({ roles: true });
   });
 
   describe('#allEntities', () => {
