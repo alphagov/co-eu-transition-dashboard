@@ -17,7 +17,7 @@
 {% block content %}
 
 <div class="govuk-grid-row" id="readiness-theme-page" data-theme-id="{{ req.params.theme }}">
-<div class="govuk-grid-column-full">
+  <div class="govuk-grid-column-full">
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -29,6 +29,12 @@
   {{ currentStatus(data.theme.color, false) }}
 
   <p class="govuk-body-s govuk-!-margin-bottom-5 govuk-!-margin-top-5"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
+
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
 
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'hide-statement' if req.params.statement }}" id="column-statements">
     <a href="{{ config.paths.readinessOverview }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.theme }}" style="display: none;">Overview</a>
@@ -89,9 +95,8 @@
     {% endif %}
   </div>
 
+  </div>
 </div>
-</div>
-
 
 {% endblock %}
 
