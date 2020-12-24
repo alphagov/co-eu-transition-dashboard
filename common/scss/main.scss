@@ -16,6 +16,7 @@
 @import 'pages/search-transition-readiness/SearchTransitionReadiness.scss';
 @import 'pages/admin/rayg-values/RaygValues.scss';
 @import 'pages/admin/user-management/edit-user/EditUser.scss';
+@import 'pages/admin/permissions/Permissions.scss';
 @import './small-device.scss';
 @import './search-measures.scss';
 @import './accordion.scss';
@@ -74,7 +75,7 @@
 //Header and width
 .govuk-width-container {
   max-width: 100%;
-  overflow: hidden;
+  overflow: initial;
   margin-left: 0;
   margin-right: 0;
 }

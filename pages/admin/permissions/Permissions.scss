@@ -1,0 +1,19 @@
+.category-group {
+    margin-top: 40px;
+    margin-bottom: 10px;
+    flex-direction: row;
+    justify-content: space-around;
+    a {
+        padding-left: 10px;
+    }
+    a:link {
+        text-decoration: none;
+    }
+    a:visited {
+        color: #1d70b8;
+    }
+    .category.selected {
+        font-weight: bold;
+        color: black;
+    }
+}
