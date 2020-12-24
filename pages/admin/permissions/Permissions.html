@@ -30,20 +30,20 @@
       </div>
     {% endif %}
     <h1 class="govuk-heading-l">Permissions</h1>
-    <h2 class="govuk-heading-m">Select role</h2>
+    <h2 class="govuk-body govuk-!-margin-bottom-0">Select role</h2>
     <select class="govuk-select" id="selectRoleId" name="groupValue" 
       onchange="TRANSITIONDELIVERYDASHBOARD.selectRoleOnChange()">
         {% for role in roles %}
             <option value='{{role.id}}' {{ "selected" if selectedRoleId == role.id }} >{{role.name}}</option>
         {% endfor %}
     </select>
-    <div class="govuk-grid-row govuk-body category-group">
+    <div class="govuk-body category-group">
         {% for category in categories %}
             <a href="{{url}}/{{selectedRoleId}}/{{category.id}}" 
             class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</a>
         {% endfor %}
     </div>
-    <div class="govuk-grid-row govuk-body">
+    <div class="govuk-body">
       {% include "admin/permissions/PermissionsTable.njk" %}
     
     </div>

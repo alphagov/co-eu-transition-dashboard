@@ -5,7 +5,7 @@
     flex-direction: row;
     justify-content: space-around;
     a {
-        padding-left: 10px;
+        padding-right: 10px;
     }
     a:link {
         text-decoration: none;
@@ -32,12 +32,15 @@
     padding: 10px;
 }
 
-#permissionsTable{
+#permissions-table{
     margin-top: 50px;
     .header-middle {
         padding: 10px;
     }
     .category-name{
         font-weight: normal;
+    }
+    .govuk-table__header, .govuk-table__cell {
+        width: 0%;
     }
 }
