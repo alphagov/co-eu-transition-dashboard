@@ -1,4 +1,11 @@
 const H2_NoOfProjects = ".govuk-heading-m";
+const DIV_Prj_Accordian_Xp = "//div[@class='govuk-accordion__section-header']";
+const DIV_Milstne_Expanded_Xp = "div[@class='govuk-accordion__section govuk-accordion__section--expanded']";
+const DIV_Milstne_Collapsed_Xp = "div[@class='govuk-accordion__section']";
+const DIV_Milstne_Tbl_Xp = "//div[starts-with(@id,'accordion-table-content-')]";
+const DIV_ProjectAccoridan = "#accordion-table button[class='govuk-accordion__open-all']";
+const TXT_Openall = "Open all sections" ;
+const TXT_Closeall = "Close all sections";
 
 class HMGDelivery {
   verifyProjectDataHeader(department)
@@ -42,6 +49,72 @@ class HMGDelivery {
         /../following-sibling::td[.='" + EUStateConfidence + "']/span[@class='cell-color-" + EUStateConfidence + "']").should('exist');
       });
     })
+  } 
+
+  openProjectAccordian(){
+    var regexp = new RegExp("^" + TXT_Openall + "$");
+    cy.get(DIV_ProjectAccoridan).then( ($ele) =>
+    { 
+      if ($ele.text().match(regexp)) {
+        // yup found it
+        cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','false');
+        cy.get(DIV_ProjectAccoridan).click();
+        cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','true');
+
+      } else {
+        cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','true');
+      }
+    });
+  }
+
+  closeProjectAccordian()
+  {
+    var regexp = new RegExp("^" + TXT_Closeall + "$");
+    cy.get(DIV_ProjectAccoridan).then( ($ele) =>
+      {
+        if ($ele.text().match(regexp)) {
+          // yup found it
+          cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','true');
+          cy.get(DIV_ProjectAccoridan).click();
+          cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','false');
+
+        } else {
+          cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','false');
+        }
+      });
+  }
+
+  verifyNoMilestoneData(projUid,department)
+  {
+    var mileslist = [];
+    cy.getMilestoneData(projUid,department).as('dbResultMilesData');
+    cy.get('@dbResultMilesData').then((mls) => {
+      mileslist = mls[2];
+      mileslist.forEach(mlsele => {
+        cy.xpath(DIV_Prj_Accordian_Xp + "//td[.=\"" + mlsele.title + "\"]\
+        /a[@href='/project-details/" + mlsele.project_uid + "']/ancestor::" + DIV_Milstne_Collapsed_Xp 
+        + DIV_Milstne_Tbl_Xp).xpath(".//tr[starts-with(normalize-space(.),'" 
+        + mlsele.uid.replace(/\s+/g, ' ').trim() + "')]").should('have.prop','offsetHeight',0);
+      });
+    });
+  }
+
+  verifyMilestoneData(projUid,department)
+  {
+    var mileslist = [];
+    cy.getMilestoneData(projUid,department).as('dbResultMilesData');
+    cy.get('@dbResultMilesData').then((mls) => {
+      mileslist = mls[2];
+      mileslist.forEach(mlsele => {
+        cy.xpath(DIV_Prj_Accordian_Xp + "//td[.=\"" + mlsele.title + "\"]\
+        /a[@href='/project-details/" + mlsele.project_uid + "']/ancestor::" + DIV_Milstne_Expanded_Xp + DIV_Milstne_Tbl_Xp).xpath(".//tr").contains(
+        (mlsele.uid + " " 
+        + mlsele.description + " " 
+        + mlsele.duedate + " "
+        + mlsele.Complete + " " 
+        + mlsele.LastComment ).replace(/\s+/g, ' ').trim());
+      });
+    });
   }
 
 }

@@ -2,6 +2,10 @@ Cypress.Commands.add('getProjectData', (department) => {
   getProjectData(department).as('dbResultPrjData');
 });
 
+Cypress.Commands.add('getMilestoneData', (projectName,department) => {
+  getMilestoneData(projectName,department).as('dbResultMilesData');
+});
+
 function getProjectData(department) {
   const query =
     `set @department = "${department}" COLLATE utf8mb4_0900_ai_ci;
@@ -30,3 +34,30 @@ function getProjectData(department) {
     (hmg.department_name is not null and @department = 'All')) ; `;
   return cy.task('queryDb', query);
 }
+
+function getMilestoneData(projUid,department) {
+  const query =
+    `
+    set @department = "${department}" COLLATE utf8mb4_0900_ai_ci;
+    set @projectuid = "${projUid}" COLLATE utf8mb4_0900_ai_ci;
+      select p.title, compl.*, comm.LastComment from
+      (
+        (select m.project_uid, m.uid, m.description, DATE_FORMAT(m.date,'%e %b %Y') as duedate, mfe.value as 'Complete' FROM milestone m
+        join milestone_field_entry mfe on mfe.milestone_uid = m.uid
+        join milestone_field mf on mfe.milestone_field_id = mf.id
+        where mf.display_name = 'Complete' ) compl,
+        (select m.uid, mfe.value as 'LastComment' FROM milestone m
+        join milestone_field_entry mfe on mfe.milestone_uid = m.uid
+        join milestone_field mf on mfe.milestone_field_id = mf.id
+        where mf.display_name = 'Comments' ) comm
+      )
+      join project p on p.uid = compl.project_uid
+      where compl.uid = comm.uid
+      and( (FIND_IN_SET(compl.project_uid, @projectuid) and @projectuid <> 'All') or
+        (compl.project_uid is not null and @projectuid = 'All'))
+      and( (FIND_IN_SET(p.department_name, @department) and @department <> 'All') or
+      (p.department_name is not null and @department = 'All'))  
+      order by project_uid, uid;`;
+  return cy.task('queryDb', query);
+}
+
