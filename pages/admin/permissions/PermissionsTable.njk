@@ -24,8 +24,8 @@
   {% set permissionRadio %}
     {{ govukRadios({
       classes: "govuk-radios--inline radio-option",
-      idPrefix: "changed-name",
-      name: "changed-name",
+      idPrefix: entity.name,
+      name: entity.name,
       items: [
         {
           value: "View",

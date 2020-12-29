@@ -24,12 +24,6 @@ class Permissions extends Page {
     return `${this.url}/:roleId?/:categoryId?`;
   }
 
-  get selectedCategory() {
-    // const categories = await this.getCategories();
-    // return categories.find(c => c.id == this.selectedCategoryId);
-    return "Theme";
-  }
-
   get selectedCategoryId() {
     if (this.req.params.categoryId) {
       return this.req.params.categoryId;
@@ -42,6 +36,11 @@ class Permissions extends Page {
       return this.req.params.roleId;
     }
     return 0;
+  }
+
+  async getSelectedCategory(id) {
+    const categories = await this.getCategories();
+    return categories.find(c => c.id == id);
   }
 
   async entitiesForCategory(){

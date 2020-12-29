@@ -44,22 +44,23 @@
             class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</a>
         {% endfor %}
     </div>
-
+    {% set selectedCategory = getSelectedCategory(selectedCategoryId) | await %}
     {% if selectedCategory %}
       <div class="govuk-body">
         {% include "admin/permissions/PermissionsTable.njk" %}
       </div>
-    {% endif %}
-    
-    <div class="govuk-body">
+
+      <div class="govuk-body">
       {{
             govukButton({
-                text: "Create User",
+                text: "Apply",
                 type: "submit",
                 preventDoubleClick: true
             })
         }}
-    </div>
+      </div>
+    {% endif %}
+    
     </form>
    </div>
   </div>
