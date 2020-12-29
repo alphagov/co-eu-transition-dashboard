@@ -30,7 +30,8 @@
       </div>
     {% endif %}
     <h1 class="govuk-heading-l">Permissions</h1>
-    <h2 class="govuk-body govuk-!-margin-bottom-0">Select role</h2>
+    <h2 class="govuk-body govuk-!-margin-bottom-0">Select a role</h2>
+    <form action='{{ url }}' method='POST' >
     <select class="govuk-select" id="selectRoleId" name="groupValue" 
       onchange="TRANSITIONDELIVERYDASHBOARD.selectRoleOnChange()">
         {% for role in roles %}
@@ -43,10 +44,23 @@
             class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</a>
         {% endfor %}
     </div>
-    <div class="govuk-body">
-      {% include "admin/permissions/PermissionsTable.njk" %}
+
+    {% if selectedCategory %}
+      <div class="govuk-body">
+        {% include "admin/permissions/PermissionsTable.njk" %}
+      </div>
+    {% endif %}
     
+    <div class="govuk-body">
+      {{
+            govukButton({
+                text: "Create User",
+                type: "submit",
+                preventDoubleClick: true
+            })
+        }}
     </div>
+    </form>
    </div>
   </div>
 {% endblock %}

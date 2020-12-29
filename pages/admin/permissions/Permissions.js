@@ -24,6 +24,12 @@ class Permissions extends Page {
     return `${this.url}/:roleId?/:categoryId?`;
   }
 
+  get selectedCategory() {
+    // const categories = await this.getCategories();
+    // return categories.find(c => c.id == this.selectedCategoryId);
+    return "Theme";
+  }
+
   get selectedCategoryId() {
     if (this.req.params.categoryId) {
       return this.req.params.categoryId;
@@ -57,6 +63,14 @@ class Permissions extends Page {
       return Category.findAll();
     }
     return [];
+  }
+
+  async postRequest(req, res){
+    try{
+      console.log('***req.body', req.body);
+    } catch (error) {
+      return res.redirect(this.req.originalUrl);
+    }
   }
 }
 
