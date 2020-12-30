@@ -71,17 +71,17 @@ class HMGDelivery {
   {
     var regexp = new RegExp("^" + TXT_Closeall + "$");
     cy.get(DIV_ProjectAccoridan).then( ($ele) =>
-      {
-        if ($ele.text().match(regexp)) {
-          // yup found it
-          cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','true');
-          cy.get(DIV_ProjectAccoridan).click();
-          cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','false');
+    {
+      if ($ele.text().match(regexp)) {
+        // yup found it
+        cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','true');
+        cy.get(DIV_ProjectAccoridan).click();
+        cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','false');
 
-        } else {
-          cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','false');
-        }
-      });
+      } else {
+        cy.get(DIV_ProjectAccoridan).should('have.attr','aria-expanded','false');
+      }
+    });
   }
 
   verifyNoMilestoneData(projUid,department)
@@ -108,11 +108,11 @@ class HMGDelivery {
       mileslist.forEach(mlsele => {
         cy.xpath(DIV_Prj_Accordian_Xp + "//td[.=\"" + mlsele.title + "\"]\
         /a[@href='/project-details/" + mlsele.project_uid + "']/ancestor::" + DIV_Milstne_Expanded_Xp + DIV_Milstne_Tbl_Xp).xpath(".//tr").contains(
-        (mlsele.uid + " " 
-        + mlsele.description + " " 
-        + mlsele.duedate + " "
-        + mlsele.Complete + " " 
-        + mlsele.LastComment ).replace(/\s+/g, ' ').trim());
+          (mlsele.uid + " " 
+          + mlsele.description + " " 
+          + mlsele.duedate + " "
+          + mlsele.Complete + " " 
+          + mlsele.LastComment ).replace(/\s+/g, ' ').trim());
       });
     });
   }
