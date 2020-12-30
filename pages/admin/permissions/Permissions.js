@@ -1,5 +1,5 @@
 const Page = require('core/pages/page');
-const { paths } = require('config');
+const { paths, features } = require('config');
 const flash = require('middleware/flash');
 const authentication = require('services/authentication');
 const Role = require('models/role');
@@ -9,6 +9,10 @@ const categories = require('helpers/categories');
 
 
 class Permissions extends Page {
+  static get isEnabled() {
+    return features.permissions;
+  }
+
   get url() {
     return paths.admin.permissions;
   }
