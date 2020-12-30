@@ -6,6 +6,7 @@ const Role = require('models/role');
 const Category = require('models/category');
 const sortBy = require('lodash/sortBy');
 const categories = require('helpers/categories');
+const {getEntitiesForRoleId} = require('helpers/roleEntity');
 
 
 class Permissions extends Page {
@@ -44,7 +45,27 @@ class Permissions extends Page {
 
   async entitiesForCategory(){
     if (this.req.params.categoryId) {
-      return categories.getEntitesForCategory(this.req.params.categoryId);
+      const entitiesForCategory = await categories.getEntitesForCategory(this.req.params.categoryId);
+      const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
+      console.log('***entitiesForCategory',entitiesForCategory);
+      console.log('***roleEntities',roleEntities.dataValues);
+
+      entitiesForCategory.forEach(ec => {
+        const re = roleEntities.find(re => re.entityId == ec.id);
+        if (re) {
+          ec.edit = re.canEdit;
+          ec.notSelected = false;
+          ec.view = (!re.canEdit) ? true : false;
+          ec.shouldCascade = re.shouldCascade;
+        } else {
+          ec.edit = false;
+          ec.notSelected = true;
+          ec.view = false;
+          ec.shouldCascade = false;
+        }
+      });
+      console.log('***entitiesForCategory1',entitiesForCategory);
+      return entitiesForCategory;
     }
     return [];
   }
@@ -62,14 +83,6 @@ class Permissions extends Page {
     }
     return [];
   }
-
-  // async postRequest(req, res){
-  //   try{
-
-  //   } catch (error) {
-  //     return res.redirect(this.req.originalUrl);
-  //   }
-  // }
 }
 
 module.exports = Permissions;
