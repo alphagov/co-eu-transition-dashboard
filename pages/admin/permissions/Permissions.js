@@ -38,11 +38,6 @@ class Permissions extends Page {
     return 0;
   }
 
-  async getSelectedCategory(id) {
-    const categories = await this.getCategories();
-    return categories.find(c => c.id == id);
-  }
-
   async entitiesForCategory(){
     if (this.req.params.categoryId) {
       return categories.getEntitesForCategory(this.req.params.categoryId);
@@ -64,13 +59,13 @@ class Permissions extends Page {
     return [];
   }
 
-  async postRequest(req, res){
-    try{
-      console.log('***req.body', req.body);
-    } catch (error) {
-      return res.redirect(this.req.originalUrl);
-    }
-  }
+  // async postRequest(req, res){
+  //   try{
+
+  //   } catch (error) {
+  //     return res.redirect(this.req.originalUrl);
+  //   }
+  // }
 }
 
 module.exports = Permissions;

@@ -10,11 +10,11 @@
 
   {% set cascadeCheckBox %}
         {{ govukCheckboxes({
-          idPrefix: "waste",
-          name: "waste",
+          idPrefix: entity.name,
+          name: entity.name,
           items: [
             {
-              value: "carcasses",
+              value: "cascade",
               text: " "
             }
           ]
@@ -28,15 +28,15 @@
       name: entity.name,
       items: [
         {
-          value: "View",
+          value: "view",
           text: "view"
         },
         {
-          value: "Edit",
+          value: "edit",
           text: "edit"
         },
         {
-          value: "None",
+          value: "none",
           text: "none"
         }
       ]

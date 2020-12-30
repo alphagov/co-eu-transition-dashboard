@@ -31,36 +31,35 @@
     {% endif %}
     <h1 class="govuk-heading-l">Permissions</h1>
     <h2 class="govuk-body govuk-!-margin-bottom-0">Select a role</h2>
-    <form action='{{ url }}' method='POST' >
-    <select class="govuk-select" id="selectRoleId" name="groupValue" 
-      onchange="TRANSITIONDELIVERYDASHBOARD.selectRoleOnChange()">
-        {% for role in roles %}
-            <option value='{{role.id}}' {{ "selected" if selectedRoleId == role.id }} >{{role.name}}</option>
-        {% endfor %}
-    </select>
-    <div class="govuk-body category-group">
+    <form action='{{ url }}/{{selectedRoleId}}/{{selectedCategoryId}}' method='POST' >
+      <select class="govuk-select" id="selectRoleId" name="groupValue" 
+        onchange="TRANSITIONDELIVERYDASHBOARD.selectRoleOnChange()">
+          {% for role in roles %}
+              <option value='{{role.id}}' {{ "selected" if selectedRoleId == role.id }} >{{role.name}}</option>
+          {% endfor %}
+      </select>
+      <div class="govuk-body category-group">
         {% for category in categories %}
             <a href="{{url}}/{{selectedRoleId}}/{{category.id}}" 
             class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</a>
         {% endfor %}
-    </div>
-    {% set selectedCategory = getSelectedCategory(selectedCategoryId) | await %}
-    {% if selectedCategory %}
-      <div class="govuk-body">
-        {% include "admin/permissions/PermissionsTable.njk" %}
       </div>
 
-      <div class="govuk-body">
-      {{
+      {% if selectedCategoryId %}
+        <div class="govuk-body">
+          {% include "admin/permissions/PermissionsTable.njk" %}
+        </div>
+
+        <div class="govuk-body">
+          {{
             govukButton({
                 text: "Apply",
                 type: "submit",
                 preventDoubleClick: true
             })
-        }}
-      </div>
-    {% endif %}
-    
+          }}
+        </div>
+      {% endif %}
     </form>
    </div>
   </div>
