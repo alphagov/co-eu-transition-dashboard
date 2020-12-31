@@ -6,37 +6,7 @@ const nav = new Navigation();
 const login = new Login();
 const hmg = new HMGDelivery();
 
-const username = "cy_auto@test.com";
 const department = 'BEIS,HMRC';
-
-function testSetup() {
-  //Create User
-  cy.createuser(username).as('dbResultUserID');
-}
-
-function testCleanup() {
-  //Create User
-  cy.deleteuser(username).as('dbResultUserID');
-}
-
-function addrole(rolename) {
-  cy.addrole(username, rolename);
-}
-
-function addDepartment(department) {
-  if (department == 'All')
-  {
-    cy.addAllDepartment(username);
-  }
-  else
-  {
-    var deplist = department.split(',');
-    cy.log(deplist);
-    deplist.forEach(depelement => {
-      cy.addDepartment(username, depelement);
-    });
-  }
-}
 
 beforeEach(() => {
   // Preserve session across the entire test.
@@ -45,10 +15,6 @@ beforeEach(() => {
 
 describe("As a Management Overivew I can View All Project Data", () => {
   before(() => {
-    //Setup
-    testCleanup();
-    testSetup();
-    //Catch Exceptions 
     cy.on('uncaught:exception', () => {
       return false;
     });
@@ -58,12 +24,9 @@ describe("As a Management Overivew I can View All Project Data", () => {
   //Log into Dashboard 
   it("Can Login into Dashboard as an 'Management and Overview & Viewer' User", function () {
     //Add relevant roles
-    addrole("viewer");
-    addrole("all_data");
-    addrole("management");
-    addrole("management_overview");  
-    addDepartment(department);
-    login.login(username);
+    cy.addroles("viewer,all_data,management,management_overview");  
+    cy.addDepartments(department);
+    login.login();
   });
 
   it("Can view list of All Project and and all relevant fiedl valus on list page (Including no. of project)", function () {

@@ -4,25 +4,7 @@ import Login from '../../Pages/Login';
 const nav = new Navigation(); 
 const login = new Login();
 
-const username = "cy_auto@test.com";
-
-function testSetup() {
-  //Create User
-  cy.createuser(username).as('dbResultUserID');
-}
-
-function testCleanup() {
-  //Create User
-  cy.deleteuser(username).as('dbResultUserID');
-}
-
-function addrole(rolename) {
-  cy.addrole(username, rolename);
-}
-
-function addDepartment(department) {
-  cy.addDepartment(username, department);
-}
+const department = "BEIS";
 
 beforeEach(() => {
   // Preserve session across the entire test.
@@ -31,30 +13,22 @@ beforeEach(() => {
 
 describe("Workflow for 'Management and Overview' with 'Viewer' User role - Verify accessible Menus", () => {
   before(() => {
-    //Setup
-    testCleanup();
-    testSetup();
     //Catch Exceptions 
     cy.on('uncaught:exception', () => {
       //logger.error("Error Caught");
       return false;
     });
-  
   });
 
   //Log into Dashboard 
   it("Can Login into Dashboard as an 'Management and Overview & Viewer' User", function () {
-    //Add Uploader role to user
-    addrole("viewer");
-    addrole("management");
-    addrole("management_overview");    //Add all data role to user
-    //addrole("all_data");
-    //Add department to user
-    addDepartment("BEIS");
-
-    login.login(username);
-    
-  });
+    //Add all role to user
+    cy.addroles("management,viewer,management_overview");
+    //Add departments to user
+    cy.addDepartments(department);
+    //Login
+    login.login();
+    });
 
   //Verify that I am allowed to access 'Tranistion Readiness' menu and all submenus underneath
   it("Can see and access 'Tranistion Readiness' menu and all submenus underneath", function () {

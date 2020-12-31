@@ -19,6 +19,17 @@ mysql.loadDBCommands();*/
 import './db_user'
 import './db_entity'
 import './db_project'
+const dev = require('../../../config/development.json')
+
+var url = dev.serviceUrl;
+const config = Cypress.config();
+
+
+before(() => {
+  cy.deleteuser(config.username).as('dbResultUserID');
+  cy.createuser(config.username).as('dbResultUserID');
+  cy.visit(url);
+});
 
 // Alternatively you can use CommonJS syntax:
 require('cypress-xpath');
