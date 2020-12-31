@@ -19,12 +19,11 @@ describe("As a Management Overivew I can View All Milestone Data on all data pag
     cy.on('uncaught:exception', () => {
       return false;
     });
-  
   });
 
   //Log into Dashboard 
   it("Can Login into Dashboard as an 'Management and Overview & Viewer' User", function () {
-    //Add relevant roles
+    //Add relevant roles and department
     cy.addroles("viewer,all_data,management,management_overview");  
     cy.addDepartments(department);
     login.login();
@@ -32,7 +31,6 @@ describe("As a Management Overivew I can View All Milestone Data on all data pag
 
   it("Can Not view list of All Milestone and when accordian are closed", function () {
     nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
-    //nav.selectSubmenu(nav.SubMenu_Alldata)
     hmg.verifyProjectDataHeader(department);
     hmg.closeProjectAccordian();
     hmg.verifyNoMilestoneData('All',department);
@@ -40,7 +38,6 @@ describe("As a Management Overivew I can View All Milestone Data on all data pag
 
   it("Can view list of All Milestone and when accordian are open", function () {
     nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
-    //nav.selectSubmenu(nav.SubMenu_Alldata)
     hmg.verifyProjectDataHeader(department);
     hmg.openProjectAccordian();
     hmg.verifyMilestoneData('All',department);

@@ -6,7 +6,6 @@ const login = new Login();
 
 const department = "BEIS";
 
-
 beforeEach(() => {
   // Preserve session across the entire test.
   Cypress.Cookies.preserveOnce('jwt');
@@ -66,5 +65,4 @@ describe("Workflow for 'Admin' with all other User roles - Verify accessible Men
     nav.verifySubmenu(nav.SubMenu_RAYGValues);
     nav.verifySubmenu(nav.SubMenu_ManageTags);
   });
-
 });

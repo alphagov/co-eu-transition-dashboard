@@ -18,7 +18,6 @@ describe("Workflow for 'Uploader' with 'Viewer' User role - Verify accessible Me
       //logger.error("Error Caught");
       return false;
     });
-  
   });
 
   //Log into Dashboard 
@@ -66,5 +65,4 @@ describe("Workflow for 'Uploader' with 'Viewer' User role - Verify accessible Me
     nav.verifyMainmenuNotExist(nav.SubMenu_RAYGValues);
     nav.verifyMainmenuNotExist(nav.SubMenu_ManageTags);
   });
-
 });

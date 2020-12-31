@@ -24,7 +24,6 @@ const dev = require('../../../config/development.json')
 var url = dev.serviceUrl;
 const config = Cypress.config();
 
-
 before(() => {
   cy.deleteuser(config.username).as('dbResultUserID');
   cy.createuser(config.username).as('dbResultUserID');
@@ -33,6 +32,3 @@ before(() => {
 
 // Alternatively you can use CommonJS syntax:
 require('cypress-xpath');
-/*Cypress.Cookies.defaults({
-    whitelist: 'ARMY_APPS'
-  })*/

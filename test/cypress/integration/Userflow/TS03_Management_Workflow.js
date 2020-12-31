@@ -18,7 +18,6 @@ describe("Workflow for 'Management' with 'Viewer' User role - Verify accessible 
       //logger.error("Error Caught");
       return false;
     });
-  
   });
 
   //Log into Dashboard 
@@ -66,5 +65,4 @@ describe("Workflow for 'Management' with 'Viewer' User role - Verify accessible 
     nav.verifyMainmenuNotExist(nav.SubMenu_RAYGValues);
     nav.verifyMainmenuNotExist(nav.SubMenu_ManageTags);
   });
-
 });

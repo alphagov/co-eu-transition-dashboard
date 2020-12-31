@@ -40,7 +40,6 @@ class Admin {
       measurelist.forEach(element => {
         measure = element.id.replace(/\s+/g, ' ') + " " + element.name.replace(/\s+/g, ' ');
         cy.get(Table_ConfirmDeleteMEasure).find("tr").contains(measure);
-        //xpath("//table//tr/td[.='" + element.id + "']/following-sibling::td[.='  " + element.name + "']").should('exist');
       });
       this.clickBackToTagList();
     })

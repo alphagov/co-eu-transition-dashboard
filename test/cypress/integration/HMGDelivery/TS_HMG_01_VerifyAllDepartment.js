@@ -18,7 +18,6 @@ describe("As a Management Overivew I can View All Project Data", () => {
     cy.on('uncaught:exception', () => {
       return false;
     });
-  
   });
 
   //Log into Dashboard 

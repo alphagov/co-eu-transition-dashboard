@@ -17,7 +17,6 @@ describe("Workflow for 'DA' with 'Viewer' User role - Verify accessible Menus", 
       //logger.error("Error Caught");
       return false;
     });
-  
   });
 
   //Log into Dashboard 
@@ -66,5 +65,4 @@ describe("Workflow for 'DA' with 'Viewer' User role - Verify accessible Menus", 
     nav.verifyMainmenuNotExist(nav.SubMenu_RAYGValues);
     nav.verifyMainmenuNotExist(nav.SubMenu_ManageTags);
   });
-
 });
