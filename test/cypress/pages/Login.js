@@ -1,5 +1,3 @@
-const dev = require('../../../config/development.json')
-
 //Login Control
 const BTN_Submit = 'button.govuk-button';
 const TXT_Username = '#username';
@@ -15,7 +13,6 @@ class Login {
   login() {
     cy.get(DIV_Dashboar_Header).then( ($ele) =>
     {
-      cy.log("$ele.text().replace(/\s+/g, ' ').trim() " + $ele.text().replace(/\s+/g, ' ').trim());
       if ($ele.text().replace(/\s+/g, ' ').trim().match("Transition Readiness Dashboard Logout")) {
         this.verifyLogoutlink();
       }

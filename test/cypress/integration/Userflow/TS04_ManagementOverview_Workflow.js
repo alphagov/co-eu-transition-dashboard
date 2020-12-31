@@ -28,7 +28,7 @@ describe("Workflow for 'Management and Overview' with 'Viewer' User role - Verif
     cy.addDepartments(department);
     //Login
     login.login();
-    });
+  });
 
   //Verify that I am allowed to access 'Tranistion Readiness' menu and all submenus underneath
   it("Can see and access 'Tranistion Readiness' menu and all submenus underneath", function () {
