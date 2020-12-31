@@ -4,25 +4,7 @@ import Login from '../../Pages/Login';
 const nav = new Navigation(); 
 const login = new Login();
 
-const username = "cy_auto@test.com";
-
-function testSetup() {
-  //Create User
-  cy.createuser(username).as('dbResultUserID');
-}
-
-function testCleanup() {
-  //Create User
-  cy.deleteuser(username).as('dbResultUserID');
-}
-
-function addrole(rolename) {
-  cy.addrole(username, rolename);
-}
-
-function addDepartment(department) {
-  cy.addDepartment(username, department);
-}
+const department = "BEIS";
 
 beforeEach(() => {
   // Preserve session across the entire test.
@@ -31,32 +13,16 @@ beforeEach(() => {
 
 describe("Workflow for 'Admin' with all other User roles - Verify accessible Menus", () => {
   before(() => {
-    //Setup
-    testCleanup();
-    testSetup();
-    //Catch Exceptions 
-    cy.on('uncaught:exception', () => {
-      //logger.error("Error Caught");
-      return false;
-    });
-  
   });
 
   //Log into Dashboard 
   it("Can Login into Dashboard as an 'Admin' Userwith all roles", function () {
     //Add Admin role to user
-    addrole("admin");
-    //Add all data role to user
-    addrole("all_data");
-    addrole("uploader");
-    addrole("viewer");
-    addrole("management_overview");
-    addrole("management");
+    cy.addroles("admin,all_data,uploader,viewer,management_overview,management");
     //Add department to user
-    addDepartment("BEIS");
-
-    login.login(username);
-    
+    cy.addDepartments(department);
+    //Login
+    login.login();
   });
 
   //Verify that I am allowed to access 'Tranistion Readiness' menu and all submenus underneath
@@ -94,5 +60,4 @@ describe("Workflow for 'Admin' with all other User roles - Verify accessible Men
     nav.verifySubmenu(nav.SubMenu_RAYGValues);
     nav.verifySubmenu(nav.SubMenu_ManageTags);
   });
-
 });
