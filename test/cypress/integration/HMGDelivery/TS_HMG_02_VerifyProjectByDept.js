@@ -15,9 +15,6 @@ beforeEach(() => {
 
 describe("As a Management Overivew I can View All Project Data", () => {
   before(() => {
-    cy.on('uncaught:exception', () => {
-      return false;
-    });
   });
 
   //Log into Dashboard 

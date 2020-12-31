@@ -13,11 +13,6 @@ beforeEach(() => {
 
 describe("Workflow for 'Admin' with all other User roles - Verify accessible Menus", () => {
   before(() => {
-    //Catch Exceptions 
-    cy.on('uncaught:exception', () => {
-      //logger.error("Error Caught");
-      return false;
-    });
   });
 
   //Log into Dashboard 

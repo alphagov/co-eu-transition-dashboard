@@ -13,11 +13,6 @@ beforeEach(() => {
 
 describe("Workflow for 'Uploader' with 'Viewer' User role - Verify accessible Menus", () => {
   before(() => {
-    //Catch Exceptions 
-    cy.on('uncaught:exception', () => {
-      //logger.error("Error Caught");
-      return false;
-    });
   });
 
   //Log into Dashboard 

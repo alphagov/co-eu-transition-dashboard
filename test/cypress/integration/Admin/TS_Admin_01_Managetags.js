@@ -14,11 +14,6 @@ beforeEach(() => {
 
 describe("As an admin I can Manage(Create/Delete) tags", () => {
   before(() => {
-    //Catch Exceptions 
-    cy.on('uncaught:exception', () => {
-      return false;
-    });
-  
   });
 
   //Log into Dashboard 

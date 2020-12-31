@@ -15,10 +15,6 @@ beforeEach(() => {
 
 describe("As a Management Overivew I can View All Milestone Data on all data page", () => {
   before(() => {
-    //Catch Exceptions 
-    cy.on('uncaught:exception', () => {
-      return false;
-    });
   });
 
   //Log into Dashboard 
