@@ -12,7 +12,7 @@ beforeEach(() => {
   Cypress.Cookies.preserveOnce('jwt');
 });
 
-describe("As an admin I can Manage(Create/Delete) tags", () => {
+describe("TS_Admin_01_Managetags - As an admin I can Manage(Create/Delete) tags", () => {
   before(() => {
   });
 
@@ -37,7 +37,7 @@ describe("As an admin I can Manage(Create/Delete) tags", () => {
   it("Can view list of measures tagged on Delete tag confirmation for relevant tag", function () {
     nav.selectMainmenu(nav.Menu_Admin);
     nav.selectSubmenu(nav.SubMenu_ManageTags)
-    var taglist = [];
+    let taglist = [];
     cy.getTagList().as('dbResultTagList');
     cy.get('@dbResultTagList').then((res) => {
       taglist = res

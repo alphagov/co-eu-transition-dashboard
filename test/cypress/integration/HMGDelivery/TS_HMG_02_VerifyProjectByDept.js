@@ -13,7 +13,7 @@ beforeEach(() => {
   Cypress.Cookies.preserveOnce('jwt');
 });
 
-describe("As a Management Overivew I can View All Project Data", () => {
+describe("TS_HMG_02_VerifyProjectByDept - As a Management Overivew I can View All Project Data", () => {
   before(() => {
   });
 

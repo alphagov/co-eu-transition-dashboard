@@ -11,7 +11,7 @@ beforeEach(() => {
   Cypress.Cookies.preserveOnce('jwt');
 });
 
-describe("Workflow for 'Management and Overview' with 'Viewer' User role - Verify accessible Menus", () => {
+describe("TS04_ManagementOverview_Workflow - 'Management and Overview' with 'Viewer' User role - Verify accessible Menus", () => {
   before(() => {
   });
 
