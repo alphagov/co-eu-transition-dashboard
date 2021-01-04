@@ -6,7 +6,9 @@ const Role = require('models/role');
 const Category = require('models/category');
 const sortBy = require('lodash/sortBy');
 const categories = require('helpers/categories');
-const {getEntitiesForRoleId} = require('helpers/roleEntity');
+const { getEntitiesForRoleId } = require('helpers/roleEntity');
+const EntityHelper = require('helpers/entity');
+
 
 
 class Permissions extends Page {
@@ -45,10 +47,9 @@ class Permissions extends Page {
 
   async entitiesForCategory(){
     if (this.req.params.categoryId) {
-      const entitiesForCategory = await categories.getEntitesForCategory(this.req.params.categoryId);
+      this.entityHelper = new EntityHelper({ category: true, fields: ['value'] }); 
+      const entitiesForCategory = await this.entityHelper.entitiesInCategories([this.req.params.categoryId]);
       const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
-      console.log('***entitiesForCategory',entitiesForCategory);
-      console.log('***roleEntities',roleEntities.dataValues);
 
       entitiesForCategory.forEach(ec => {
         const re = roleEntities.find(re => re.entityId == ec.id);
@@ -64,7 +65,7 @@ class Permissions extends Page {
           ec.shouldCascade = false;
         }
       });
-      console.log('***entitiesForCategory1',entitiesForCategory);
+      
       return entitiesForCategory;
     }
     return [];

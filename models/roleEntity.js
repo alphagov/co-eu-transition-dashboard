@@ -1,4 +1,4 @@
-const { Model, INTEGER , BOOLEAN} = require('sequelize');
+const { Model, INTEGER , BOOLEAN } = require('sequelize');
 const sequelize = require('services/sequelize');
 
 class RoleEntity extends Model {}

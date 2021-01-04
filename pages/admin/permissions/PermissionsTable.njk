@@ -9,8 +9,8 @@
 
   {% set cascadeCheckBox %}
         {{ govukCheckboxes({
-          idPrefix: entity.name,
-          name: entity.name,
+          idPrefix: entity.id,
+          name: entity.id,
           items: [
             {
               value: "cascade",
@@ -24,8 +24,8 @@
   {% set permissionRadio %}
     {{ govukRadios({
       classes: "govuk-radios--inline radio-option",
-      idPrefix: entity.name,
-      name: entity.name,
+      idPrefix: entity.id,
+      name: entity.id,
       items: [
         {
           value: "view",
