@@ -2,6 +2,7 @@ const H1_ManageTags_Xp = "//h1[text()='Manage Tags']";
 const TH_TagName_Xp = "//table//th[text()='Name']";
 const Link_Delete_Xp = "//td/a[text()='Delete']";
 const Link_BackToTagList_Xp = "//a[normalize-space(.)='Back to tag list']";
+const Table_ConfirmDeleteMEasure = ".govuk-table";
 
 class Admin {
   verifyManageTagsHeader()
@@ -35,8 +36,10 @@ class Admin {
     cy.get('@dbResultMeasurelist').then((res) => {
       cy.xpath("//table//tr[contains(.,'" + tagname+ "')]" + Link_Delete_Xp).click();
       measurelist = res
+      var measure;
       measurelist.forEach(element => {
-        cy.xpath("//table//tr/td[.='" + element.id + "']/following-sibling::td[.='" + element.name + "']").should('exist');
+        measure = element.id.replace(/\s+/g, ' ') + " " + element.name.replace(/\s+/g, ' ');
+        cy.get(Table_ConfirmDeleteMEasure).find("tr").contains(measure);
       });
       this.clickBackToTagList();
     })
