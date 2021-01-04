@@ -10,5 +10,7 @@
     "videosFolder": "test/cypress/videos",
     "pageLoadTimeout" :300000,
     "defaultCommandTimeout": 30000,
-    "chromeWebSecurity": false
+    "chromeWebSecurity": false,
+    "username": "cy_auto@test.com",
+    "ignoreTestFiles": ["*VerifyAll*"]
 }
