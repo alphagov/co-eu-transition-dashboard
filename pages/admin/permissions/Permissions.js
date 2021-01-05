@@ -44,7 +44,7 @@ class Permissions extends Page {
 
   async entitiesForCategory(){
     if (this.req.params.categoryId) {
-      this.entityHelper = new EntityHelper({ category: true, fields: ['value'] }); 
+      this.entityHelper = new EntityHelper({ category: true, fields: true }); 
       const entitiesForCategory = await this.entityHelper.entitiesInCategories(
         [parseInt(this.req.params.categoryId)]);
       const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
