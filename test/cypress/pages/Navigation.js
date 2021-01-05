@@ -1,137 +1,137 @@
 //Headers
-const H1_OverviewPage_Header = "//h1[text()='Transition Readiness Overview";
+const H1_OVERVIEWPAGE_HEADER = "//h1[text()='Transition Readiness Overview";
 const Link_RAYG_Definition = "//a[text()='View RAYG definitions and how they are calculated";
-const Main_Menu = "li a[class='govuk-header__link nav']";
-const Sub_Menu = "li a[class='govuk-header__link child-nav']";
+const MAIN_MENU = "li a[class='govuk-header__link nav']";
+const SUB_MENU = "li a[class='govuk-header__link child-nav']";
 
 //Main Menus
-const Menu_Tranistion_Readiness = "Transition readiness";
-const Menu_HMG_delivery_megmt_info = "HMG delivery management information";
-const Menu_Adddata = "Add data";
-const Menu_Admin = "Admin";
+const MENU_TRANISTION_READINESS = "Transition readiness";
+const MENU_HMG_DELIVERY_MEGMT_INFO = "HMG delivery management information";
+const MENU_ADD_DATA = "Add data";
+const MENU_ADMIN = "Admin";
 
 //Sub Menus Tranistion Readiness
-const SubMenu_Overview = "Overview";
+const SUBMENU_OVERVIEW = "Overview";
 
 //Sub Menus HMG
-const SubMenu_Reporting_overview = "Reporting overview";
-const SubMenu_Alldata = "All data";
-const SubMenu_Missedmilestones = "Missed milestones";
-const SubMenu_Upcomingmilestones = "Upcoming milestones";
+const SUBMENU_REPORTING_OVERVIEW = "Reporting overview";
+const SUBMENU_ALLDATA = "All data";
+const SUBMENU_MISSED_MILESTONES = "Missed milestones";
+const SUBMENU_UPCOMING_MILESTONES = "Upcoming milestones";
 
 //Sub Menus Add data
-const SubMenu_Managementinformation = "Management information";
-const SubMenu_Measures = "Measures";
+const SUBMENU_MANAGEMENT_INFORMATION = "Management information";
+const SUBMENU_MEASURES = "Measures";
 
 //Sub Menus Admin
-const SubMenu_MIdatastructure = "MI data structure";
-const SubMenu_Managecategories = "Manage categories";
-const SubMenu_ManageHeadlineMeasures = "Manage Headline Measures";
-const SubMenu_ManageUsers = "Manage Users";
-const SubMenu_Entitydataimport = "Entity data import";
-const SubMenu_StaticExport = "Static Export";
-const SubMenu_RAYGValues = "RAYG Values";
-const SubMenu_ManageTags = "Manage Tags";
+const SUBMENU_MI_DATA_STRUCTURE = "MI data structure";
+const SUBMENU_MANAGE_CATEGORIES = "Manage categories";
+const SUBMENU_MANAGE_HEADLINE_MEASURES = "Manage Headline Measures";
+const SUBMENU_MANAGE_USERS = "Manage Users";
+const SUBMENU_ENTITY_DATAIMPORT = "Entity data import";
+const SUBMENU_STATIC_EXPORT = "Static Export";
+const SUBMENU_RAYG_VALUES = "RAYG Values";
+const SUBMENU_MANAGE_TAGS = "Manage Tags";
 
 class Navigation {
 //Menus
   get Menu_Tranistion_Readiness() {
-    return Menu_Tranistion_Readiness;
+    return MENU_TRANISTION_READINESS;
   }
   get Menu_HMG_delivery_megmt_info() {
-    return Menu_HMG_delivery_megmt_info;
+    return MENU_HMG_DELIVERY_MEGMT_INFO;
   }
   get Menu_Adddata() {
-    return Menu_Adddata;
+    return MENU_ADD_DATA;
   }
   get Menu_Admin() {
-    return Menu_Admin;
+    return MENU_ADMIN;
   }
 
   //Sub Menus Tranistion Readiness
   get SubMenu_Overview() {
-    return SubMenu_Overview;
+    return SUBMENU_OVERVIEW;
   }
 
   //Sub Menus HMG
   get SubMenu_Reporting_overview() {
-    return SubMenu_Reporting_overview;
+    return SUBMENU_REPORTING_OVERVIEW;
   }
   get SubMenu_Alldata() {
-    return SubMenu_Alldata;
+    return SUBMENU_ALLDATA;
   }
   get SubMenu_Missedmilestones() {
-    return SubMenu_Missedmilestones;
+    return SUBMENU_MISSED_MILESTONES;
   }
   get SubMenu_Upcomingmilestones() {
-    return SubMenu_Upcomingmilestones;
+    return SUBMENU_UPCOMING_MILESTONES;
   }
 
   //Sub Menus Add data
   get SubMenu_Managementinformation() {
-    return SubMenu_Managementinformation;
+    return SUBMENU_MANAGEMENT_INFORMATION;
   }
   get SubMenu_Measures() {
-    return SubMenu_Measures;
+    return SUBMENU_MEASURES;
   }
   //Sub Menus Admin
   get SubMenu_MIdatastructure() {
-    return SubMenu_MIdatastructure;
+    return SUBMENU_MI_DATA_STRUCTURE;
   }
   get SubMenu_Managecategories() {
-    return SubMenu_Managecategories;
+    return SUBMENU_MANAGE_CATEGORIES;
   }
   get SubMenu_ManageHeadlineMeasures() {
-    return SubMenu_ManageHeadlineMeasures;
+    return SUBMENU_MANAGE_HEADLINE_MEASURES;
   }
   get SubMenu_ManageUsers() {
-    return SubMenu_ManageUsers;
+    return SUBMENU_MANAGE_USERS;
   }
   get SubMenu_Entitydataimport() {
-    return SubMenu_Entitydataimport;
+    return SUBMENU_ENTITY_DATAIMPORT;
   }
   get SubMenu_StaticExport() {
-    return SubMenu_StaticExport;
+    return SUBMENU_STATIC_EXPORT;
   }
   get SubMenu_RAYGValues() {
-    return SubMenu_RAYGValues;
+    return SUBMENU_RAYG_VALUES;
   }
   get SubMenu_ManageTags() {
-    return SubMenu_ManageTags;
+    return SUBMENU_MANAGE_TAGS;
   }
 
   //Select Main menu
   selectMainmenu(menuname) {
-    cy.get(Main_Menu).contains(menuname).click();
+    cy.get(MAIN_MENU).contains(menuname).click();
   }
 
   //Select sub meny
   selectSubmenu(submenuname) {
-    cy.get(Sub_Menu).contains(submenuname).click();
+    cy.get(SUB_MENU).contains(submenuname).click();
   }
 
   //Select Main menu
   verifyMainmenu(menuname) {
-    cy.get(Main_Menu).contains(menuname).should('exist');
+    cy.get(MAIN_MENU).contains(menuname).should('exist');
   }
 
   //Select Main menu
   verifyMainmenuNotExist(menuname) {
-    cy.get(Main_Menu).contains(menuname).should('not.exist');
+    cy.get(MAIN_MENU).contains(menuname).should('not.exist');
   }
 
   //Select sub meny
   verifySubmenu(submenuname) {
-    cy.get(Sub_Menu).contains(submenuname).should('exist');
+    cy.get(SUB_MENU).contains(submenuname).should('exist');
   }
 
   verifyOverviewPage() {
-    cy.xpath(H1_OverviewPage_Header).should('exist');
+    cy.xpath(H1_OVERVIEWPAGE_HEADER).should('exist');
     cy.xpath(Link_RAYG_Definition).should('exist');
   }
 
   verifyAllThemes() {
-    var allThemes = [];
+    let allThemes = [];
     cy.getallThemes().as('dbResultAllThemes');
     cy.get('@dbResultAllThemes').then((res) => {
       allThemes = res
@@ -142,7 +142,7 @@ class Navigation {
   }
 
   verifyDAThemes() {
-    var daThemes = [];
+    let daThemes = [];
     cy.getDAThemes().as('dbResultDAThemes');
     cy.get('@dbResultDAThemes').then((res) => {
       daThemes = res
@@ -153,7 +153,7 @@ class Navigation {
   }
 
   verifyNonDAThemes() {
-    var nondaThemes = [];
+    let nondaThemes = [];
     cy.getNonDAThemes().as('dbResultNonDAThemes');
     cy.get('@dbResultNonDAThemes').then((res) => {
       nondaThemes = res
