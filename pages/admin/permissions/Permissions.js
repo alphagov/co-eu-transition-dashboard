@@ -5,6 +5,7 @@ const authentication = require('services/authentication');
 const Role = require('models/role');
 const Category = require('models/category');
 const sortBy = require('lodash/sortBy');
+const categories = require('helpers/categories');
 
 
 class Permissions extends Page {
@@ -40,6 +41,13 @@ class Permissions extends Page {
     }
     return 0;
   }
+
+  async entitiesForCategory(){
+    if (this.req.params.categoryId) {
+      return categories.getEntitesForCategory(this.req.params.categoryId);
+    }
+    return [];
+  }
   
   async getRoles() {
     let roles = await Role.findAll()
@@ -54,6 +62,14 @@ class Permissions extends Page {
     }
     return [];
   }
+
+  // async postRequest(req, res){
+  //   try{
+
+  //   } catch (error) {
+  //     return res.redirect(this.req.originalUrl);
+  //   }
+  // }
 }
 
 module.exports = Permissions;
