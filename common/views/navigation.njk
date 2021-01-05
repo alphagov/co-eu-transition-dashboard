@@ -248,12 +248,12 @@
                 Permissions
                 </a>
               </li>
-               {% endif %}
               <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in adminEntityList }}">
                 <a class="govuk-header__link child-nav" href="{{ config.paths.admin.entityList }}">
                 Manage Entities
                 </a>
               </li>
+              {% endif %}
             </ul>
           </li>
           {% endif %}
