@@ -21,7 +21,7 @@ import './db_entity'
 import './db_project'
 const dev = require('../../../config/development.json')
 
-var url = dev.serviceUrl;
+let url = dev.serviceUrl;
 const config = Cypress.config();
 
 before(() => {
