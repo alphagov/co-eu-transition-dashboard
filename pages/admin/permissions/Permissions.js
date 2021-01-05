@@ -5,11 +5,8 @@ const authentication = require('services/authentication');
 const Role = require('models/role');
 const Category = require('models/category');
 const sortBy = require('lodash/sortBy');
-const categories = require('helpers/categories');
 const { getEntitiesForRoleId } = require('helpers/roleEntity');
 const EntityHelper = require('helpers/entity');
-
-
 
 class Permissions extends Page {
   static get isEnabled() {
@@ -84,6 +81,14 @@ class Permissions extends Page {
     }
     return [];
   }
+
+  // async postRequest(req, res){
+  //   try{
+
+  //   } catch (error) {
+  //     return res.redirect(this.req.originalUrl);
+  //   }
+  // }
 }
 
 module.exports = Permissions;
