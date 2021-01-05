@@ -1,5 +1,3 @@
-//const logger = require('middleware/logger');
-
 //Headers
 const H1_OverviewPage_Header = "//h1[text()='Transition Readiness Overview";
 const Link_RAYG_Definition = "//a[text()='View RAYG definitions and how they are calculated";
@@ -76,7 +74,6 @@ class Navigation {
   get SubMenu_Measures() {
     return SubMenu_Measures;
   }
-
   //Sub Menus Admin
   get SubMenu_MIdatastructure() {
     return SubMenu_MIdatastructure;
@@ -105,42 +102,26 @@ class Navigation {
 
   //Select Main menu
   selectMainmenu(menuname) {
-    //logger.info("menuname " + menuname);
-    //logger.info("this.Main_Menu " + Main_Menu);
-    //var regexMenu = new RegExp("/^\s*" + menuname+ "\s*$/");
-    //cy.get(Main_Menu).contains(regexMenu).click();
     cy.get(Main_Menu).contains(menuname).click();
   }
 
   //Select sub meny
   selectSubmenu(submenuname) {
-    //var regexMenu = new RegExp("^\s*" + submenuname+ "\s*$/");
-    //cy.get(Sub_Menu).contains(regexMenu).click();
     cy.get(Sub_Menu).contains(submenuname).click();
   }
 
   //Select Main menu
   verifyMainmenu(menuname) {
-    //logger.infoger.info("menuname " + menuname);
-    //logger.info("this.Main_Menu " + Main_Menu);
-    //var regexMenu = new RegExp("/^\s*" + menuname+ "\s*$/");
-    //cy.get(Main_Menu).contains(regexMenu).click();
     cy.get(Main_Menu).contains(menuname).should('exist');
   }
 
   //Select Main menu
   verifyMainmenuNotExist(menuname) {
-    //logger.infoger.info("menuname " + menuname);
-    //logger.info("this.Main_Menu " + Main_Menu);
-    //var regexMenu = new RegExp("/^\s*" + menuname+ "\s*$/");
-    //cy.get(Main_Menu).contains(regexMenu).click();
     cy.get(Main_Menu).contains(menuname).should('not.exist');
   }
 
   //Select sub meny
   verifySubmenu(submenuname) {
-    //var regexMenu = new RegExp("^\s*" + submenuname+ "\s*$/");
-    //cy.get(Sub_Menu).contains(regexMenu).click();
     cy.get(Sub_Menu).contains(submenuname).should('exist');
   }
 
@@ -155,7 +136,6 @@ class Navigation {
     cy.get('@dbResultAllThemes').then((res) => {
       allThemes = res
       allThemes.forEach(element => {
-        //logger.info("element " + element.value);
         cy.xpath("//li/a[normalize-space() = '" + element.value + "']").should('exist');
       });
     })
@@ -167,7 +147,6 @@ class Navigation {
     cy.get('@dbResultDAThemes').then((res) => {
       daThemes = res
       daThemes.forEach(element => {
-        //logger.info("element " + element.value);
         cy.xpath("//li/a[normalize-space() = '" + element.value + "']").should('exist');
       });
     })
@@ -179,7 +158,6 @@ class Navigation {
     cy.get('@dbResultNonDAThemes').then((res) => {
       nondaThemes = res
       nondaThemes.forEach(element => {
-        //logger.info("element " + element.value);
         cy.xpath("//li/a[normalize-space() = '" + element.value + "']").should('not.exist');
       });
     })

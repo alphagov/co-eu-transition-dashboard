@@ -242,11 +242,13 @@
                 Manage Tags
                 </a>
               </li>
+              {% if config.features.permissions %}
               <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.permissions }}">
                 <a class="govuk-header__link child-nav" href="{{ config.paths.admin.permissions }}">
                 Permissions
                 </a>
               </li>
+               {% endif %}
               <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in adminEntityList }}">
                 <a class="govuk-header__link child-nav" href="{{ config.paths.admin.entityList }}">
                 Manage Entities

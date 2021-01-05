@@ -18,9 +18,10 @@ class UserManagementList extends Page {
   }
 
   async getUsers() {
-    return await User.findAll({
+    const users = await User.findAll({
       include: Role
     });
+    return users.sort((a, b) => a.email.split('@').pop().localeCompare(b.email.split('@').pop()));
   }
 }
 
