@@ -1,10 +1,11 @@
 .category-group {
     margin-top: 40px;
     margin-bottom: 10px;
+    
     flex-direction: row;
     justify-content: space-around;
     a {
-        padding-left: 10px;
+        padding-right: 10px;
     }
     a:link {
         text-decoration: none;
@@ -15,5 +16,31 @@
     .category.selected {
         font-weight: bold;
         color: black;
+    }
+}
+.permissions-radio {
+    padding: 10px;
+    background-color:#f3f2f1;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+    .radio-option{
+        display: flex;
+    }
+}
+.cascade-checkbox {
+    padding: 10px;
+}
+
+#permissions-table{
+    margin-top: 50px;
+    .header-middle {
+        padding: 10px;
+    }
+    .category-name{
+        font-weight: normal;
+    }
+    .govuk-table__header, .govuk-table__cell {
+        width: 0%;
     }
 }

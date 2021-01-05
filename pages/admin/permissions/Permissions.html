@@ -1,12 +1,11 @@
 {% extends "template.njk" %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
-{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+
 
 {% set roles = getRoles() | await %}
 {% set categories = getCategories() | await %}
+{% set entities = entitiesForCategory() | await %}
 
 {% block beforeContent %}
   {% include "navigation.njk" %}
@@ -31,19 +30,37 @@
       </div>
     {% endif %}
     <h1 class="govuk-heading-l">Permissions</h1>
-    <h2 class="govuk-heading-m">Select role</h2>
-    <select class="govuk-select" id="selectRoleId" name="groupValue" 
-      onchange="TRANSITIONDELIVERYDASHBOARD.selectRoleOnChange()">
-        {% for role in roles %}
-            <option value='{{role.id}}' {{ "selected" if selectedRoleId == role.id }} >{{role.name}}</option>
-        {% endfor %}
-    </select>
-    <div class="govuk-grid-row govuk-body category-group">
+    <h2 class="govuk-body govuk-!-margin-bottom-0">Select a role</h2>
+    <form action='{{ url }}/{{selectedRoleId}}/{{selectedCategoryId}}' method='POST' >
+      <select class="govuk-select" id="selectRoleId" name="groupValue" 
+        onchange="TRANSITIONDELIVERYDASHBOARD.selectRoleOnChange()">
+          {% for role in roles %}
+              <option value='{{role.id}}' {{ "selected" if selectedRoleId == role.id }} >{{role.name}}</option>
+          {% endfor %}
+      </select>
+      <div class="govuk-body category-group">
         {% for category in categories %}
             <a href="{{url}}/{{selectedRoleId}}/{{category.id}}" 
-            class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</option>
+            class="govuk-link category {{"selected" if selectedCategoryId == category.id}}">{{category.name}}</a>
         {% endfor %}
-    </div>
+      </div>
+
+      {% if selectedCategoryId %}
+        <div class="govuk-body">
+          {% include "admin/permissions/PermissionsTable.njk" %}
+        </div>
+
+        <div class="govuk-body">
+          {{
+            govukButton({
+                text: "Apply",
+                type: "submit",
+                preventDoubleClick: true
+            })
+          }}
+        </div>
+      {% endif %}
+    </form>
    </div>
   </div>
 {% endblock %}
