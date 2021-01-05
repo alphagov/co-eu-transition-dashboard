@@ -54,7 +54,7 @@ class EntityHelper {
     })
       .then(entities => {
         return entities.reduce((entities, entity) => {
-          if(this.options.roles) {
+          if(this.options.roles && entity.roleEntities) {
             entity.roles = entity.roleEntities.reduce((roles, role) => {
               roles[role.roleId] = role;
               return roles;
@@ -62,7 +62,7 @@ class EntityHelper {
             delete entity.roleEntities;
           }
 
-          if (this.options.fields) {
+          if (this.options.fields && entity.entityFieldEntries) {
             entity.entityFieldEntries.forEach(entityFieldEntry => {
               entity[entityFieldEntry.categoryField.name] = entityFieldEntry.value;
             }, {});
@@ -90,41 +90,52 @@ class EntityHelper {
       }, {});
   }
 
-  async entitiesInCategories(categoryIds) {
+  async entitiesInCategories(categoryIds = []) {
     if(!this.options.category) {
       throw new Error('Must include category in constructor');
     }
 
-    const categoryIdsAsObject = categoryIds.reduce((categoryIdsAsObject, categoryId) => {
-      categoryIdsAsObject[categoryId] = true;
-      return categoryIdsAsObject;
-    }, {});
-
     return Object.values(await this.entities)
-      .filter(entity => {
-        return categoryIdsAsObject[entity.category.id];
-      }, {});
+      .filter(entity => categoryIds.includes(entity.category.id))
   }
 
-  async getParent(entity = {}) {
+  async getEntityData(entityID) {
     const entities = await this.entities;
+    if (entities[entityID]) {
+      return entities[entityID];
+    }
+  }
+
+  async buildHierarchy(entity, parents = []) {
+    const entityCategoryId = entity.category.id;
     if(entity.parents && entity.parents.length) {
-      return await entities[entity.parents[0].id];
+      let selectedEntityParent = entity.parents[0];
+      
+      if (entity.parents.length > 1) {
+        // Entities can be nested and have multiple parents.  When we have multiple
+        // parents we want to find the item which will has the same category ID
+        for (const parent of entity.parents) {
+          const parentEntity = await this.getEntityData(parent.id);
+
+          if (parentEntity.category.id === entityCategoryId) {
+            selectedEntityParent = parent;
+          }  
+        }
+      }
+
+      const parent = await this.getEntityData(selectedEntityParent.id)
+      parents.unshift(parent);
+
+      if (parent.parents && parent.parents.length) {
+        await this.buildHierarchy(parent, parents)
+      }
     }
   }
 
   async getHierarchy(entity) {
     const parents = [];
-
-    let parent = entity;
-    do {
-      parent = await this.getParent(parent);
-      if(parent) {
-        parents.push(parent);
-      }
-    } while (parent);
-
-    return parents.reverse();
+    await this.buildHierarchy(entity, parents)
+    return parents;
   }
 }
 

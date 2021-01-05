@@ -31,7 +31,7 @@
             <td class="govuk-table__cell">
               <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
               {% if entity.hierarchy | length %}
-                <div class="govuk-breadcrumbs">
+                <div class="govuk-breadcrumbs govuk-!-margin-bottom-0">
                   <strong>Hierarchy</strong>:
                   <ol class="govuk-breadcrumbs__list">
                     {% for entityHierarchyItem in entity.hierarchy %}
