@@ -45,7 +45,8 @@ class Permissions extends Page {
   async entitiesForCategory(){
     if (this.req.params.categoryId) {
       this.entityHelper = new EntityHelper({ category: true, fields: ['value'] }); 
-      const entitiesForCategory = await this.entityHelper.entitiesInCategories([this.req.params.categoryId]);
+      const entitiesForCategory = await this.entityHelper.entitiesInCategories(
+        [parseInt(this.req.params.categoryId)]);
       const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
 
       entitiesForCategory.forEach(ec => {
@@ -81,14 +82,6 @@ class Permissions extends Page {
     }
     return [];
   }
-
-  // async postRequest(req, res){
-  //   try{
-
-  //   } catch (error) {
-  //     return res.redirect(this.req.originalUrl);
-  //   }
-  // }
 }
 
 module.exports = Permissions;
