@@ -11,7 +11,7 @@ beforeEach(() => {
   Cypress.Cookies.preserveOnce('jwt');
 });
 
-describe("Workflow for 'Uploader' with 'Viewer' User role - Verify accessible Menus", () => {
+describe("TS02_Uploader_Workflow - 'Uploader' with 'Viewer' User role - Verify accessible Menus", () => {
   before(() => {
   });
 

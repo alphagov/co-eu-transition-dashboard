@@ -13,7 +13,7 @@ beforeEach(() => {
   Cypress.Cookies.preserveOnce('jwt');
 });
 
-describe("As a Management Overivew I can View All Milestone Data on all data page", () => {
+describe("TS_HMG_04_VerifyMilestonesByDept - As a Management Overivew I can View All Milestone Data on all data page", () => {
   before(() => {
   });
 

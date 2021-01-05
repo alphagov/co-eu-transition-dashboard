@@ -1,29 +1,29 @@
-const H1_ManageTags_Xp = "//h1[text()='Manage Tags']";
-const TH_TagName_Xp = "//table//th[text()='Name']";
-const Link_Delete_Xp = "//td/a[text()='Delete']";
-const Link_BackToTagList_Xp = "//a[normalize-space(.)='Back to tag list']";
-const Table_ConfirmDeleteMEasure = ".govuk-table";
+const H1_MANAGETAGS_XP = "//h1[text()='Manage Tags']";
+const TH_TAGNAME_XP = "//table//th[text()='Name']";
+const LINK_DELETE_XP = "//td/a[text()='Delete']";
+const LINK_BACKTO_TAGLIST_XP = "//a[normalize-space(.)='Back to tag list']";
+const TABLE_CONFIRM_DELETE_MEASURE = ".govuk-table";
 
 class Admin {
   verifyManageTagsHeader()
   {
-    cy.xpath(H1_ManageTags_Xp).should('exist');
+    cy.xpath(H1_MANAGETAGS_XP).should('exist');
   }
 
   clickBackToTagList()
   {
-    cy.xpath(Link_BackToTagList_Xp).click();
+    cy.xpath(LINK_BACKTO_TAGLIST_XP).click();
   }
 
   verifyTagList()
   {
-    cy.xpath(TH_TagName_Xp).should("exist");
-    var taglist = [];
+    cy.xpath(TH_TAGNAME_XP).should("exist");
+    let taglist = [];
     cy.getTagList().as('dbResultTagList');
     cy.get('@dbResultTagList').then((res) => {
       taglist = res
       taglist.forEach(element => {
-        cy.xpath("//table//tr[contains(.,'" + element.name + "')]" + Link_Delete_Xp).should('exist');
+        cy.xpath("//table//tr[contains(.,'" + element.name + "')]" + LINK_DELETE_XP).should('exist');
       });
     })
   }
@@ -31,15 +31,15 @@ class Admin {
   verifyListedMeasureOnDelete(tagname)
   {
     
-    var measurelist = [];
+    let measurelist = [];
     cy.getTagedMeasure(tagname).as('dbResudbResultMeasurelistltTagList');
     cy.get('@dbResultMeasurelist').then((res) => {
-      cy.xpath("//table//tr[contains(.,'" + tagname+ "')]" + Link_Delete_Xp).click();
+      cy.xpath("//table//tr[contains(.,'" + tagname+ "')]" + LINK_DELETE_XP).click();
       measurelist = res
-      var measure;
+      let measure;
       measurelist.forEach(element => {
         measure = element.id.replace(/\s+/g, ' ') + " " + element.name.replace(/\s+/g, ' ');
-        cy.get(Table_ConfirmDeleteMEasure).find("tr").contains(measure);
+        cy.get(TABLE_CONFIRM_DELETE_MEASURE).find("tr").contains(measure);
       });
       this.clickBackToTagList();
     })
