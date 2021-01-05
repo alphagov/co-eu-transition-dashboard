@@ -1,0 +1,50 @@
+{% extends "template.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% set categories = getCategories() | await %}
+{% set entities = getEntitiesForCategory(categories[0].id) | await %}
+
+{% block beforeContent %}
+  {% include "navigation.njk" %}
+{% endblock %}
+
+{% block pageTitle %}Manage Entities{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Manage Entities</h1>
+
+      {% for category in categories %}
+        <a href="{{ url }}/{{ category.id }}" class="govuk-link">{{ category.name }}</a>
+      {% endfor %}
+
+      <table class="govuk-table">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header"></th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+        {% for entity in entities %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">
+              <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
+              {% if entity.hierarchy | length %}
+                <div class="govuk-breadcrumbs govuk-!-margin-bottom-0">
+                  <strong>Hierarchy</strong>:
+                  <ol class="govuk-breadcrumbs__list">
+                    {% for entityHierarchyItem in entity.hierarchy %}
+                      <li class="govuk-breadcrumbs__list-item">{{ entityHierarchyItem.name }}</li>
+                    {% endfor %}
+                  </ol>
+                </div>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

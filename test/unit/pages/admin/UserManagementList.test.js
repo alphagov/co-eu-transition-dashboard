@@ -41,12 +41,30 @@ describe('pages/admin/user-management/list/UserManagementList', () => {
   });
 
   describe('#getUsers', () => {
+    const userData = [{ id: 1, email: 'test@digital.com' }, { id: 2, email: 'test@cabinetoffice.com' }, 
+      { id: 3, email: 'test@universalcredit.com' }, { id: 4, email: 'test@digital.com' }];
+
+    beforeEach(()=>{
+      User.findAll.returns(userData);
+    })
+
     it('gets users with roles', async () => {
       await page.getUsers();
 
       sinon.assert.calledWith(User.findAll, {
         include: Role
       });
+    });
+
+    it('gets users and sorts alphabetically by email domain', async () => {
+      const users = await page.getUsers();
+
+      sinon.assert.calledWith(User.findAll, {
+        include: Role
+      });
+
+      expect(users).to.deep.equal([{ id: 2, email: 'test@cabinetoffice.com' }, { id: 1, email: 'test@digital.com' },
+        { id: 4, email: 'test@digital.com' }, { id: 3, email: 'test@universalcredit.com' }])
     });
   });
 });
