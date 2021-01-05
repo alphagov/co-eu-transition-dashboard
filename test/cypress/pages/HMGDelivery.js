@@ -51,6 +51,42 @@ class HMGDelivery {
     })
   } 
 
+  verifyPojectDataOnProjArry(department, prjListArry)
+  {
+    cy.get(H2_NOOFPROJECTS).contains(prjListArry.length + " Projects displayed");
+    prjListArry.forEach(element => {
+      let projName = element.title
+      let departmentdb = element.department_name
+      let impact = element.impact
+      let HMGConfidence = element.HMGConfidence
+      let CitizenReadiness = element.CitizenReadiness
+      let BusinessReadiness = element.BusinessReadiness
+      let EUStateConfidence = element.EUStateConfidence
+      let department_Xpath = "";
+      if(department=="All" || department.split(',').length > 1)
+      {
+        department_Xpath = "/following-sibling::td[.='" + departmentdb + "']";
+      }
+      cy.xpath("//tr//td[.=\"" + projName + "\"]" + department_Xpath + "\
+      /following-sibling::td[.='" + impact + "']/span[@class='cell-color-" + impact + "']\
+      /../following-sibling::td[.='" + HMGConfidence + "']/span[@class='cell-color-" + HMGConfidence + "']\
+      /../following-sibling::td[.='" + CitizenReadiness + "']/span[@class='cell-color-" + CitizenReadiness + "']\
+      /../following-sibling::td[.='" + BusinessReadiness + "']/span[@class='cell-color-" + BusinessReadiness + "']\
+      /../following-sibling::td[.='" + EUStateConfidence + "']/span[@class='cell-color-" + EUStateConfidence + "']").should('exist');
+    });
+  } 
+
+  verifyNoOfPojectDisplayed(department)
+  {
+    let prjlist = [];
+    cy.getProjectData(department).as('dbResultPrjData');
+    cy.get('@dbResultPrjData').then((res) => {
+      prjlist = res[1];
+      cy.log(prjlist);
+      cy.get(H2_NOOFPROJECTS).contains(prjlist.length + " Projects displayed");
+    });
+  }
+
   openProjectAccordian(){
     let regexp = new RegExp("^" + TXT_OPENALL + "$");
     cy.get(DIV_PROJECT_ACCORIDAN).then( ($ele) =>
@@ -116,6 +152,5 @@ class HMGDelivery {
       });
     });
   }
-
 }
 export default HMGDelivery;
