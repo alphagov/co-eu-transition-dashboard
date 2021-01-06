@@ -5,8 +5,13 @@
     "domain": "transition-dashboard.london.cloudapps.digital"
   },
   "services": {
+    "logger": {
+      "format": "json",
+      "includeMeta": true
+    },
     "mysql": {
-      "sslCertificate": "Amazon RDS"
+      "sslCertificate": "Amazon RDS",
+      "logsActive": true
     },
     "tfa": {
       "name": "Transition Taskforce Dashboard"
@@ -17,6 +22,7 @@
     "tableau": {}
   },
   "features": {
-    "missedMilestones": true
+    "missedMilestones": true,
+    "permissions": false
   }
 }

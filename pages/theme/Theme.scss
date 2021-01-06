@@ -1,22 +1,16 @@
-.top-statements {
-    height: 100vh;
-    overflow-y: scroll;
-}
-
 .active-statement {
-    background-color: white !important;
+    background-color: #ffffff !important;
+    a {
+        color: #0b0c0c !important;
+    }
 }
 
-.active-statement ~ .overview-card--link {
-    color: #003078 !important;
-    &:hover {
-        background-color: #f8f8f8;
-    }
+.active-statement + hr + .overview-card--display {
+    background-color: #f8f8f8;
 }
 
 .no-horizontal-padding {
     padding-left: 0;
-    padding-right: 0;
 }
 
 .readiness-accordion-wrapper {
@@ -100,7 +94,7 @@
             border-bottom: 1px solid #f3f2f1;
             padding-bottom: 5px;
         }
-        
+
         > .govuk-accordion__section--expanded > .govuk-accordion__section-header {
             background-color: #ffffff;
             border-bottom: none;
@@ -163,7 +157,7 @@
         text-decoration: none;
         color: #1d70b8;
         ~ .current-status {
-            margin-top: 8px;   
+            margin-top: 8px;
         }
 
         &:before {
@@ -218,6 +212,12 @@
     border: 0;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+#theme-tableu-placeholder {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
 }
 
 .search-right {
@@ -303,4 +303,12 @@
     border-top: 10px solid #B1B4B6;
     border-right: 10px solid transparent;
     border-bottom: 10px solid transparent;
+}
+
+#readiness-theme-page .govuk-grid-column-full {
+    background-color: #ffffff;
+}
+
+#milestone-timeline {
+  max-height: 250px;
 }

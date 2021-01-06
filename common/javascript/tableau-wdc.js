@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-
+/* eslint-disable no-prototype-builtins */
 const getTableauDataType = type => {
   switch (type) {
   case 'string':
@@ -21,16 +21,25 @@ const getTableauDataType = type => {
 const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
 
 (function() {
+  let data;
   // Create the connector object
   var myConnector = tableau.makeConnector();
 
   // Define the schema
   myConnector.getSchema = function (schemaCallback) {
+<<<<<<< HEAD
     if(!tableau.connectionData || !tableau.connectionData.length) {
       throw new Error('Data is not valid');
     }
     var cols = [];
     for (const [key, value] of Object.entries(tableau.connectionData[0])) {
+=======
+    if(!data || !data.length) {
+      throw new Error('Data is not valid');
+    }
+    var cols = [];
+    for (const [key, value] of Object.entries(data[0])) {
+>>>>>>> dbc16b4f2c7d6df3bb21f34319e943d0712dc96c
       cols.push({
         id: formatKey(key),
         dataType: getTableauDataType(value.type),
@@ -48,15 +57,25 @@ const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
   };
 
   myConnector.getData = function (table, doneCallback) {
+<<<<<<< HEAD
     if(!tableau.connectionData || ! tableau.connectionData.length) {
+=======
+    if(!data || ! data.length) {
+>>>>>>> dbc16b4f2c7d6df3bb21f34319e943d0712dc96c
       throw new Error('Data is not valid');
     }
 
     var tableData = [];
 
+<<<<<<< HEAD
     for (var i = 0, len = tableau.connectionData.length; i < len; i++) {
       const tableEntry = {};
       for (const [key, entryValue] of Object.entries(tableau.connectionData[i])) {
+=======
+    for (var i = 0, len = data.length; i < len; i++) {
+      const tableEntry = {};
+      for (const [key, entryValue] of Object.entries(data[i])) {
+>>>>>>> dbc16b4f2c7d6df3bb21f34319e943d0712dc96c
         tableEntry[formatKey(key)] = entryValue.value !== undefined ? entryValue.value : entryValue
       }
       tableData.push(tableEntry);
@@ -100,7 +119,11 @@ const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
 
     const success = response => {
       validateResponse(response);
+<<<<<<< HEAD
       tableau.connectionData = response;
+=======
+      data = response;
+>>>>>>> dbc16b4f2c7d6df3bb21f34319e943d0712dc96c
       initCallback();
       tableau.submit();
     };
@@ -111,7 +134,11 @@ const formatKey = key => key.replace(/[^a-zA-Z0-9_]/g, '');
 
     $.ajax({
       dataType: "json",
+<<<<<<< HEAD
       url: `${url}/data`,
+=======
+      url: `${tableau.connectionData}/data`,
+>>>>>>> dbc16b4f2c7d6df3bb21f34319e943d0712dc96c
       success,
       error
     });

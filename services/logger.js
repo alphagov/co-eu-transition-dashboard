@@ -1,36 +1,37 @@
 const winston = require('winston');
+const httpContext = require('express-http-context');
+const set = require('lodash/set');
+const config = require('config');
 
-const format = winston.format.printf(info => {
-  let messageAsString = `${info.timestamp} ${info.level}:`;
-
-  if(info.headers) {
-    Object.keys(info.headers).forEach(headerName => {
-      messageAsString += ` ${headerName}: ${info.headers[headerName]}`;
-    });
+const addMeta = winston.format(info => {
+  const req = httpContext.get('req') || {};
+  if(req.headers && config.services.logger.includeMeta) {
+    set(info, 'meta.req.headers', req.headers);
   }
 
-  messageAsString += ` ${info.message}`;
-
-  if (info && info instanceof Error) {
-    messageAsString += ` Stack Trace: ${info.stack}`;
+  if(req.user) {
+    info.userId = req.user.id;
   }
 
-  return messageAsString;
+  if(config.services.logger.includeMeta) {
+    info.originalMessage = info.message;
+  }
+
+  return info;
 });
 
-const config = {
+const loggerConfig = {
   transports: [
     new winston.transports.Console()
   ],
   format: winston.format.combine(
-    winston.format.splat(),
-    winston.format.timestamp(),
     winston.format.colorize(),
-    format
+    winston.format.timestamp(),
+    addMeta(),
+    winston.format[config.services.logger.format]()
   )
 };
 
-const logger = winston.createLogger(config);
+const logger = winston.createLogger(loggerConfig);
 
 module.exports = logger;
-

@@ -5,8 +5,14 @@
     "expires": 3600000
   },
   "services": {
+    "logger": {
+      "format": "simple",
+      "includeMeta": false
+    },
     "redis": {},
-    "mysql": {},
+    "mysql": {
+      "logsActive": false
+    },
     "s3": {},
     "tfa": {
       "name": "Transition Taskforce Dashboard"
@@ -34,12 +40,18 @@
       "headlineMeasures": "/admin/headline-measures",
       "userManagementList": "/admin/manage-users-list",
       "userManagementAuthentication": "/admin/manage-users-authentication",
+      "resetUser2FA": "/admin/reset-user-2fa",
       "clearCache": "/admin/clear-cache",
       "createUser": "/admin/create-user",
       "editUser": "/admin/edit-user",
+      "deactivateUser": "/admin/deactivate-user",
       "staticExports": "/admin/static-exports",
       "raygValues": "/admin/rayg-values",
-      "tagManagementList": "/admin/manage-tags-list"
+      "tagManagementAdd": "/admin/manage-tags-add",
+      "tagManagementDelete": "/admin/manage-tags-delete",
+      "tagManagementList": "/admin/manage-tags-list",
+      "permissions": "/admin/permissions",
+      "entityList": "/admin/entity-list"
     },
     "allData": "/all-data",
     "filterExample": "/filter-example",
@@ -100,7 +112,8 @@
     "transitionReadinessTheme": true,
     "transitionReadinessCache": true,
     "measureUpload": true,
-    "measureValue": true
+    "measureValue": true,
+    "permissions": true
   },
   "notify": {
     "createTemplateKey": "ca1dcdac-7d98-4158-be9d-5190ceb62289",

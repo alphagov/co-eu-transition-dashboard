@@ -13,9 +13,9 @@ const moment = require('moment');
 const cloneDeep = require('lodash/cloneDeep');
 const authentication = require('services/authentication');
 const { tableauIpWhiteList } = require('middleware/ipWhitelist');
-const entityUserPermissions = require('middleware/entityUserPermissions');
 const Role = require('models/role');
 const logger = require('services/logger');
+const EntityHelper = require('helpers/entity.js');
 
 class TableauExport extends Page {
   get url() {
@@ -73,7 +73,9 @@ class TableauExport extends Page {
       throw new Error(`Cannot find role: ${roleName}`);
     }
 
-    const entities = await entityUserPermissions.entitiesRoleCanAccess(role);
+    const entityHelper = new EntityHelper({ roles: true });
+    const entities = await entityHelper.entitiesWithRoles([role]);
+
     return entities.map(entity => entity.id);
   }
 
@@ -159,7 +161,7 @@ class TableauExport extends Page {
     });
 
     if(this.restrictExportByRole) {
-      logger.info('restricting entities', { headers: this.req.headers });
+      logger.info('restricting entities');
       // remove any entities role cannot access
       const entityIdsRoleCanAccess = await this.entitiesRoleCanAccess(this.restrictExportByRole);
       entities = entities.filter(entity => entityIdsRoleCanAccess.includes(entity.id));
@@ -178,7 +180,7 @@ class TableauExport extends Page {
       }, {});
 
       entityFieldMap['Public ID'] = { value: entity.publicId, type: 'string' };
-      const lastUpdatedOrCreated = entity.updated_at || entity.created_at;      
+      const lastUpdatedOrCreated = entity.updated_at || entity.created_at;
       entityFieldMap['LastUpdate'] = { value: moment(lastUpdatedOrCreated, 'YYYY-MM-DD').format('DD/MM/YYYY'), type: 'date' };
 
       if(entity.parents.length) {
@@ -276,7 +278,7 @@ class TableauExport extends Page {
 
   async getRequest(req, res) {
     if (this.showForm) {
-      logger.info(`Print tableau request page`, { headers: req.headers });
+      logger.info(`Print tableau request page`);
       return super.getRequest(req, res);
     }
 
@@ -290,10 +292,10 @@ class TableauExport extends Page {
     }
     if (data && data.length) {
       if (this.exportSchema) {
-        logger.info(`Exporting schema ${this.req.params.type}: ${Object.keys(data[0])}`, { headers: req.headers });
+        logger.info(`Exporting schema ${this.req.params.type}: ${Object.keys(data[0])}`);
         return res.json(data[0]);
       } else {
-        logger.info(`Exporting data ${this.req.params.type}: ${Object.keys(data[0])}`, { headers: req.headers });
+        logger.info(`Exporting data ${this.req.params.type}: ${Object.keys(data[0])}`);
         return res.json(data)
       }
     }

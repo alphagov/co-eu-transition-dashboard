@@ -93,7 +93,9 @@ const mapMilestoneToEntity = (milestoneFieldDefinitions, entityFieldMap, project
 
   milestone.milestoneFieldEntries.forEach(milestoneFieldEntry => {
     // Prevent entity category field overwriting the category
-    if (milestoneFieldEntry.milestoneField.name != "category") {
+    if (milestoneFieldEntry.milestoneField.name === "category") {
+      entityFieldMap.categoryName = milestoneFieldEntry.value
+    } else {
       entityFieldMap[milestoneFieldEntry.milestoneField.name] = milestoneFieldEntry.value
     }
   });
@@ -315,7 +317,8 @@ const mapProjectsToEntities = async (entitiesInHierarchy) => {
 }
 
 const sortById = (entity, property) => {
-  const childrenGrouped = groupBy(entity.children, child => child[property]);
+  const entitiesWithProperty = entity.children.filter(child => child[property]);
+  const childrenGrouped = groupBy(entitiesWithProperty, child => child[property]);
 
   if(childrenGrouped) {
     Object.keys(childrenGrouped).forEach(groupKey => {
@@ -623,11 +626,18 @@ const applyUIFlags = (entity) => {
 }
 
 const groupById = (entity) => {
-  if(entity.children && entity.children.length && entity.children[0].groupID) {
-    sortById(entity, 'groupID');
-  } else if(entity.children && entity.children.length && entity.children[0].commsId) {
-    sortById(entity, 'commsId');
-  } else if(entity.children) {
+  const propertiesToGroupBy = ['groupID', 'commsId'];
+  if(entity.children && entity.children.length) {
+    propertiesToGroupBy.forEach(property => {
+      const hasProperty = entity.children.find(child => child.hasOwnProperty(property));
+
+      if(hasProperty) {
+        sortById(entity, property);
+      }
+    });
+  }
+
+  if (entity.children) {
     entity.children.forEach(groupById);
   }
 }
@@ -875,6 +885,7 @@ const measuresWithLink = async (allThemes, publicIds, transitionReadinessThemeDe
 }
 
 module.exports = {
+  applyRagRollups,
   filterTopLevelOutcomeStatementsChildren,
   themeDetail,
   overview,

@@ -341,6 +341,9 @@ class MeasureValue extends Page {
       if (e.updateDueOn) {
         e.updateDueOn = moment(e.updateDueOn, "DD/MM/YYYY").format("YYYY-MM-DD")
       }
+      if (e.activeFrom) {
+        e.activeFrom = moment(e.activeFrom, "DD/MM/YYYY").format("YYYY-MM-DD");
+      }
     });
     const { errors, parsedEntities } = await measures.validateEntities(newEntities);
 
@@ -486,13 +489,11 @@ class MeasureValue extends Page {
     const uiInputs = measures.calculateUiInputs(measureEntities);
 
     const measuresForSelectedDate = measureEntities.filter((measure) => measure.date === this.req.params.date);
-
     if (!moment(this.req.params.date, "DD/MM/YYYY").isValid() || (measuresForSelectedDate.length === 0 && !this.successfulMode)) {
       return this.res.redirect(config.paths.dataEntryEntity.measureList);
     }
 
     const measureValues = this.generateInputValues(uiInputs, measuresForSelectedDate, this.req.params.date);
-
     // measuresEntities are already sorted by date, so the last entry is the newest
     const latestEntity = measureEntities[measureEntities.length - 1];
     const backLink = `${config.paths.dataEntryEntity.measureEdit}/${latestEntity.metricID}/${latestEntity.groupID}`;
@@ -502,7 +503,6 @@ class MeasureValue extends Page {
     const displayRaygValueCheckbox =  !doesHaveFilter && isOnlyMeasureInGroup && isLatestDateOrInTheFuture;
     // Dont show delete if there is only a single date for the measure
     const showDeleteButton = Object.keys(groupBy(measureEntities, measure => measure.date)).length > 1;
-
     return {
       latest: latestEntity,
       fields: uiInputs,

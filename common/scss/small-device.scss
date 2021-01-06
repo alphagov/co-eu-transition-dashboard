@@ -77,10 +77,6 @@
         margin-top: 10px;
     }
 
-    .top-statements {
-        height: auto;
-    }
-
     // Readiness Overview
     .readiness-overview {
         .govuk-grid-column-one-quarter,
@@ -144,6 +140,17 @@
     .accessibility {
         .govuk-grid-column-two-thirds {
             width: 100%;
+        }
+    }
+
+    // Search Measure
+    .search-measure {
+        #dataTable, #search-filters {
+            width: 100% !important;
+        }
+    
+        .search-list a {
+            display: inline-flex;
         }
     }
 }
