@@ -48,14 +48,12 @@ class Permissions extends Page {
       const entitiesForCategory = await this.entityHelper.entitiesInCategories(
         [parseInt(this.req.params.categoryId)]);
       const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
-
       entitiesForCategory.forEach(ec => {
-        const re = roleEntities.find(re => re.entityId == ec.id);
-        if (re) {
-          ec.edit = re.canEdit;
+        if (ec.id in roleEntities) {
+          ec.edit = roleEntities[ec.id].canEdit;
           ec.notSelected = false;
-          ec.view = (!re.canEdit) ? true : false;
-          ec.shouldCascade = re.shouldCascade;
+          ec.view = (!roleEntities[ec.id].canEdit) ? true : false;
+          ec.shouldCascade = roleEntities[ec.id].shouldCascade;
         } else {
           ec.edit = false;
           ec.notSelected = true;
