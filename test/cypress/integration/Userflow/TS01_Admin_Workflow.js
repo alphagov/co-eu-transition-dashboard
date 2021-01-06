@@ -11,7 +11,7 @@ beforeEach(() => {
   Cypress.Cookies.preserveOnce('jwt');
 });
 
-describe("Workflow for 'Admin' with all other User roles - Verify accessible Menus", () => {
+describe("TS01_Admin_Workflow - 'Admin' with all other User roles - Verify accessible Menus", () => {
   before(() => {
   });
 
