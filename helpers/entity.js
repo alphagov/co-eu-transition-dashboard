@@ -94,7 +94,6 @@ class EntityHelper {
     if(!this.options.category) {
       throw new Error('Must include category in constructor');
     }
-
     return Object.values(await this.entities)
       .filter(entity => categoryIds.includes(entity.category.id))
   }

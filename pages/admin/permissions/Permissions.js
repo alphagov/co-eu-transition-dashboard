@@ -5,8 +5,8 @@ const authentication = require('services/authentication');
 const Role = require('models/role');
 const Category = require('models/category');
 const sortBy = require('lodash/sortBy');
-const categories = require('helpers/categories');
-
+const { getEntitiesForRoleId } = require('helpers/roleEntity');
+const EntityHelper = require('helpers/entity');
 
 class Permissions extends Page {
   static get isEnabled() {
@@ -44,7 +44,25 @@ class Permissions extends Page {
 
   async entitiesForCategory(){
     if (this.req.params.categoryId) {
-      return categories.getEntitesForCategory(this.req.params.categoryId);
+      this.entityHelper = new EntityHelper({ category: true, fields: true }); 
+      const entitiesForCategory = await this.entityHelper.entitiesInCategories(
+        [parseInt(this.req.params.categoryId)]);
+      const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
+      entitiesForCategory.forEach(ec => {
+        if (ec.id in roleEntities) {
+          ec.edit = roleEntities[ec.id].canEdit;
+          ec.notSelected = false;
+          ec.view = (!roleEntities[ec.id].canEdit) ? true : false;
+          ec.shouldCascade = roleEntities[ec.id].shouldCascade;
+        } else {
+          ec.edit = false;
+          ec.notSelected = true;
+          ec.view = false;
+          ec.shouldCascade = false;
+        }
+      });
+      
+      return entitiesForCategory;
     }
     return [];
   }
@@ -62,14 +80,6 @@ class Permissions extends Page {
     }
     return [];
   }
-
-  // async postRequest(req, res){
-  //   try{
-
-  //   } catch (error) {
-  //     return res.redirect(this.req.originalUrl);
-  //   }
-  // }
 }
 
 module.exports = Permissions;
