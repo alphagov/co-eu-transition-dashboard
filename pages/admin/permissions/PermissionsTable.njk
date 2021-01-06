@@ -1,6 +1,5 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 
-
 {% set tableRows = [] %}
 
 
@@ -10,12 +9,13 @@
 
   {% set cascadeCheckBox %}
         {{ govukCheckboxes({
-          idPrefix: entity.name,
-          name: entity.name,
+          idPrefix: entity.id,
+          name: entity.id,
           items: [
             {
               value: "cascade",
-              text: " "
+              text: " ",
+              checked: entity.shouldCascade
             }
           ]
         }) }}
@@ -24,20 +24,23 @@
   {% set permissionRadio %}
     {{ govukRadios({
       classes: "govuk-radios--inline radio-option",
-      idPrefix: entity.name,
-      name: entity.name,
+      idPrefix: entity.id,
+      name: entity.id,
       items: [
         {
           value: "view",
-          text: "view"
+          text: "view",
+          checked: entity.view
         },
         {
           value: "edit",
-          text: "edit"
+          text: "edit",
+          checked: entity.edit
         },
         {
           value: "none",
-          text: "none"
+          text: "none",
+          checked: entity.notSelected
         }
       ]
     }) }}
