@@ -11,8 +11,13 @@
 }
 #search-filters {
   .actions {
-    display: flex;
-    justify-content: space-evenly;
+    display: contents;
+    button {
+      margin-right: 10px;
+    }
+     button, a {
+      width: 150px;
+    }
   }
   .govuk-accordion__section--expanded{
     max-height: 300px;
@@ -36,4 +41,18 @@
   p {
     display: none !important;
   }
+}
+
+.search-list {
+  background-color: #f3f2f1;
+  padding: 10px;
+  margin-bottom: 10px;
+    a {
+      margin-right: 20px;
+      display: inline-block;
+    }
+    p:not(:first-child) {
+      text-transform: capitalize;
+      margin: 10px 5px 5px 0;
+    }
 }

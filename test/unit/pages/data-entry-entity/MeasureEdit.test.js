@@ -741,7 +741,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       additionalComment: 'test cmment',
       frequency: 4,
       updateDueOn: '24/12/2020',
-      colour: 'red'
+      colour: 'red',
     },
     {
       id: 1230,
@@ -764,7 +764,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       additionalComment: 'test cmment',
       frequency: 4,
       updateDueOn: '24/12/2020',
-      colour: 'green'
+      colour: 'green',
     }
     ]
 
@@ -790,7 +790,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       additionalComment: 'test cmment',
       frequency: 4,
       updateDueOn: '24/12/2020',
-      colour: 'red'
+      colour: 'red',
     }
     ]
 
@@ -814,7 +814,8 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
       name: 'gp1',
       description: 'desc 1 gp1',
       unit: '#',
-      value: 333
+      value: 333,
+      activeFrom: '20/12/2020'
     }
 
     const futureUpdateDueOn = "2020-12-28";
@@ -822,7 +823,7 @@ describe('pages/data-entry-entity/measure-edit/MeasureEdit', () => {
     const newEntities = [entityToAdd];
     const errors = [{ error: 'error' }]
     const parsedEntities = [entityToAdd];
-    let entitiesToBeSaved = [{ ...entityToAdd , updateDueOn: futureUpdateDueOn }];
+    let entitiesToBeSaved = [{ ...entityToAdd , updateDueOn: futureUpdateDueOn, activeFrom: '2020-12-20' }];
     let allMeasures = [];
 
     measuresEntities.forEach(m => {

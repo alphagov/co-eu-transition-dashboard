@@ -1,5 +1,5 @@
 {% extends "template.njk" %}
-{% from "readiness-accordion.njk" import buildOutcomeMeasures, projectDetails with context %}
+{% from "readiness-accordion.njk" import buildOutcomeMeasures %}
 {% from "attribute.njk" import ariaCurrent %}
 {% from "searchMeasures.njk" import searchMeasuresForm %}
 {% from "status.njk" import currentStatus %}
@@ -9,13 +9,15 @@
 {% set activeStatement = '' %}
 {% set activeColor = '' %}
 {% set projectedIsSelected = data.selected and data.selected.category and data.selected.category.name === 'Project' %}
+{% set milestoneIsSelected = data.selected and data.selected.category and data.selected.category.name === 'Milestone' %}
+{% set isCommentOnlyMeasure = data.selected and data.selected.category and data.selected.category.name === 'Measure' and data.selected.commentsOnly == "Yes" %}
 
 {% block pageTitle %}{{ data.theme.name }} - {{ super() }}{% endblock %}
 
 {% block content %}
 
 <div class="govuk-grid-row" id="readiness-theme-page" data-theme-id="{{ req.params.theme }}">
-<div class="govuk-grid-column-full">
+  <div class="govuk-grid-column-full">
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -28,16 +30,22 @@
 
   <p class="govuk-body-s govuk-!-margin-bottom-5 govuk-!-margin-top-5"><a class="govuk-link" href="{{ config.paths.raygDefinitions }}">Understanding risk levels and how they are calculated</a></p>
 
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+
   <div class="govuk-grid-column-one-quarter no-horizontal-padding {{ 'hide-statement' if req.params.statement }}" id="column-statements">
     <a href="{{ config.paths.readinessOverview }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-statement' if req.params.theme }}" style="display: none;">Overview</a>
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Outcomes</h2>
     <div id="outcome-statements">
     {% for topOutcome in data.topLevelOutcomeStatements %}
     <div class="overview-card {{ topOutcome.color }}">
-      <div class="overview-card--inner {{ 'active-statement' if topOutcome.active }}">   
-      {% if topOutcome.active %} 
-        {% set activeStatement = topOutcome.name %} 
-        {% set activeColor = topOutcome.color %} 
+      <div class="overview-card--inner {{ 'active-statement' if topOutcome.active }}">
+      {% if topOutcome.active %}
+        {% set activeStatement = topOutcome.name %}
+        {% set activeColor = topOutcome.color %}
       {% endif %}
        <h3 class="govuk-heading-s govuk-!-margin-bottom-2"><a href="{{ topOutcome.link }}" class="overview-card--link govuk-link" {{ ariaCurrent(req.params.statement and not req.params.selectedPublicId) }}>{{ topOutcome.name }}</a></h3>
         <p class="govuk-body-s govuk-!-margin-bottom-2">{{ topOutcome.description }}</p>
@@ -69,8 +77,15 @@
   <a href="{{ themeUrl }}/{{ req.params.statement }}" class="govuk-back-link govuk-!-margin-top-0 govuk-!-margin-left-0 {{ 'show-measure' if req.params.selectedPublicId }}" style="display: none;">Select data</a>
   <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Data display</h2>
     {{ activeStatementBox(activeStatement, activeColor) }}
+    {% set selectedItem = data.selected %}
     {% if projectedIsSelected %}
-      {{ projectDetails(data.selected) }}
+      {% set showViewLinks = canAccessProject(selectedItem.publicId) | await %}
+      {% include "theme/partials/projectDetails.njk" %}
+    {% elseif milestoneIsSelected %}
+      {% set showViewLinks = canAccessProject(selectedItem.parents[0].publicId) | await %}
+      {% include "theme/partials/milestoneDetails.njk" %}
+    {% elseif isCommentOnlyMeasure %}
+      {% include "theme/partials/commentOnlyMeasure.njk" %}
     {% elseif not data.iframeUrl.error and not data.iframeUrl.url %}
       <p class="govuk-body-s tableu-message">To view data of measures and metrics, select a data grouping or type</p>
     {% elseif data.iframeUrl.error %}
@@ -80,8 +95,13 @@
     {% endif %}
   </div>
 
-</div>
+  </div>
 </div>
 
+{% endblock %}
 
+{% block afterScript %}
+  <script>
+    TRANSITIONDELIVERYDASHBOARD.milestoneTimeline('milestone-timeline', {{ data.selected | dump | safe }});
+  </script>
 {% endblock %}

@@ -1,0 +1,37 @@
+<div class="govuk-!-padding-left-2" id="project-information-{{ selectedItem.id }}">
+  <h3 class="govuk-heading-m">{{ selectedItem.name }}</h3>
+  {{ currentStatus(selectedItem.color, false, selectedItem.complete == "Yes") }}<br>
+
+  <ul class="govuk-list govuk-body-s">
+    <li>
+      <strong>Project UID</strong>: {{ selectedItem.parents[0].publicId }}
+    </li>
+    <li>
+      <strong>Milestone UID</strong>: {{ selectedItem.publicId }}
+    </li>
+    <li>
+      <strong>Completed</strong>: {{ selectedItem.complete }}
+    </li>
+    <li>
+      <strong>Delivery Confidence</strong>: <span class="cell-color-{{ 'complete' if selectedItem.complete == "Yes" else selectedItem.deliveryConfidence }}">{{ selectedItem.deliveryConfidence }}</span>
+    </li>
+    <li>
+      <strong>Category</strong>: {{ selectedItem.categoryName }}
+    </li>
+    <li>
+      <strong>Theme</strong>: {{ selectedItem.priorityTheme }}
+    </li>
+    <li>
+      <strong>Comment</strong>: {{ selectedItem.comments }}
+    </li>
+  </ul>
+
+  <h4 class="govuk-heading-s">Delivery Timeline</h4>
+  <canvas id="milestone-timeline" aria-label="Milestone delivery timeline" role="img"></canvas>
+
+  <br><br>
+  {% if (req.user.roles | includes(['management'])) and showViewLinks %}
+    <a class="govuk-link" href="{{ config.paths.milestoneDetails | replace(':uid', selectedItem.publicId | urlencode) }}">View Milestone</a> &nbsp;&nbsp;
+    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', selectedItem.parents[0].publicId | urlencode) }}">View Project</a>
+  {% endif %}
+</div>

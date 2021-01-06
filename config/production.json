@@ -5,6 +5,10 @@
     "domain": "transition-dashboard.london.cloudapps.digital"
   },
   "services": {
+    "logger": {
+      "format": "json",
+      "includeMeta": true
+    },
     "mysql": {
       "sslCertificate": "Amazon RDS",
       "logsActive": true
@@ -18,6 +22,7 @@
     "tableau": {}
   },
   "features": {
-    "missedMilestones": true
+    "missedMilestones": true,
+    "permissions": false
   }
 }

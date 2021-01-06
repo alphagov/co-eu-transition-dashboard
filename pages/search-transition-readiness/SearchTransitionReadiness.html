@@ -20,20 +20,21 @@
   }}
 {% endblock %}
 
-{% block pageTitle %}Search transition readiness{% endblock %}
+{% block pageTitle %}Search transition readiness - {{ super() }}{% endblock %}
 
 {% block content %}
 
-<form method="GET" action="{{ url }}">
+<form method="GET" action="{{ url }}" class="search-measure">
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl">
-              <label class="govuk-label--l" for="term">Search measures</label>
+    <div class="govuk-grid-column-two-thirds govuk-!-margin-bottom-5">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+            <label class="govuk-label--l" for="term">Search measures</label>
           </h1>
       {{ searchMeasures(true) }}
     </div>
   </div>
-  <div class="govuk-grid-row">
+
+    <div class="govuk-grid-row" id="hide-filters">
       <div class="govuk-grid-column-one-quarter" id="search-filters" >
         {% include "search-transition-readiness/partials/filters.njk" %}
         <div class="govuk-grid-row actions">
@@ -52,10 +53,25 @@
           }}
         </div>
       </div>
-      <div class="govuk-grid-column-two-thirds">
+
+      <div class="govuk-grid-column-full" id="dataTable">
+
+        <div id="showFiltersBtn">
+        {% include "all-data/partials/filters/show-filter-btn.njk" %}
+        </div>
+
+        <div id="hideFiltersBtn">
+        {% include "all-data/partials/filters/hide-filter-btn.njk" %}
+        </div>
+
+        <div class="search-list hidden">
+          <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Selected filters</p>
+          <hr class="govuk-section-break govuk-section-break--m govuk-!-margin-top-0" aria-hidden="true">
+        </div>
+
         <table class="govuk-table" id="search-table">
           <tbody class="govuk-table__body">
-            <tr class="result-count hidden">
+            <tr class="result-count">
               <td class="govuk-table__cell" colspan="2">
                 <p class="govuk-body govuk-!-margin-0 count"></p>
               </td>

@@ -49,7 +49,9 @@
     config.paths.admin.resetUser2FA,
     config.paths.admin.tagManagementAdd,
     config.paths.admin.tagManagementDelete,
-    config.paths.admin.tagManagementList
+    config.paths.admin.tagManagementList,
+    config.paths.admin.permissions,
+    config.paths.admin.entityList
     ]
 %}
 
@@ -66,6 +68,11 @@
     config.paths.admin.tagManagementAdd,
     config.paths.admin.tagManagementDelete,
     config.paths.admin.tagManagementList
+    ]
+%}
+
+{% set adminEntityList = [
+    config.paths.admin.entityList
     ]
 %}
 
@@ -235,6 +242,18 @@
                 Manage Tags
                 </a>
               </li>
+              {% if config.features.permissions %}
+              <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url == config.paths.admin.permissions }}">
+                <a class="govuk-header__link child-nav" href="{{ config.paths.admin.permissions }}">
+                Permissions
+                </a>
+              </li>
+              <li class="govuk-header__navigation-item child-item {{ 'govuk-header__navigation-item--active' if url in adminEntityList }}">
+                <a class="govuk-header__link child-nav" href="{{ config.paths.admin.entityList }}">
+                Manage Entities
+                </a>
+              </li>
+              {% endif %}
             </ul>
           </li>
           {% endif %}

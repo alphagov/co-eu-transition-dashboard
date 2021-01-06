@@ -1,0 +1,8 @@
+<div class="govuk-!-padding-left-2 project-information" id="project-information-{{ selectedItem.id }}">
+  <h3 class="govuk-heading-m">{{ selectedItem.name }}</h3>
+  <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ selectedItem.hmgConfidence }}">{{ selectedItem.hmgConfidence }}</span></p>
+  <p class="govuk-body">{{ selectedItem.description }}</p>
+  {% if (req.user.roles | includes(['management'])) and showViewLinks %}
+    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', selectedItem.publicId | urlencode) }}">View project</a>
+  {% endif %}
+</div>
