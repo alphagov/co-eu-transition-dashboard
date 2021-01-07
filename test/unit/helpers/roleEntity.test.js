@@ -12,7 +12,6 @@ describe('helpers/roleEntity', ()=>{
                 entityId:2, canEdit: false, shouldCascade: true 
             }]);
             const entities = await roleEntity.getEntitiesForRoleId(roleId);
-            console.log('***entities', entities);
             expect(entities).to.eql({
                 '1': { canEdit: true, shouldCascade: false },
                 '2': { canEdit: false, shouldCascade: true }
