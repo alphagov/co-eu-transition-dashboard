@@ -5,7 +5,7 @@ const authentication = require('services/authentication');
 const Role = require('models/role');
 const Category = require('models/category');
 const sortBy = require('lodash/sortBy');
-const { getEntitiesForRoleId } = require('helpers/roleEntity');
+const { getEntitiesForRoleId, doesEntityHasParentsPermission } = require('helpers/roleEntity');
 const EntityHelper = require('helpers/entity');
 
 class Permissions extends Page {
@@ -48,7 +48,9 @@ class Permissions extends Page {
       const entitiesForCategory = await this.entityHelper.entitiesInCategories(
         [parseInt(this.req.params.categoryId)]);
       const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
-      entitiesForCategory.forEach(ec => {
+      let i;
+      for (i in entitiesForCategory) {
+        const ec = entitiesForCategory[i];
         if (ec.id in roleEntities) {
           ec.edit = roleEntities[ec.id].canEdit;
           ec.notSelected = false;
@@ -60,8 +62,9 @@ class Permissions extends Page {
           ec.view = false;
           ec.shouldCascade = false;
         }
-      });
-      
+        const hierarchy = await this.entityHelper.getHierarchy(ec);
+        ec.hasParentsPermission = doesEntityHasParentsPermission(roleEntities, hierarchy);
+      }
       return entitiesForCategory;
     }
     return [];
