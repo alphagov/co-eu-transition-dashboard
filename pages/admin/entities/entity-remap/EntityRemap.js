@@ -7,8 +7,6 @@ const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const CategoryParent = require('models/CategoryParent');
-
-
 class EntityRemap extends Page {
   get url() {
     return paths.admin.entityRemap;
@@ -24,12 +22,15 @@ class EntityRemap extends Page {
     ];
   }
 
-  get categorySelected() {
-    return this.req.params && this.req.params.publicId;
+  async getCategories() {
+    const categories = await Category.findAll();
+
+    return categories.reduce((acc, category) => {
+      return { ...acc, [category.id]: category.name };
+    }, {})
   }
 
   async getEntity() {
-
     const entity = await Entity.findOne({
       where: { publicId: this.req.params.publicId },
       include: [{
@@ -44,32 +45,34 @@ class EntityRemap extends Page {
       entity[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
     });
      
-   
-
-    console.log('sdfsdfsdsdfs', entity)
-    const allowedParentCategories = await this.getAllowedParentCategories(entity.categoryId)
-
-    console.log('allowedParentCategories', allowedParentCategories)
-
     return entity;
-
-    // const entityHelper = new EntityHelper({ fields: true, category: true });
-    // const entities = await entityHelper.entitiesInCategories([this.categorySelected || defaultCategoryId]);
-
-    // for(const entity of entities) {
-    //   entity.hierarchy = await entityHelper.getHierarchy(entity);
-    // }
-
-    // return entities;
   }
 
-  async getAllowedParentCategories(categoryId) {
+  async getCategoryParents(categoryId) {
     return CategoryParent.findAll({
       attributes: { exclude: ['id'] },
       where: { categoryId },
     });
   }
-  
+
+  async getParentEntities(entity) {
+    const categoryParents = await this.getCategoryParents(entity.categoryId);
+    const categoryIds = categoryParents.map(category => category.parentCategoryId);
+
+    const entityHelper = new EntityHelper({ fields: true, category: true });
+    const entities = await entityHelper.entitiesInCategories(categoryIds);
+
+    for (const entity of entities) {
+      entity.hierarchy = await entityHelper.getHierarchy(entity);
+    }
+
+    const entitiesByCategory = entities.reduce((acc, entity) => {
+      acc[entity.category.id] = [ ...(acc[entity.category.id] || []), entity]
+      return acc
+    }, {});
+
+    return entitiesByCategory;
+  }
 }
 
 module.exports = EntityRemap;
