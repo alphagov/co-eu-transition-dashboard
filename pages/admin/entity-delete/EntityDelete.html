@@ -22,56 +22,13 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">Delete entity {{ entity.publicId }}</h1>
-    {{ entity | dump }}
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Delete entity {{ entity.publicId }}</h1>
+    <p class="govuk-body-l">{{ entity.entityFieldEntries[0].value }}</p>
 
     {% if entity.children | length %}
-
-        {{ govukWarningText({
-            text: "This entity can’t be removed until the children have been remapped or deleted",
-            iconFallbackText: "Warning"
-        }) }}
-
-      <table class="govuk-table">
-        <thead class="govuk-table__head">
-          <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Public ID</th>
-            <th scope="col" class="govuk-table__header">Entity Name</th>
-            <th scope="col" class="govuk-table__header"></th>
-          </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-        {% for child in entity.children %}
-          <tr class="govuk-table__row">
-            <td class="govuk-table__cell">{{ child.publicId }}</td>
-            <td class="govuk-table__cell">{{ child.name }}</td>
-            <td class="govuk-table__cell">
-                <a href="{{ config.paths.admin.entityDelete }}/{{ child.publicId }}" class="govuk-link edit-link">Delete</a>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-
+        {% include "admin/entity-delete/partials/children-entity.njk" %}
     {% else %}
-
-    {{ govukPanel({
-        titleText: "Are you sure you want to delete entity " + entity.publicId + "?",
-        html: entity.name,
-        classes: 'red-panel'
-    }) }}
-
-    {{ govukButton({
-        text: "Cancel",
-        classes: "govuk-button--secondary back-measure-button",
-        href: config.paths.admin.entityList
-    }) }}
-
-    {{ govukButton({
-        text: "Delete",
-        classes: "govuk-button--warning back-measure-button"
-    }) }}
-
+        {% include "admin/entity-delete/partials/delete-confirmation.njk" %}
     {% endif %}
 
  </div>

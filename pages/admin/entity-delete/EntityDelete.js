@@ -1,8 +1,6 @@
 const Page = require('core/pages/page');
 const { paths } = require('config');
 const authentication = require('services/authentication');
-const Category = require('models/category');
-const CategoryField = require('models/categoryField');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 
@@ -28,7 +26,12 @@ class EntityDelete extends Page {
       },
       include: [{
         model: Entity,
-        as: 'children'
+        as: 'children',
+        include: {
+          model: EntityFieldEntry,
+        }
+      }, {
+        model: EntityFieldEntry,
       }]
     });
   }
