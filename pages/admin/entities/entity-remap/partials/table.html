@@ -1,0 +1,46 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% for categoryId, parentEntitied in parentEntitiesByCategory %}
+  <table class="govuk-table govuk-!-margin-top-0">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">
+        {{ categories[categoryId] }}
+        </th>
+        <th scope="col" class="govuk-table__header"></th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for entity in parentEntitied %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">
+          <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
+          {% if entity.hierarchy | length %}
+          <div class="govuk-breadcrumbs govuk-!-margin-bottom-0">
+            <strong>Hierarchy</strong>:
+            <ol class="govuk-breadcrumbs__list">
+              {% for entityHierarchyItem in entity.hierarchy %}
+                <li class="govuk-breadcrumbs__list-item">{{ entityHierarchyItem.name }}</li>
+              {% endfor %}
+            </ol>
+          </div>
+        {% endif %}
+        </td>
+        <td class="govuk-table__cell">
+        {{ govukCheckboxes({
+            name: entity.id,
+            classes: "govuk-checkboxes--small",
+            items: [
+              {
+                value: "ttttt",
+                text: " ",
+                checked: entity.shouldCascade
+              }
+            ]
+          }) }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endfor %}
