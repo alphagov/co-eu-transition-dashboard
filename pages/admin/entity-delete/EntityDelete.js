@@ -3,6 +3,7 @@ const { paths } = require('config');
 const authentication = require('services/authentication');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
+const CategoryField = require('models/categoryField');
 
 class EntityDelete extends Page {
   get url() {
@@ -20,7 +21,7 @@ class EntityDelete extends Page {
   }
 
   async getEntity() {
-    return Entity.findOne({
+    const entity = await Entity.findOne({
       where: {
         public_id: this.req.params.publicId
       },
@@ -29,11 +30,31 @@ class EntityDelete extends Page {
         as: 'children',
         include: {
           model: EntityFieldEntry,
+          include: {
+            model: CategoryField
+          }
         }
       }, {
         model: EntityFieldEntry,
+        include: {
+          model: CategoryField
+        }
       }]
     });
+
+    entity.entityFieldEntries.map(entityfieldEntry => {
+      entity[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
+    });
+
+    if (entity.children.length) {
+      for (const child of entity.children) {
+        child.entityFieldEntries.map(entityfieldEntry => {
+          child[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
+        });
+      }
+    }
+
+    return entity;
   }
 }
 
