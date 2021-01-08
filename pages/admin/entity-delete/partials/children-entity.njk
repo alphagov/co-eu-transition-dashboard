@@ -1,0 +1,26 @@
+{{ govukWarningText({
+    text: "This entity can’t be removed until their children have been remapped or deleted",
+    iconFallbackText: "Warning"
+}) }}
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Public ID</th>
+        <th scope="col" class="govuk-table__header">Entity Name</th>
+        <th scope="col" class="govuk-table__header"></th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    {% for child in entity.children %}
+        <tr class="govuk-table__row">
+        <td class="govuk-table__cell">{{ child.publicId }}</td>
+        <td class="govuk-table__cell">{{ child.name }}</td>
+        <td class="govuk-table__cell">
+            <a href="{{ config.paths.admin.entityRemap }}/{{ child.publicId }}" class="govuk-link edit-link govuk-!-margin-left-2">Remap</a>
+            <a href="{{ config.paths.admin.entityDelete }}/{{ child.publicId }}" class="govuk-link edit-link">Delete</a>
+        </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
