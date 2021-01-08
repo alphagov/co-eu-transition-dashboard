@@ -63,6 +63,9 @@ class Permissions extends Page {
         ec.name = (ec.name) ? ec.name : 'Entity name is not set';
         const hierarchy = await this.entityHelper.getHierarchy(ec);
         ec.hasParentsPermission = doesEntityHasParentsPermission(roleEntities, hierarchy);
+        if (ec.hasParentsPermission) {
+          console.log('***ec', ec);
+        }
       }
       return entitiesForCategory;
     }

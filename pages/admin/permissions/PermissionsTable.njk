@@ -11,11 +11,13 @@
         {{ govukCheckboxes({
           idPrefix: entity.id,
           name: entity.id,
+          classes: "govuk-checkboxes--small",
           items: [
             {
               value: "cascade",
               text: " ",
-              checked: entity.shouldCascade
+              checked: entity.shouldCascade,
+              disabled: true if entity.hasParentsPermission
             }
           ]
         }) }}
@@ -23,24 +25,27 @@
 
   {% set permissionRadio %}
     {{ govukRadios({
-      classes: "govuk-radios--inline radio-option",
+      classes: "govuk-radios--inline radio-option govuk-radios--small",
       idPrefix: entity.id,
       name: entity.id,
       items: [
         {
           value: "view",
           text: "view",
-          checked: entity.view
+          checked: entity.view,
+          disabled: true if entity.hasParentsPermission
         },
         {
           value: "edit",
           text: "edit",
-          checked: entity.edit
+          checked: entity.edit,
+          disabled: true if entity.hasParentsPermission
         },
         {
           value: "none",
           text: "none",
-          checked: entity.notSelected
+          checked: entity.notSelected,
+          disabled: true if entity.hasParentsPermission
         }
       ]
     }) }}
@@ -68,7 +73,8 @@
       firstCellIsHeader: true,
       head: [
         {
-          text: "Category"
+          text: "Category",
+          classes: "header-first"
         },
         {
           text: "Permissions",
