@@ -1,0 +1,48 @@
+{% extends "template.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set categories = getCategories() | await %}
+{% set selectedEntity = getEntity() | await %}
+{% set parentEntitiesByCategory = getParentEntities(selectedEntity) | await %}
+
+{% block beforeContent %}
+  {% include "navigation.njk" %}
+{% endblock %}
+
+{% block pageTitle %}Remap Entities{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Remap Entity</h1>
+
+      <h2 class="govuk-heading-m govuk-!-font-weight-regular"><strong>{{ selectedEntity.publicId }}</strong>: {{ selectedEntity.name }}</h2> 
+
+      {% if parentEntitiesByCategory | length %}
+
+        {% include "admin/entities/entity-remap/partials/table.html" %}
+
+        {{
+          govukButton({
+            text: "Save",
+            type: "submit",
+            preventDoubleClick: true,
+            classes: "edit-user-button"
+          })
+        }}
+
+        {{
+          govukButton({
+            text: "Cancel",
+            href:  config.paths.admin.entityList,
+            classes: "govuk-button--secondary edit-user-button"
+          })
+        }}
+      {% else %}
+        <h3 class="govuk-heading-m">No parent entities found</h3>
+      {% endif %}
+
+    </div>
+  </div>
+{% endblock %}
