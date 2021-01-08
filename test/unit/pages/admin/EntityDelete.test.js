@@ -4,6 +4,7 @@ const EntityDelete = require("pages/admin/entity-delete/EntityDelete");
 const authentication = require("services/authentication");
 const Entity = require("models/entity");
 const EntityFieldEntry = require('models/entityFieldEntry');
+const CategoryField = require('models/categoryField');
 
 let page = {};
 let res = {};
@@ -46,7 +47,23 @@ describe("pages/admin/entity-delete/EntityDelete", () => {
   });
   
   describe('#getEntity', () => {
-    const entity =  { public_id: 1, entityFieldEntries: [], children: [{ public_id: 1, entityFieldEntries: [] }] }; 
+    const entity =  { 
+      public_id: 1, 
+      entityFieldEntries: [{
+        categoryField: {
+          name: 'name',
+        },
+        value: 'name one'
+      }], children: [{ 
+        public_id: 2, 
+        entityFieldEntries: [{
+          categoryField: {
+            name: 'name',
+          },
+          value: 'name two' 
+        }] 
+      }] 
+    }; 
 
     beforeEach(()=>{
       Entity.findOne.returns(entity);
@@ -54,7 +71,6 @@ describe("pages/admin/entity-delete/EntityDelete", () => {
 
     it('returns entity and its children based on publicId', async ()=>{
       const response = await page.getEntity();
-      expect(response).to.deep.equal(entity)
 
       sinon.assert.calledWith(Entity.findOne, {
         where: {
@@ -65,12 +81,39 @@ describe("pages/admin/entity-delete/EntityDelete", () => {
           as: 'children',
           include: {
             model: EntityFieldEntry,
+            include: {
+              model: CategoryField
+            }
           }
         }, {
           model: EntityFieldEntry,
+          include: {
+            model: CategoryField
+          }
         }]
       });
-      
-    });
-  });
+
+      expect(response).to.deep.equal({ 
+        children: [{
+          entityFieldEntries: [{
+            categoryField: {
+              name: 'name'
+            },
+            value: 'name two'
+          }],
+          name: 'name two',
+          public_id: 2
+        }],
+        entityFieldEntries: [{
+          categoryField: {
+            name: 'name'
+          },
+          value: 'name one'
+        }
+        ],
+        name: 'name one',
+        public_id: 1
+      })
+    })
+  })
 });
