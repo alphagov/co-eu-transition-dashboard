@@ -16,7 +16,7 @@
       <h1 class="govuk-heading-l">Manage Entities</h1>
 
       {% for category in categories %}
-        <a href="{{ url }}/{{ category.id }}" class="govuk-link">{{ category.name }}</a>
+        <a href="{{ url }}/{{ category.id }}" class="govuk-link govuk-!-margin-right-1">{{ category.name }}</a>
       {% endfor %}
 
       <table class="govuk-table">
@@ -43,7 +43,8 @@
               {% endif %}
             </td>
             <td class="govuk-table__cell text-align-right">
-              <a href="{{ config.paths.admin.entityRemap }}/{{ entity.publicId }}" class="govuk-link">Remap Entity</a>
+              <a href="{{ config.paths.admin.entityRemap }}/{{ entity.publicId }}" class="govuk-link govuk-!-margin-right-2">Remap</a>
+              <a href="{{ config.paths.admin.entityDelete }}/{{ entity.publicId }}" class="govuk-link">Delete</a>
             </td>
           </tr>
         {% endfor %}

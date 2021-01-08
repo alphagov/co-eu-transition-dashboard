@@ -60,6 +60,7 @@ class Permissions extends Page {
           ec.view = false;
           ec.shouldCascade = false;
         }
+        ec.name = (ec.name) ? ec.name : 'Entity name is not set';
         const hierarchy = await this.entityHelper.getHierarchy(ec);
         ec.hasParentsPermission = doesEntityHasParentsPermission(roleEntities, hierarchy);
       }

@@ -52,7 +52,8 @@
       "tagManagementList": "/admin/manage-tags-list",
       "permissions": "/admin/permissions",
       "entityList": "/admin/entity-list",
-      "entityRemap":  "/admin/entity-remap"
+      "entityRemap":  "/admin/entity-remap",
+      "entityDelete": "/admin/delete-entity"
     },
     "allData": "/all-data",
     "filterExample": "/filter-example",
