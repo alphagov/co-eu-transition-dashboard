@@ -15,6 +15,20 @@ const getEntitiesForRoleId = async(roleId) => {
   },{})
 }
 
+const doesEntityHasParentsPermission = (roleEntities, entities) => {
+  for(const entity of entities) {
+    for(const parent of entity.parents) {
+      const parentEntityId = parent.id;
+      if (parentEntityId in roleEntities && roleEntities[parentEntityId].shouldCascade) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+
 module.exports = {
-  getEntitiesForRoleId
+  getEntitiesForRoleId,
+  doesEntityHasParentsPermission
 }
