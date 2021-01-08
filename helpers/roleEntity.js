@@ -16,12 +16,9 @@ const getEntitiesForRoleId = async(roleId) => {
 }
 
 const doesEntityHasParentsPermission = (roleEntities, entities) => {
-  let i;
-  for(i in entities) {
-    let j;
-    const entity = entities[i];
-    for(j in entity.parents) {
-      const parentEntityId = entity.parents[j].id;
+  for(const entity of entities) {
+    for(const parent of entity.parents) {
+      const parentEntityId = parent.id;
       if (parentEntityId in roleEntities && roleEntities[parentEntityId].shouldCascade) {
         return true;
       }
