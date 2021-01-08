@@ -27,37 +27,39 @@ describe("TS01_Admin_Workflow - 'Admin' with all other User roles - Verify acces
 
   //Verify that I am allowed to access 'Tranistion Readiness' menu and all submenus underneath
   it("Can see and access 'Tranistion Readiness' menu and all submenus underneath", function () {
-    nav.selectMainmenu(nav.Menu_Tranistion_Readiness);
-    nav.verifySubmenu(nav.SubMenu_Overview);
+    nav.selectMainmenu(nav.menuTranistionReadiness);
+    nav.verifySubmenu(nav.subMenuOverview);
     nav.verifyAllThemes();
   });
 
   //Verify that I am allowed to access 'HMG delivery management information' menu and all submenus underneath
   it("Can see and access 'HMG delivery management information' menu and all submenus underneath", function () {
-    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
-    nav.verifySubmenu(nav.SubMenu_Reporting_overview);
-    nav.verifySubmenu(nav.SubMenu_Alldata);
-    nav.verifySubmenu(nav.SubMenu_Missedmilestones);
-    nav.verifySubmenu(nav.SubMenu_Upcomingmilestones);
+    nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
+    nav.verifySubmenu(nav.subMenuReportingOverview);
+    nav.verifySubmenu(nav.subMenuAlldata);
+    nav.verifySubmenu(nav.subMenuMissedMilestones);
+    nav.verifySubmenu(nav.subMenuUpcomingMilestones);
   });
 
   //Verify that I am allowed to access 'Add data' menu and all submenus underneath
   it("Can see and access 'Add data' menu and all submenus underneath", function () {
-    nav.selectMainmenu(nav.Menu_Adddata);
-    nav.verifySubmenu(nav.SubMenu_Managementinformation);
+    nav.selectMainmenu(nav.menuAdddata);
+    nav.verifySubmenu(nav.subMenuManagementInformation);
     nav.verifySubmenu(nav.SubMenu_Measures);
   });
 
   //Verify that I am allowed to access 'Admin' mneu and all submenus underneath
   it("Can see and access 'Admin' menu and all submenus underneath", function () {
-    nav.selectMainmenu(nav.Menu_Admin);
-    nav.verifySubmenu(nav.SubMenu_MIdatastructure);
-    nav.verifySubmenu(nav.SubMenu_Managecategories);
-    nav.verifySubmenu(nav.SubMenu_ManageHeadlineMeasures);
-    nav.verifySubmenu(nav.SubMenu_ManageUsers);
-    nav.verifySubmenu(nav.SubMenu_Entitydataimport);
-    nav.verifySubmenu(nav.SubMenu_StaticExport);
-    nav.verifySubmenu(nav.SubMenu_RAYGValues);
-    nav.verifySubmenu(nav.SubMenu_ManageTags);
+    nav.selectMainmenu(nav.menuAdmin);
+    nav.verifySubmenu(nav.subMenuMIDataStructure);
+    nav.verifySubmenu(nav.subMenuManageCategories);
+    nav.verifySubmenu(nav.subMenuManageHeadlineMeasures);
+    nav.verifySubmenu(nav.subMenuManageUsers);
+    nav.verifySubmenu(nav.subMenuEntitydataimport);
+    nav.verifySubmenu(nav.subMenuStaticExport);
+    nav.verifySubmenu(nav.subMenuRAYGValues);
+    nav.verifySubmenu(nav.subMenuManageTags);
+    nav.verifySubmenu(nav.subMenuPermissions);
+    nav.verifySubmenu(nav.subMenuManageEntities);
   });
 });

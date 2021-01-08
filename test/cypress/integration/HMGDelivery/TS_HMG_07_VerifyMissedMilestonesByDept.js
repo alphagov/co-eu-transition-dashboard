@@ -47,8 +47,8 @@ describe("TS_HMG_07_VerifyMissedMilestonesByDept - As a Management Overivew I ca
   });
 
   it("Can view list of All missed Milestone for given department", function () {
-    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
-    nav.selectSubmenu(nav.SubMenu_Missedmilestones);
+    nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
+    nav.selectSubmenu(nav.subMenuMissedMilestones);
     hmg.verifyMissedMilestones(allMilestListArry);
   });
 

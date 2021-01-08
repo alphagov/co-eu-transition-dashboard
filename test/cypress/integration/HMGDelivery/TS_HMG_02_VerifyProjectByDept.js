@@ -26,8 +26,8 @@ describe("TS_HMG_02_VerifyProjectByDept - As a Management Overivew I can View Al
   });
 
   it("Can view list of All Project and and all relevant fiedl valus on list page (Including no. of project)", function () {
-    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
-    nav.selectSubmenu(nav.SubMenu_Alldata)
+    nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
+    nav.selectSubmenu(nav.subMenuAlldata)
     hmg.verifyProjectDataHeader(department);
     hmg.verifyPojectData(department);
   });
