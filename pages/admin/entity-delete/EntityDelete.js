@@ -61,13 +61,22 @@ class EntityDelete extends Page {
     return Entity.destroy({
       where: {
         public_id: this.req.params.publicId
-      }
+      },
+      include: [{
+        model: Entity,
+        as: 'parents',
+        include: {
+          model: EntityFieldEntry
+        }
+      }, {
+        model: EntityFieldEntry
+      }]
     });
   }
 
   async postRequest(req, res) {
     await this.deleteEntity();
-    return res.redirect(paths.admin.entityDelete);
+    return res.redirect(paths.admin.entityList);
   }
 }
 
