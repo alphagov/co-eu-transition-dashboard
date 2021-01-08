@@ -51,7 +51,8 @@
       "tagManagementDelete": "/admin/manage-tags-delete",
       "tagManagementList": "/admin/manage-tags-list",
       "permissions": "/admin/permissions",
-      "entityList": "/admin/entity-list"
+      "entityList": "/admin/entity-list",
+      "entityDelete": "/admin/entity-list/delete-entity"
     },
     "allData": "/all-data",
     "filterExample": "/filter-example",
