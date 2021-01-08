@@ -1,7 +1,7 @@
 const { expect, sinon } = require("test/unit/util/chai");
 const config = require("config");
 
-const EntityList = require("pages/admin/entity-list/EntityList");
+const EntityList = require("pages/admin/entities/entity-list/EntityList");
 const authentication = require("services/authentication");
 const Entity = require("models/entity");
 const Category = require("models/category");
@@ -10,7 +10,7 @@ let page = {};
 let res = {};
 let req = {};
 
-describe("pages/admin/entity-list/EntityList", () => {
+describe("pages/admin/entities/entity-list/EntityList", () => {
   beforeEach(() => {
     res = { cookies: sinon.stub() };
     req = { cookies: [] };
