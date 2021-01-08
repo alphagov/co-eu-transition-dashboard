@@ -3,6 +3,8 @@
     classes: 'red-panel'
 }) }}
 
+<form action="{{ config.paths.admin.entityDelete }}/{{ entity.publicId }}" method="post">
+
 {{ govukButton({
     text: "Cancel",
     classes: "govuk-button--secondary back-measure-button",
@@ -13,3 +15,5 @@
     text: "Delete",
     classes: "govuk-button--warning back-measure-button"
 }) }}
+
+</form>

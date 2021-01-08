@@ -56,6 +56,19 @@ class EntityDelete extends Page {
 
     return entity;
   }
+
+  async deleteEntity() {
+    return Entity.destroy({
+      where: {
+        public_id: this.req.params.publicId
+      }
+    });
+  }
+
+  async postRequest(req, res) {
+    await this.deleteEntity();
+    return res.redirect(paths.admin.entityDelete);
+  }
 }
 
 module.exports = EntityDelete;
