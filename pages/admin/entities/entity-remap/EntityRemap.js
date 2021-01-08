@@ -4,7 +4,7 @@ const EntityHelper = require('helpers/entity');
 const authentication = require('services/authentication');
 const Category = require('models/category');
 const CategoryField = require('models/categoryField');
-const CategoryParent = require('models/CategoryParent');
+const CategoryParent = require('models/categoryParent');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 class EntityRemap extends Page {

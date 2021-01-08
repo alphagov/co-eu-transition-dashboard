@@ -5,7 +5,7 @@ const EntityRemap = require("pages/admin/entities/entity-remap/EntityRemap");
 const authentication = require("services/authentication");
 const Category = require('models/category');
 const CategoryField = require('models/categoryField');
-const CategoryParent = require('models/CategoryParent');
+const CategoryParent = require('models/categoryParent');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 
