@@ -1,3 +1,5 @@
+const { groupBy } = require('../support/utils');
+
 const H2_NOOFPROJECTS = ".govuk-heading-m";
 const DIV_PRJ_ACCORDIAN_XP = "//div[@class='govuk-accordion__section-header']";
 const DIV_MILESTNE_EXPANDED_XP = "div[@class='govuk-accordion__section govuk-accordion__section--expanded']";
@@ -6,6 +8,8 @@ const DIV_MILSTNE_TBL_XP = "//div[starts-with(@id,'accordion-table-content-')]";
 const DIV_PROJECT_ACCORIDAN = "#accordion-table button[class='govuk-accordion__open-all']";
 const TXT_OPENALL = "Open all sections" ;
 const TXT_CLOSEALL = "Close all sections";
+const BODY_MISSED_MILESTONE = ".govuk-table__body";
+
 
 class HMGDelivery {
   verifyProjectDataHeader(department)
@@ -151,6 +155,56 @@ class HMGDelivery {
           + mlsele.LastComment ).replace(/\s+/g, ' ').trim());
       });
     });
+  }
+
+  getDuedate(obj) {
+    return obj.Duedate
+  }
+
+  getTheme(obj) {
+    return obj.Theme
+  }
+
+  verifyMissedMilestones(milestListArry)
+  {
+    let arry = groupBy(milestListArry, this.getDuedate);
+    Object.keys(arry).forEach(key => {
+      let noofmilestones = arry[key].length;
+      let milesarry = arry[key];
+      milesarry.forEach(mele => {
+        if (noofmilestones <= 1)
+        {
+          cy.get(BODY_MISSED_MILESTONE).contains((key + " " + noofmilestones).replace(/\s+/g, ' ').trim()).parents("tr").contains(
+            (mele.Uid + " " + mele.Department + " " + mele.Theme + " " + mele.ProjectName + " " + mele.DeliveryConfidence + " " 
+            + mele.ProjectImpact).replace(/\s+/g, ' ').trim()).find("a[href='/milestone-details/" + mele.Uid.replace(' ', '%20')  + 
+            "']").parents("td").nextAll().find("a[href='/project-details/" + mele.ProjectUid.replace(' ', '%20')  + 
+            "']").parents("tr").next().contains(mele.MilestoneDescription.replace(/\s+/g, ' ').trim());
+        }
+        else
+        {
+          cy.get(BODY_MISSED_MILESTONE).contains((key + " " + noofmilestones).replace(/\s+/g, ' ').trim()).parents("tbody").contains(
+            (mele.Uid + " " + mele.Department + " " + mele.Theme + " " + mele.ProjectName + " " + mele.DeliveryConfidence + " " 
+            + mele.ProjectImpact).replace(/\s+/g, ' ').trim()).find("a[href='/milestone-details/" + mele.Uid.replace(' ', '%20') + 
+            "']").parents("td").nextAll().find("a[href='/project-details/" + mele.ProjectUid.replace(' ', '%20')  + 
+            "']").parents("tr").next().contains(mele.MilestoneDescription.replace(/\s+/g, ' ').trim());
+        }
+      });
+    })
+  }
+
+  getThemewithMaximumMissedMilestone(milestListArry)
+  {
+    let maxthme;
+    let arry = groupBy(milestListArry, this.getTheme);
+    let noofmilestones = 0;
+    Object.keys(arry).forEach(key => {
+      if (noofmilestones < arry[key].length)
+      {
+        noofmilestones = arry[key].length;
+        maxthme = key;
+      }
+    });
+    return maxthme;
   }
 }
 export default HMGDelivery;

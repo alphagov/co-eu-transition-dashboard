@@ -23,7 +23,7 @@ Cypress.Commands.add('addroles', (rolename) => {
   }
   else
   {
-    let rolelist = rolename.split(',');
+    const rolelist = rolename.split(',');
     cy.log(rolelist);
     rolelist.forEach(rolename => {
       addrole(rolename).as('dbResultUserID');
@@ -48,7 +48,7 @@ Cypress.Commands.add('addDepartments', ( departmentname) => {
   }
   else
   {
-    let deplist = departmentname.split(',');
+    const deplist = departmentname.split(',');
     cy.log(deplist);
     deplist.forEach(depelement => {
       addDepartment(depelement).as('dbResultUserID');

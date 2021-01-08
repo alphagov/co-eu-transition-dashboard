@@ -6,7 +6,7 @@ const nav = new Navigation();
 const login = new Login();
 const hmg = new HMGDelivery();
 
-const department = 'BEIS,HMRC';
+const department = Cypress.config().department;
 
 beforeEach(() => {
   // Preserve session across the entire test.

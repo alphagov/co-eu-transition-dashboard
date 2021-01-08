@@ -5,7 +5,7 @@ import Admin from '../../pages/Admin';
 const nav = new Navigation(); 
 const login = new Login();
 const admin = new Admin();
-const department = "BEIS";
+const department = Cypress.config().department.split(',')[0];
 
 beforeEach(() => {
   // Preserve session across the entire test.

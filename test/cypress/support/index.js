@@ -19,9 +19,10 @@ mysql.loadDBCommands();*/
 import './db_user'
 import './db_entity'
 import './db_project'
+import './utils'
 const dev = require('../../../config/development.json')
 
-let url = dev.serviceUrl;
+const url = dev.serviceUrl;
 const config = Cypress.config();
 
 before(() => {

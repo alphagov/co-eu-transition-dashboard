@@ -10,6 +10,10 @@ Cypress.Commands.add('getMilestoneData', (projectName,department) => {
   getMilestoneData(projectName,department).as('dbResultMilesData');
 });
 
+Cypress.Commands.add('getMissedMilestone', (projectName,department,theme) => {
+  getMissedMilestone(projectName,department,theme).as('dbResultMilesData');
+});
+
 function getProjectData(department) {
   const query =
     `set @department = "${department}" COLLATE utf8mb4_0900_ai_ci;
@@ -102,6 +106,42 @@ function getMilestoneData(projUid,department) {
       and( (FIND_IN_SET(p.department_name, @department) and @department <> 'All') or
       (p.department_name is not null and @department = 'All'))  
       order by project_uid, uid;`;
+  return cy.task('queryDb', query);
+}
+
+function getMissedMilestone(projUid,department,theme) {
+  const query =
+    `
+    set @department = "${department}" COLLATE utf8mb4_0900_ai_ci;
+    set @projectuid = "${projUid}" COLLATE utf8mb4_0900_ai_ci;
+    set @theme = "${theme}" COLLATE utf8mb4_0900_ai_ci;
+    select compl.project_uid as 'ProjectUid', p.title as 'ProjectName', p.department_name as 'Department',pfe.value as 'Theme', compl.uid as Uid, 
+    compl.description as 'MilestoneDescription', DATE_FORMAT(compl.Duedate,'%d/%m/%Y') as Duedate, dcof.DeliveryConfidence , p.impact as 'ProjectImpact' from
+    (
+    (select m.project_uid, m.uid, m.description, m.date as Duedate, mfe.value as 'Complete' FROM milestone m
+    join milestone_field_entry mfe on mfe.milestone_uid = m.uid
+    join milestone_field mf on mfe.milestone_field_id = mf.id
+    where mf.display_name = 'Complete' ) compl,
+    (select m.uid, mfe.value as 'DeliveryConfidence' FROM milestone m
+    join milestone_field_entry mfe on mfe.milestone_uid = m.uid
+    join milestone_field mf on mfe.milestone_field_id = mf.id
+    where mf.display_name = 'Delivery Confidence' ) dcof
+    )
+    join project p on p.uid = compl.project_uid
+    join project_field_entry pfe on pfe.project_uid = p.uid
+	  join project_field pf on pfe.project_field_id = pf.id 
+    where compl.uid = dcof.uid 
+    and( (FIND_IN_SET(compl.project_uid, @projectuid) and @projectuid <> 'All') or
+    (compl.project_uid is not null and @projectuid = 'All'))
+    and( (FIND_IN_SET(p.department_name, @department) and @department <> 'All') or
+    (p.department_name is not null and @department = 'All'))  
+    and( (FIND_IN_SET(pfe.value, @theme) and @theme <> 'All') or
+    (pfe.value is not null and @theme = 'All'))  
+    and compl.duedate < sysdate()
+    and compl.Complete = 'No'
+    and p.impact in(0,1)
+    and pf.display_name ='Delivery Theme'
+    order by compl.Duedate desc`;
   return cy.task('queryDb', query);
 }
 
