@@ -3,10 +3,10 @@ const { paths } = require('config');
 const EntityHelper = require('helpers/entity');
 const authentication = require('services/authentication');
 const Category = require('models/category');
-const Entity = require('models/entity');
 const CategoryField = require('models/categoryField');
-const EntityFieldEntry = require('models/entityFieldEntry');
 const CategoryParent = require('models/CategoryParent');
+const Entity = require('models/entity');
+const EntityFieldEntry = require('models/entityFieldEntry');
 class EntityRemap extends Page {
   get url() {
     return paths.admin.entityRemap;
@@ -30,6 +30,13 @@ class EntityRemap extends Page {
     }, {})
   }
 
+  async getCategoryParents(categoryId) {
+    return CategoryParent.findAll({
+      attributes: { exclude: ['id'] },
+      where: { categoryId },
+    });
+  }
+
   async getEntity() {
     const entity = await Entity.findOne({
       where: { publicId: this.req.params.publicId },
@@ -46,13 +53,6 @@ class EntityRemap extends Page {
     });
      
     return entity;
-  }
-
-  async getCategoryParents(categoryId) {
-    return CategoryParent.findAll({
-      attributes: { exclude: ['id'] },
-      where: { categoryId },
-    });
   }
 
   async getParentEntities(entity) {
