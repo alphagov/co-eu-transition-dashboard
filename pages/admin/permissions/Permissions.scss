@@ -36,15 +36,15 @@
 #permissions-table{
     margin-top: 50px;
     .header-first {
-       width: 150rem; 
+       width: 50%; 
     }
     .header-middle {
         padding: 10px;
     }
+    th:nth-child(3) {
+        width: 10%;
+    }
     .category-name{
         font-weight: normal;
-    }
-    .govuk-table__header, .govuk-table__cell {
-        width: 0%;
     }
 }
