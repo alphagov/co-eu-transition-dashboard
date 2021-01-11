@@ -8,7 +8,7 @@ const CategoryField = require('models/categoryField');
 const CategoryParent = require('models/categoryParent');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
-const EntityParent = require('models/EntityParent');
+const EntityParent = require('models/entityParent');
 
 let page = {};
 let res = {};
