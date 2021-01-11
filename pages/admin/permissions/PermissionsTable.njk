@@ -7,6 +7,13 @@
   {% from "govuk/components/radios/macro.njk" import govukRadios %}
   {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
+  {% set entityName %}
+  <div>
+    <div>{{entity.name}}</div>
+    <div><b>{{"Permissions are set by parent" if entity.hasParentsPermission}}</b></div>
+  </div>
+  {% endset -%}
+
   {% set cascadeCheckBox %}
         {{ govukCheckboxes({
           idPrefix: entity.id,
@@ -16,8 +23,7 @@
             {
               value: "cascade",
               text: " ",
-              checked: entity.shouldCascade,
-              disabled: true if entity.hasParentsPermission
+              checked: entity.shouldCascade
             }
           ]
         }) }}
@@ -32,20 +38,17 @@
         {
           value: "view",
           text: "view",
-          checked: entity.view,
-          disabled: true if entity.hasParentsPermission
+          checked: entity.view
         },
         {
           value: "edit",
           text: "edit",
-          checked: entity.edit,
-          disabled: true if entity.hasParentsPermission
+          checked: entity.edit
         },
         {
           value: "none",
           text: "none",
-          checked: entity.notSelected,
-          disabled: true if entity.hasParentsPermission
+          checked: entity.notSelected
         }
       ]
     }) }}
@@ -53,7 +56,7 @@
 
   {% set rowItems = [] %}
   {% set rowItems= (rowItems.push({
-        text: entity.name,
+        html: entityName,
         classes: "category-name"
       }, {
         html: permissionRadio,
