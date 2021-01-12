@@ -7,6 +7,7 @@ const CategoryField = require('models/categoryField');
 const CategoryParent = require('models/categoryParent');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
+const EntityParent = require('models/entityParent');
 class EntityRemap extends Page {
   get url() {
     return paths.admin.entityRemap;
@@ -45,13 +46,19 @@ class EntityRemap extends Page {
         include: {
           model: CategoryField,
         }
+      },
+      {
+        model: EntityParent,
+        as: 'entityParents',
       }]
     });
 
     entity.entityFieldEntries.map(entityfieldEntry => {
       entity[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
     });
-     
+   
+    entity.parents =  entity.entityParents.map(entityParent => entityParent.parentEntityId);
+    
     return entity;
   }
 
