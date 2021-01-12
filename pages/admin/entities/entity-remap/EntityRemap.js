@@ -9,6 +9,8 @@ const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const EntityParent = require('models/entityParent');
 const flash = require('middleware/flash');
+const sequelize = require('services/sequelize');
+const logger = require('services/logger');
 class EntityRemap extends Page {
   constructor(path, req, res) {
     super(path, req, res)
@@ -20,7 +22,7 @@ class EntityRemap extends Page {
   }
 
   get pathToBind() {
-    return `${this.url}/:publicId`;
+    return `${this.url}/:publicId/:successful(successful)?`;
   }
 
   get middleware() {
@@ -110,37 +112,43 @@ class EntityRemap extends Page {
     return errors;
   }
 
+  async saveData({ remapEntities }, selectedEntity) {
+    const transaction = await sequelize.transaction();
+    let redirectUrl = this.req.originalUrl;
+
+    const entityParentData = Object.keys(remapEntities).map(parentEntityId => ({
+      entityId: selectedEntity.id,
+      parentEntityId
+    }));
+    
+    try {
+      await EntityParent.destroy({
+        where: { entityId: selectedEntity.id },
+        transaction
+      });
+  
+      await EntityParent.bulkCreate(entityParentData, { transaction });
+
+      await transaction.commit();
+      redirectUrl += "/successful";
+    } catch (error) {
+      logger.error(error);
+      this.req.flash(["Error saving data"]);
+      await transaction.rollback();
+    }
+    return this.res.redirect(redirectUrl);
+  }
+
   async postRequest(req, res) {
-
     const selectedEntity = await this.getEntity()
-
     const formErrors = await this.validatePostData(req.body, selectedEntity);
-    console.log('formErrors', formErrors)
+
     if (formErrors && formErrors.length) {
       req.flash(formErrors);
       return res.redirect(req.originalUrl);
     }
 
-    // Get entity
-    // Get category parents for entity
-
-    // validate post data contains require parents
-      // use post data key to get entity -> cateogry
-        //
-    // if pass validation, save
-    //if not error
-
-  
-    console.log('selectedEntity', selectedEntity)
-    // console.log('categoryParents', categoryParents)
-
-
-
-
-    // const entitiesToBeSave = this.buildEntitiesToBeSaved(req.body,flatternedEntityData);
-    // await this.saveData(entitiesToBeSave);
-
-    return res.redirect(req.originalUrl);
+    await this.saveData(req.body, selectedEntity);
   }
 }
 
