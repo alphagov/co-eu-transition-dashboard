@@ -8,6 +8,7 @@ const CategoryField = require('models/categoryField');
 const CategoryParent = require('models/categoryParent');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
+const EntityParent = require('models/entityParent');
 
 let page = {};
 let res = {};
@@ -84,7 +85,8 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
         value: 'Some name'
       }],
       id: 2,
-      public_id: 'measure-1'
+      public_id: 'measure-1',
+      entityParents: [{ parentEntityId: 123 }]
     }
 
     beforeEach(() => {
@@ -104,12 +106,17 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
           include: {
             model: CategoryField,
           }
+        }, 
+        {
+          model: EntityParent,
+          as: 'entityParents',
         }]
       });
 
       expect(response).to.deep.equal({ 
         ...entity,
-        name: 'Some name'
+        name: 'Some name',
+        parents: [123]
       })
     });
   });
