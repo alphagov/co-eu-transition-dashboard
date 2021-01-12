@@ -34,8 +34,6 @@ describe("TS_HMG_08_VerifyUpcomingMilestonesByAllDept - As a Management Overivew
     {
       allMilestListArry = res[9];
       randomMilestoneArry = hmg.getRandomMilestone(allMilestListArry);
-      cy.log(randomMilestoneArry);
-    cy.pause(0);
     });
   });
 
