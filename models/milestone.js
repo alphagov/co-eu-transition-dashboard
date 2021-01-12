@@ -147,7 +147,7 @@ class Milestone extends Model {
       options.lock = transaction.LOCK
     }
 
-    const milestones = await sequelize.query(`SELECT uid FROM milestone WHERE project_uid='${projectUid}' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE`, options);
+    const milestones = await sequelize.query(`SELECT uid FROM milestone WHERE project_uid='${projectUid}' AND uid REGEXP '^[A-Za-z]+-[0-9]+-[0-9]+$' ORDER BY LENGTH(uid) DESC, uid DESC LIMIT 1 FOR UPDATE`, options);
 
     if(!milestones || !milestones.length) {
       return `${projectUid}-01`;
