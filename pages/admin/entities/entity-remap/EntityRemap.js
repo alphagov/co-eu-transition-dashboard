@@ -8,7 +8,13 @@ const CategoryParent = require('models/categoryParent');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const EntityParent = require('models/entityParent');
+const flash = require('middleware/flash');
 class EntityRemap extends Page {
+  constructor(path, req, res) {
+    super(path, req, res)
+    this.entityHelper = new EntityHelper({ fields: true, category: true });
+  }
+
   get url() {
     return paths.admin.entityRemap;
   }
@@ -19,7 +25,8 @@ class EntityRemap extends Page {
 
   get middleware() {
     return [
-      ...authentication.protect(['admin'])
+      ...authentication.protect(['admin']),
+      flash
     ];
   }
 
@@ -66,11 +73,11 @@ class EntityRemap extends Page {
     const categoryParents = await this.getCategoryParents(entity.categoryId);
     const categoryIds = categoryParents.map(category => category.parentCategoryId);
 
-    const entityHelper = new EntityHelper({ fields: true, category: true });
-    const entities = await entityHelper.entitiesInCategories(categoryIds);
+    
+    const entities = await this.entityHelper.entitiesInCategories(categoryIds);
 
     for (const entity of entities) {
-      entity.hierarchy = await entityHelper.getHierarchy(entity);
+      entity.hierarchy = await this.entityHelper.getHierarchy(entity);
     }
 
     const entitiesByCategory = entities.reduce((acc, entity) => {
@@ -79,6 +86,59 @@ class EntityRemap extends Page {
     }, {});
 
     return entitiesByCategory;
+  }
+
+  async validatePostData({ remapEntities = {} }, selectedEntity) {
+    const errors = [];
+    const entityCategories = [];
+    
+    for (const entityId in remapEntities) {
+      const entityData = await this.entityHelper.getEntityData(entityId);
+      entityCategories.push(entityData.category.id);
+    }
+
+    const categoryParents = await this.getCategoryParents(selectedEntity.categoryId);
+
+    categoryParents.forEach(category => {
+      if (category.isRequired && !entityCategories.includes(category.parentCategoryId)) {
+        errors.push("Required category missing");
+      }
+    })
+
+    return errors;
+  }
+
+  async postRequest(req, res) {
+
+    const selectedEntity = await this.getEntity()
+
+    const formErrors = await this.validatePostData(req.body, selectedEntity);
+    console.log('formErrors', formErrors)
+    if (formErrors && formErrors.length) {
+      req.flash(formErrors);
+      return res.redirect(req.originalUrl);
+    }
+
+    // Get entity
+    // Get category parents for entity
+
+    // validate post data contains require parents
+      // use post data key to get entity -> cateogry
+        //
+    // if pass validation, save
+    //if not error
+
+  
+    console.log('selectedEntity', selectedEntity)
+    // console.log('categoryParents', categoryParents)
+
+
+
+
+    // const entitiesToBeSave = this.buildEntitiesToBeSaved(req.body,flatternedEntityData);
+    // await this.saveData(entitiesToBeSave);
+
+    return res.redirect(req.originalUrl);
   }
 }
 

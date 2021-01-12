@@ -15,34 +15,38 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-l">Remap Entity</h1>
+      <form action='{{ req.originalUrl }}' method='POST'>
+        <h1 class="govuk-heading-l">Remap Entity</h1>
 
-      <h2 class="govuk-heading-m govuk-!-font-weight-regular"><strong>{{ selectedEntity.publicId }}</strong>: {{ selectedEntity.name }}</h2> 
+        <h2 class="govuk-heading-m govuk-!-font-weight-regular"><strong>{{ selectedEntity.publicId }}</strong>: {{ selectedEntity.name }}</h2> 
 
-      {% if parentEntitiesByCategory | length %}
+        {% if flash %}
+          {% include "admin/entities/entity-remap/partials/error.njk" %}
+        {% endif %}
+        
+        {% if parentEntitiesByCategory | length %}
+          {% include "admin/entities/entity-remap/partials/table.njk" %}
 
-        {% include "admin/entities/entity-remap/partials/table.html" %}
+          {{
+            govukButton({
+              text: "Save",
+              type: "submit",
+              preventDoubleClick: true,
+              classes: "edit-user-button"
+            })
+          }}
 
-        {{
-          govukButton({
-            text: "Save",
-            type: "submit",
-            preventDoubleClick: true,
-            classes: "edit-user-button"
-          })
-        }}
-
-        {{
-          govukButton({
-            text: "Cancel",
-            href:  config.paths.admin.entityList,
-            classes: "govuk-button--secondary edit-user-button"
-          })
-        }}
-      {% else %}
-        <h3 class="govuk-heading-m">No parent entities found</h3>
-      {% endif %}
-
+          {{
+            govukButton({
+              text: "Cancel",
+              href:  config.paths.admin.entityList,
+              classes: "govuk-button--secondary edit-user-button"
+            })
+          }}
+        {% else %}
+          <h3 class="govuk-heading-m">No parent entities found</h3>
+        {% endif %}
+      </form>
     </div>
   </div>
 {% endblock %}
