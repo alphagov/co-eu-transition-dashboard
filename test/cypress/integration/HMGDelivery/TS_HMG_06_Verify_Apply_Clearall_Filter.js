@@ -8,7 +8,7 @@ const login = new Login();
 const hmg = new HMGDelivery();
 const fil = new Filters();
 
-const department = Cypress.config().department;
+const { department } = Cypress.config();
 let randomPrjArray = [];
 
 beforeEach(() => {

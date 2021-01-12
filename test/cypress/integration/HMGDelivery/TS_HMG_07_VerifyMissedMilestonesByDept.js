@@ -27,14 +27,19 @@ describe("TS_HMG_07_VerifyMissedMilestonesByDept - As a Management Overivew I ca
     cy.get('@dbResultMilesData').then((res) =>
     {
       allMilestListArry = res[3];
+
+      //Get theme with maxium milestones
+      theme = hmg.getFilterByWithMaximumMilestones(allMilestListArry,hmg.getTheme);
+
+      //Filter and create new Array by above Theme
+      cy.getMissedMilestone("All",department,theme).as('dbResultMilesData');
+      cy.get('@dbResultMilesData').then((res) =>
+      {
+        bythemeMilestListArry = res[3];
+      });
     });
   
-    //Filtered by Theme
-    cy.getMissedMilestone("All",department,theme).as('dbResultMilesData');
-    cy.get('@dbResultMilesData').then((res) =>
-    {
-      bythemeMilestListArry = res[3];
-    });
+    
   });
 
   //Log into Dashboard 
@@ -49,7 +54,7 @@ describe("TS_HMG_07_VerifyMissedMilestonesByDept - As a Management Overivew I ca
   it("Can view list of All missed Milestone for given department", function () {
     nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
     nav.selectSubmenu(nav.subMenuMissedMilestones);
-    hmg.verifyMissedMilestones(allMilestListArry);
+    hmg.verifyGroupbyDueDateMilestones(allMilestListArry);
   });
 
   it("Can not view Filter Panel on 'Hide Filter'", function () {
@@ -60,13 +65,11 @@ describe("TS_HMG_07_VerifyMissedMilestonesByDept - As a Management Overivew I ca
     fil.showFilter();
   });
   it("Can Filter All missed Milestone for department:'"+ department + "' by Theme:'"+ theme + "'", function () {
-    //Get theme with maxium milestones
-    theme = hmg.getThemewithMaximumMissedMilestone(allMilestListArry);
     fil.openFilterAccordian();
     fil.checkFilter("Delivery Theme", theme);
     fil.applyFilter();
     fil.verifyFilterSelectionPanel("Delivery Theme", theme);
-    hmg.verifyMissedMilestones(bythemeMilestListArry);
+    hmg.verifyGroupbyDueDateMilestones(bythemeMilestListArry);
   });
 
   it("Can Apply filter on Unselecting Theme:'" + theme + "' and verify that all results displayed for department:'"+ department + "'", function () {
@@ -74,7 +77,7 @@ describe("TS_HMG_07_VerifyMissedMilestonesByDept - As a Management Overivew I ca
     fil.uncheckFilter("Delivery Theme", theme);
     fil.applyFilter();
     fil.verifyNoFilterPanel();
-    hmg.verifyMissedMilestones(allMilestListArry);
+    hmg.verifyGroupbyDueDateMilestones(allMilestListArry);
   });
   
   it("Can 'Clear all filters' after 'Selecting/Applying all filter types' and verify that all results for department:'" + department + "'", function () {
@@ -83,7 +86,7 @@ describe("TS_HMG_07_VerifyMissedMilestonesByDept - As a Management Overivew I ca
     fil.applyFilter();
     fil.clearFilter();
     fil.verifyNoFilterPanel();
-    hmg.verifyMissedMilestones(allMilestListArry);
+    hmg.verifyGroupbyDueDateMilestones(allMilestListArry);
   });
 
 }); 

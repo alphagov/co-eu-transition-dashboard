@@ -124,6 +124,11 @@ class Filters {
     cy.get(DL_SELECT_FILTER_PANEL + " " + DIV_SELECT_FILTER_ROW).contains(filtername + " " + value);
   }
 
+  removeFilterFromSelectionPanel(filtername)
+  {
+    cy.get(DL_SELECT_FILTER_PANEL + " " + DIV_SELECT_FILTER_ROW).contains(filtername).parentsUntil(DIV_SELECT_FILTER_ROW).find(".cross").click();
+  }
+
   hideFilter()
   {
     cy.xpath(LINK_HIDE_FILTER_XP).then( ($ele) =>

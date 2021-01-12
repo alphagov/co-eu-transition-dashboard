@@ -1,4 +1,5 @@
-const { groupBy } = require('../support/utils');
+const groupBy = require('lodash/groupBy');
+const sample = require('lodash/sample');
 
 const H2_NOOFPROJECTS = ".govuk-heading-m";
 const DIV_PRJ_ACCORDIAN_XP = "//div[@class='govuk-accordion__section-header']";
@@ -100,7 +101,6 @@ class HMGDelivery {
         cy.get(DIV_PROJECT_ACCORIDAN).should('have.attr','aria-expanded','false');
         cy.get(DIV_PROJECT_ACCORIDAN).click();
         cy.get(DIV_PROJECT_ACCORIDAN).should('have.attr','aria-expanded','true');
-
       } else {
         cy.get(DIV_PROJECT_ACCORIDAN).should('have.attr','aria-expanded','true');
       }
@@ -117,7 +117,6 @@ class HMGDelivery {
         cy.get(DIV_PROJECT_ACCORIDAN).should('have.attr','aria-expanded','true');
         cy.get(DIV_PROJECT_ACCORIDAN).click();
         cy.get(DIV_PROJECT_ACCORIDAN).should('have.attr','aria-expanded','false');
-
       } else {
         cy.get(DIV_PROJECT_ACCORIDAN).should('have.attr','aria-expanded','false');
       }
@@ -165,7 +164,31 @@ class HMGDelivery {
     return obj.Theme
   }
 
-  verifyMissedMilestones(milestListArry)
+  getDeliveryConfidence(obj) {
+    return obj.DeliveryConfidence
+  }
+
+  getProjectImpact(obj) {
+    return obj.ProjectImpact
+  }
+
+  getDepartment(obj) {
+    return obj.Department
+  }
+
+  getHMGConfidence(obj) {
+    return obj.HMGConfidence
+  }
+
+  getCategory(obj) {
+    return obj.HMGCategory
+  }
+
+  getHMGImpact(obj) {
+    return obj.HMGImpact
+  }
+
+  verifyGroupbyDueDateMilestones(milestListArry)
   {
     let arry = groupBy(milestListArry, this.getDuedate);
     Object.keys(arry).forEach(key => {
@@ -192,10 +215,10 @@ class HMGDelivery {
     })
   }
 
-  getThemewithMaximumMissedMilestone(milestListArry)
+  getFilterByWithMaximumMilestones(milestListArry, columnName)
   {
     let maxthme;
-    let arry = groupBy(milestListArry, this.getTheme);
+    let arry = groupBy(milestListArry, columnName);
     let noofmilestones = 0;
     Object.keys(arry).forEach(key => {
       if (noofmilestones < arry[key].length)
@@ -205,6 +228,11 @@ class HMGDelivery {
       }
     });
     return maxthme;
+  }
+
+  getRandomMilestone(milestListArry)
+  {
+    return sample(milestListArry);
   }
 }
 export default HMGDelivery;

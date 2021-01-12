@@ -6,7 +6,7 @@ const nav = new Navigation();
 const login = new Login();
 const hmg = new HMGDelivery();
 
-const department = Cypress.config().department;
+const { department } = Cypress.config();
 
 beforeEach(() => {
   // Preserve session across the entire test.
