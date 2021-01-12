@@ -69,19 +69,21 @@ class EntityRemap extends Page {
     return entity;
   }
 
-  async getParentEntities(entity) {
-    const categoryParents = await this.getCategoryParents(entity.categoryId);
+  async getParentEntities(selectedEntity) {
+    const categoryParents = await this.getCategoryParents(selectedEntity.categoryId);
     const categoryIds = categoryParents.map(category => category.parentCategoryId);
 
-    
-    const entities = await this.entityHelper.entitiesInCategories(categoryIds);
+    const entities = await this.entityHelper.entitiesInCategories(categoryIds, [selectedEntity.id]);
 
     for (const entity of entities) {
       entity.hierarchy = await this.entityHelper.getHierarchy(entity);
     }
 
     const entitiesByCategory = entities.reduce((acc, entity) => {
-      acc[entity.category.id] = [ ...(acc[entity.category.id] || []), entity]
+      if (entity.publicId !== selectedEntity.publicId) {
+        acc[entity.category.id] = [ ...(acc[entity.category.id] || []), entity]
+      }
+      
       return acc
     }, {});
 
