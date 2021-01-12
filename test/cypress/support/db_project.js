@@ -197,8 +197,8 @@ function getUpcomingMilestone(projUid,confidence,category,department,theme,impac
       (p.impact is not null and @impact = 'All')) 
     and( (dcof.DeliveryConfidence= @confidence and @confidence <> 'All') or
       (dcof.DeliveryConfidence is not null and @confidence = 'All')) 
-    and( (hmg.HMGConfidence = @hmgimpact and @hmgimpact <> 'All') or
-      (hmg.HMGConfidence is not null and @hmgimpact = 'All')) 
+    and( (hmg.HMGConfidence = @hmgconfidence and @hmgconfidence <> 'All') or
+      (hmg.HMGConfidence is not null and @hmgconfidence = 'All')) 
     and( (categ.Category = @category and @category <> 'All') or
       (categ.Category is not null and @category = 'All')) 
     and ((compl.Duedate >= DATE_ADD(sysdate(), INTERVAL @duedateFromOffset DAY) and @duedateFromOffset <> 'All') or

@@ -126,7 +126,7 @@ class Filters {
 
   removeFilterFromSelectionPanel(filtername)
   {
-    cy.get(DL_SELECT_FILTER_PANEL + " " + DIV_SELECT_FILTER_ROW).contains(filtername).parentsUntil(DIV_SELECT_FILTER_ROW).find(".cross").click();
+    cy.get(DL_SELECT_FILTER_PANEL + " " + DIV_SELECT_FILTER_ROW).contains(filtername).parentsUntil(DL_SELECT_FILTER_PANEL).find("button").click();
   }
 
   hideFilter()

@@ -24,15 +24,18 @@ describe("TS_HMG_08_VerifyUpcomingMilestonesByAllDept - As a Management Overivew
     cy.getUpcomingMilestone("All","All","All",department,"All","All","All","-1","42").as('dbResultMilesData');
     cy.get('@dbResultMilesData').then((res) =>
     {
-      defaultDuedateMilestListArry = res[10];
+      cy.log(res);
+      defaultDuedateMilestListArry = res[9];
     });
 
     //All Milestones
     cy.getUpcomingMilestone("All","All","All",department,"All","All","All","All","All").as('dbResultMilesData');
     cy.get('@dbResultMilesData').then((res) =>
     {
-      allMilestListArry = res[10];
+      allMilestListArry = res[9];
       randomMilestoneArry = hmg.getRandomMilestone(allMilestListArry);
+      cy.log(randomMilestoneArry);
+    cy.pause(0);
     });
   });
 
@@ -72,8 +75,8 @@ describe("TS_HMG_08_VerifyUpcomingMilestonesByAllDept - As a Management Overivew
     fil.checkFilter("Impact", randomMilestoneArry.ProjectImpact);
     fil.checkFilter("HMG Confidence", randomMilestoneArry.HMGConfidence);
     fil.applyFilter();
-    fil.verifyFilterSelectionPanel("Milestone Delivery Confidence", randomMilestoneArry.DeliveryConfidence);
-    fil.verifyFilterSelectionPanel("Milestone Category", randomMilestoneArry.Category);
+    fil.verifyFilterSelectionPanel("Delivery Confidence", randomMilestoneArry.DeliveryConfidence);
+    fil.verifyFilterSelectionPanel("Category", randomMilestoneArry.Category);
     fil.verifyFilterSelectionPanel("Department", randomMilestoneArry.Department);
     fil.verifyFilterSelectionPanel("Delivery Theme", randomMilestoneArry.Theme);
     fil.verifyFilterSelectionPanel("Impact", randomMilestoneArry.ProjectImpact);
@@ -83,7 +86,7 @@ describe("TS_HMG_08_VerifyUpcomingMilestonesByAllDept - As a Management Overivew
       randomMilestoneArry.Theme,randomMilestoneArry.ProjectImpact,randomMilestoneArry.HMGConfidence).as('dbResultMilesData');
     cy.get('@dbResultMilesData').then((res) =>
     {
-      const filteredMilestListArry = res[7];
+      const filteredMilestListArry = res[9];
       hmg.verifyGroupbyDueDateMilestones(filteredMilestListArry);
     });
   });
@@ -103,8 +106,8 @@ describe("TS_HMG_08_VerifyUpcomingMilestonesByAllDept - As a Management Overivew
   
   it("Can 'Clear all filters' after 'Selecting/Applying all filter types' and verify that all results for department:'" + department + "'", function () {
     fil.openFilterAccordian();
-    fil.checkFilter("Milestone Delivery Confidence", randomMilestoneArry.DeliveryConfidence);
-    fil.checkFilter("Milestone Category", randomMilestoneArry.Category);
+    fil.checkFilter("Delivery Confidence", randomMilestoneArry.DeliveryConfidence);
+    fil.checkFilter("Category", randomMilestoneArry.Category);
     fil.checkFilter("Department", randomMilestoneArry.Department);
     fil.checkFilter("Delivery Theme", randomMilestoneArry.Theme);
     fil.checkFilter("Impact", randomMilestoneArry.ProjectImpact);
