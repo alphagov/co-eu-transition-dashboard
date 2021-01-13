@@ -1,0 +1,48 @@
+{% extends "template.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% block beforeContent %}
+{% if successfulMode %}
+  {% include "navigation.njk" %}
+{% else %} 
+    {{ govukBackLink({
+        text: "Back",
+        href: "#",
+        attributes: {
+            onclick: "history.go(-1); return false;"
+        }
+    }) }}
+{% endif %}
+{% endblock %}
+
+{% block pageTitle %}Delete entity{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+  {% if successfulMode %}
+    {% include "admin/entities/entity-delete/partials/delete-success.njk" %}
+  {% else %}
+
+    {% set entity = getEntity() | await %}
+  
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Delete entity</h1>
+    <h2 class="govuk-heading-m govuk-!-font-weight-regular"><strong>{{ entity.publicId }}</strong>: {{ entity.name }}</h2> 
+
+    {% if entity.children | length %}
+        {% include "admin/entities/entity-delete/partials/children-entity.njk" %}
+    {% else %}
+        {% include "admin/entities/entity-delete/partials/delete-confirmation.njk" %}
+    {% endif %}
+
+  {% endif %}
+
+ </div>
+</div>
+
+{% endblock %}
