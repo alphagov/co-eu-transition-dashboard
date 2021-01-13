@@ -68,16 +68,7 @@ class EntityDelete extends Page {
     return Entity.destroy({
       where: {
         public_id: this.req.params.publicId
-      },
-      include: [{
-        model: Entity,
-        as: 'parents',
-        include: {
-          model: EntityFieldEntry
-        }
-      }, {
-        model: EntityFieldEntry
-      }]
+      }
     });
   }
 

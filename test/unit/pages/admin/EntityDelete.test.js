@@ -167,16 +167,7 @@ describe("pages/admin/entities/entity-delete/EntityDelete", () => {
       sinon.assert.calledWith(Entity.destroy, {
         where: {
           public_id: page.req.params.publicId
-        },
-        include: [{
-          model: Entity,
-          as: 'parents',
-          include: {
-            model: EntityFieldEntry
-          }
-        }, {
-          model: EntityFieldEntry
-        }]
+        }
       });
     });
   });
