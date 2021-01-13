@@ -1,19 +1,20 @@
 const { expect, sinon } = require("test/unit/util/chai");
 const config = require("config");
-const EntityDelete = require("pages/admin/entity-delete/EntityDelete");
+const EntityDelete = require("pages/admin/entities/entity-delete/EntityDelete");
 const authentication = require("services/authentication");
 const Entity = require("models/entity");
 const EntityFieldEntry = require('models/entityFieldEntry');
 const CategoryField = require('models/categoryField');
+const flash = require('middleware/flash');
 
 let page = {};
 let res = {};
 let req = {};
 
-describe("pages/admin/entity-delete/EntityDelete", () => {
+describe("pages/admin/entities/entity-delete/EntityDelete", () => {
   beforeEach(() => {
-    res = { cookies: sinon.stub() };
-    req = { cookies: [] };
+    res = { cookies: sinon.stub(), redirect: sinon.stub() };
+    req = { cookies: [], params: { publicId: 1 }, flash: sinon.stub() };
 
     page = new EntityDelete("some path", req, res);
 
@@ -33,16 +34,28 @@ describe("pages/admin/entity-delete/EntityDelete", () => {
   });
 
   describe("#middleware", () => {
-    it("only uploaders are allowed to access this page", () => {
+    it("only admins are allowed to access this page", () => {
       expect(page.middleware).to.eql([
         ...authentication.protect(["admin"]),
+        flash
       ]);
     });
   });
 
   describe('#pathToBind', () => {
     it('returns correct url with param', () => {
-      expect(page.pathToBind).to.eql(`${config.paths.admin.entityDelete}/:publicId`);
+      expect(page.pathToBind).to.eql(`${config.paths.admin.entityDelete}/:publicId/:successful(successful)?`);
+    });
+  });
+
+  describe('#successfulMode', () => {
+    it('returns true when in successful mode', () => {
+      page.req.params = { publicId: '1', successful: 'successful' };
+      expect(page.successfulMode).to.be.ok;
+    });
+
+    it('returns false when not in successful mode', () => {
+      expect(page.successfulMode).to.be.not.ok;
     });
   });
   
@@ -116,4 +129,46 @@ describe("pages/admin/entity-delete/EntityDelete", () => {
       })
     })
   })
+
+  describe('#postRequest', () => {
+    beforeEach(() => {
+      sinon.stub(page, 'deleteEntity')
+    });
+
+    afterEach(() => {
+      page.deleteEntity.restore();
+    });
+
+    it('should call entityDelete and redirect to sucessful url', async () => {
+      req.originalUrl = 'someurl';
+      await page.postRequest(req, res);
+
+      sinon.assert.calledOnce(page.deleteEntity);
+      sinon.assert.calledWith(res.redirect, `${req.originalUrl}/successful`);
+    });
+
+    it('should call entityDelete and redirect back to delete page when an error occurs', async () => {
+      req.originalUrl = 'someurl';
+
+      page.deleteEntity.throws('error')
+
+      await page.postRequest(req, res);
+
+      sinon.assert.calledOnce(page.deleteEntity);
+      sinon.assert.calledWith(req.flash, 'An error has occurred when deleting this entity');
+      sinon.assert.calledWith(res.redirect, req.originalUrl);
+    });
+  });
+
+  describe('#deleteEntity', () => {
+    it('deletes entity and parents', async () => {
+      await page.deleteEntity();
+
+      sinon.assert.calledWith(Entity.destroy, {
+        where: {
+          public_id: page.req.params.publicId
+        }
+      });
+    });
+  });
 });
