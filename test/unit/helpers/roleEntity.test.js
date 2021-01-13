@@ -96,8 +96,8 @@ describe('helpers/roleEntity', ()=>{
 
     it('should not call delete or update role entities when empty', async()=>{
       await roleEntity.updateRoleEntityTableForRole(roleId, { entitiesToUpdate:[], entitiesToDelete:[] });
-      expect(destroyStub).to.be.calledWith({ where: { entityId: entitiesToDelete, roleId } });
-      expect(bulkCreateStub).to.be.calledWith(entitiesToUpdate);
+      sinon.assert.notCalled(destroyStub);
+      sinon.assert.notCalled(bulkCreateStub);
     });
   });
 });
