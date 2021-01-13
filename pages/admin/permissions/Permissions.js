@@ -29,7 +29,7 @@ class Permissions extends Page {
   }
 
   get pathToBind() {
-    return `${this.url}/:roleId?/:categoryId?/:success(success)?`;
+    return `${this.url}/:roleId?/:categoryId?/:success?`;
   }
 
   get successMode() {
@@ -121,7 +121,6 @@ class Permissions extends Page {
       entitiesToUpdate,
       entitiesToDelete
     }
-
   }
 
   async postRequest(req, res) {

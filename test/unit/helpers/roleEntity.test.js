@@ -17,7 +17,8 @@ describe('helpers/roleEntity', ()=>{
         '2': { canEdit: false, shouldCascade: true }
       })
     })
-  })
+  });
+
   describe('doesEntityHasParentsPermission', ()=>{
     it('should return true when parent has shouldCascade true', ()=>{
       const roleEntities = {
@@ -69,5 +70,34 @@ describe('helpers/roleEntity', ()=>{
       const hasParentsPermission = roleEntity.doesEntityHasParentsPermission(roleEntities,entities);
       expect(hasParentsPermission).to.be.false;
     });
-  })
-})
+  });
+
+  describe('updateRoleEntityTableForRole', ()=>{
+    const roleId = 1
+    const entitiesToUpdate = [{ roleId, entityId: 2, canEdit: true, shouldCascade: false },
+      { roleId, entityId: 3, canEdit: false, shouldCascade: false }];
+    const entitiesToDelete = [4,5];
+
+    let destroyStub;
+    let bulkCreateStub;
+    
+    beforeEach(()=>{
+      destroyStub = sinon.stub().resolves([]);
+      bulkCreateStub = sinon.stub().resolves([]);
+      RoleEntity.destroy = destroyStub;
+      RoleEntity.bulkCreate = bulkCreateStub;
+    });
+
+    it('should delete and update role entities', async()=>{
+      await roleEntity.updateRoleEntityTableForRole(roleId, { entitiesToUpdate, entitiesToDelete });
+      expect(destroyStub).to.be.calledWith({ where: { entityId: entitiesToDelete, roleId } });
+      expect(bulkCreateStub).to.be.calledWith(entitiesToUpdate);
+    });
+
+    it('should not call delete or update role entities when empty', async()=>{
+      await roleEntity.updateRoleEntityTableForRole(roleId, { entitiesToUpdate:[], entitiesToDelete:[] });
+      expect(destroyStub).to.be.calledWith({ where: { entityId: entitiesToDelete, roleId } });
+      expect(bulkCreateStub).to.be.calledWith(entitiesToUpdate);
+    });
+  });
+});

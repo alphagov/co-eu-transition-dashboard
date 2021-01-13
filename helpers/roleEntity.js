@@ -38,7 +38,7 @@ const deleteRoleEntities = async (roleId, entityIds, transaction ) => {
 }
 
 const bulkUpdateRoleEntities = async (entitiesToUpdate, transaction) => {
-  return await RoleEntity.bulkCreate(entitiesToUpdate, { 
+  return RoleEntity.bulkCreate(entitiesToUpdate, { 
     transaction, 
     updateOnDuplicate: ["canEdit", "shouldCascade"]
   });
