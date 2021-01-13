@@ -11,6 +11,7 @@
     "pageLoadTimeout" :300000,
     "defaultCommandTimeout": 30000,
     "chromeWebSecurity": false,
-    "username": "cy_auto@test.com",
+    "username": "cy_auto@example.cy.org",
+    "department": "BEIS,HMRC",
     "ignoreTestFiles": ["*VerifyAll*"]
 }

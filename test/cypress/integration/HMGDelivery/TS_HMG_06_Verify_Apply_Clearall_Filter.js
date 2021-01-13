@@ -8,7 +8,7 @@ const login = new Login();
 const hmg = new HMGDelivery();
 const fil = new Filters();
 
-const department = 'BEIS,HMRC';
+const { department } = Cypress.config();
 let randomPrjArray = [];
 
 beforeEach(() => {
@@ -33,7 +33,7 @@ describe("TS_HMG_06_Verify_Apply_Clearall_Filter - As a Management Overivew user
   });
 
   it("Can Apply filter on 'Selecting all filter types' and verify that only filtered result displayed", function () {
-    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
+    nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
     hmg.verifyProjectDataHeader(department);
     fil.openFilterAccordian();
     fil.selectAllProjectFilters(randomPrjArray);

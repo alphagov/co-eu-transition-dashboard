@@ -6,7 +6,7 @@ const nav = new Navigation();
 const login = new Login();
 const hmg = new HMGDelivery();
 
-const department = 'All';
+const { department } = Cypress.config();
 
 beforeEach(() => {
   // Preserve session across the entire test.
@@ -26,8 +26,8 @@ describe("TS_HMG_01_VerifyAllDepartment - As a Management Overivew I can View Al
   });
 
   it("Can view list of All Project and and all relevant fiedl valus on list page (Including no. of project)", function () {
-    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
-    nav.selectSubmenu(nav.SubMenu_Alldata)
+    nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
+    nav.selectSubmenu(nav.subMenuAlldata)
     hmg.verifyProjectDataHeader(department);
     hmg.verifyPojectData(department);
   });
