@@ -32,72 +32,82 @@ const SUBMENU_ENTITY_DATAIMPORT = "Entity data import";
 const SUBMENU_STATIC_EXPORT = "Static Export";
 const SUBMENU_RAYG_VALUES = "RAYG Values";
 const SUBMENU_MANAGE_TAGS = "Manage Tags";
+const SUBMENU_PERMISSIONS = "Permissions";
+const SUBMENU_MANAGE_ENTITIES = "Manage Entities";
 
 class Navigation {
 //Menus
-  get Menu_Tranistion_Readiness() {
+  get menuTranistionReadiness() {
     return MENU_TRANISTION_READINESS;
   }
-  get Menu_HMG_delivery_megmt_info() {
+  get menuHMGdeliverymegmtinfo() {
     return MENU_HMG_DELIVERY_MEGMT_INFO;
   }
-  get Menu_Adddata() {
+  get menuAdddata() {
     return MENU_ADD_DATA;
   }
-  get Menu_Admin() {
+  get menuAdmin() {
     return MENU_ADMIN;
   }
 
   //Sub Menus Tranistion Readiness
-  get SubMenu_Overview() {
+  get subMenuOverview() {
     return SUBMENU_OVERVIEW;
   }
 
   //Sub Menus HMG
-  get SubMenu_Reporting_overview() {
+  get subMenuReportingOverview() {
     return SUBMENU_REPORTING_OVERVIEW;
   }
-  get SubMenu_Alldata() {
+  get subMenuAlldata() {
     return SUBMENU_ALLDATA;
   }
-  get SubMenu_Missedmilestones() {
+  get subMenuMissedMilestones() {
     return SUBMENU_MISSED_MILESTONES;
   }
-  get SubMenu_Upcomingmilestones() {
+  get subMenuUpcomingMilestones() {
     return SUBMENU_UPCOMING_MILESTONES;
   }
 
   //Sub Menus Add data
-  get SubMenu_Managementinformation() {
+  get subMenuManagementInformation() {
     return SUBMENU_MANAGEMENT_INFORMATION;
   }
   get SubMenu_Measures() {
     return SUBMENU_MEASURES;
   }
   //Sub Menus Admin
-  get SubMenu_MIdatastructure() {
+  get subMenuMIDataStructure() {
     return SUBMENU_MI_DATA_STRUCTURE;
   }
-  get SubMenu_Managecategories() {
+  get subMenuManageCategories() {
     return SUBMENU_MANAGE_CATEGORIES;
   }
-  get SubMenu_ManageHeadlineMeasures() {
+  get subMenuManageHeadlineMeasures() {
     return SUBMENU_MANAGE_HEADLINE_MEASURES;
   }
-  get SubMenu_ManageUsers() {
+  get subMenuManageUsers() {
     return SUBMENU_MANAGE_USERS;
   }
-  get SubMenu_Entitydataimport() {
+  get subMenuEntitydataimport() {
     return SUBMENU_ENTITY_DATAIMPORT;
   }
-  get SubMenu_StaticExport() {
+  get subMenuStaticExport() {
     return SUBMENU_STATIC_EXPORT;
   }
-  get SubMenu_RAYGValues() {
+  get subMenuRAYGValues() {
     return SUBMENU_RAYG_VALUES;
   }
-  get SubMenu_ManageTags() {
+  get subMenuManageTags() {
     return SUBMENU_MANAGE_TAGS;
+  }
+  get subMenuPermissions()
+  {
+    return SUBMENU_PERMISSIONS
+  }
+  get subMenuManageEntities()
+  {
+    return SUBMENU_MANAGE_ENTITIES
   }
 
   //Select Main menu
@@ -105,7 +115,7 @@ class Navigation {
     cy.get(MAIN_MENU).contains(menuname).click();
   }
 
-  //Select sub meny
+  //Select sub menu
   selectSubmenu(submenuname) {
     cy.get(SUB_MENU).contains(submenuname).click();
   }
@@ -120,7 +130,7 @@ class Navigation {
     cy.get(MAIN_MENU).contains(menuname).should('not.exist');
   }
 
-  //Select sub meny
+  //Select sub menu
   verifySubmenu(submenuname) {
     cy.get(SUB_MENU).contains(submenuname).should('exist');
   }

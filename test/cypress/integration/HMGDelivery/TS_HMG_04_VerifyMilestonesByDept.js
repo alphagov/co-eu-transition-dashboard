@@ -6,7 +6,7 @@ const nav = new Navigation();
 const login = new Login();
 const hmg = new HMGDelivery();
 
-const department = 'BEIS,HMRC';
+const { department } = Cypress.config();
 
 beforeEach(() => {
   // Preserve session across the entire test.
@@ -26,14 +26,14 @@ describe("TS_HMG_04_VerifyMilestonesByDept - As a Management Overivew I can View
   });
 
   it("Can Not view list of All Milestone and when accordian are closed", function () {
-    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
+    nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
     hmg.verifyProjectDataHeader(department);
     hmg.closeProjectAccordian();
     hmg.verifyNoMilestoneData('All',department);
   });
 
   it("Can view list of All Milestone and when accordian are open", function () {
-    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
+    nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
     hmg.verifyProjectDataHeader(department);
     hmg.openProjectAccordian();
     hmg.verifyMilestoneData('All',department);
