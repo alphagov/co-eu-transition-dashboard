@@ -5,7 +5,11 @@ const authentication = require('services/authentication');
 const Role = require('models/role');
 const Category = require('models/category');
 const sortBy = require('lodash/sortBy');
-const { getEntitiesForRoleId, doesEntityHasParentsPermission } = require('helpers/roleEntity');
+const { 
+  getEntitiesForRoleId, 
+  doesEntityHasParentsPermission,
+  updateRoleEntityTableForRole
+} = require('helpers/roleEntity');
 const EntityHelper = require('helpers/entity');
 
 class Permissions extends Page {
@@ -25,7 +29,11 @@ class Permissions extends Page {
   }
 
   get pathToBind() {
-    return `${this.url}/:roleId?/:categoryId?`;
+    return `${this.url}/:roleId?/:categoryId?/:success?`;
+  }
+
+  get successMode() {
+    return this.req.params && this.req.params.success;
   }
 
   get selectedCategoryId() {
@@ -81,6 +89,51 @@ class Permissions extends Page {
       return Category.findAll();
     }
     return [];
+  }
+
+  handleFormData(formData, roleEntities, roleId) {
+    let entitiesToUpdate = [];
+    let entitiesToDelete = [];
+    for(const entityId in formData) {
+      const options = formData[entityId];
+      const noneFound = (Array.isArray(options))? options.includes('none') : null;
+      const cascadeFound = options.includes('cascade');
+      if (noneFound && cascadeFound) {
+        throw new Error('You can not select both None and Cascade for an entity');
+      }
+
+      if (options === 'none' && entityId in roleEntities) {
+        entitiesToDelete.push(entityId)
+        continue;
+      } 
+
+      if ((options != 'none' && !(entityId in roleEntities)) || (entityId in roleEntities && options)){
+        entitiesToUpdate.push({
+          roleId,
+          entityId,
+          canEdit: (options==='edit' || options.includes('edit')) ? true : false,
+          shouldCascade: (options==='cascade' || options.includes('cascade')) ? true : false
+        });
+        continue;
+      }
+    }
+    return {
+      entitiesToUpdate,
+      entitiesToDelete
+    }
+  }
+
+  async postRequest(req, res) {
+    const roleId = req.params.roleId;
+    const roleEntities = await getEntitiesForRoleId(roleId);
+    try {
+      const data = this.handleFormData(req.body, roleEntities, roleId);
+      await updateRoleEntityTableForRole(roleId, data);
+      return res.redirect(`${req.originalUrl}/success`);
+    } catch(error) {
+      req.flash(error.message)
+      return res.redirect(this.req.originalUrl);
+    }
   }
 }
 
