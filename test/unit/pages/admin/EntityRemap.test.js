@@ -14,7 +14,27 @@ const sequelize = require('services/sequelize');
 let page = {};
 let res = {};
 let req = {};
-let entityMap;
+let entityMap = {
+  123: {
+    id: 123,
+    publicId: 'bottom entity',
+    parents:  [{ id: 234, publicId: 'middle entity' }],
+    category: { id: 2 }
+  },
+  234: {
+    id: 234,
+    publicId: 'middle entity',
+    parents:  [{ id: 345, publicId: 'top entity' }],
+    category: { id: 2 }
+  },
+  345: {
+    id: 345,
+    publicId: 'top entity',
+    children: [{ id: 234, publicId: 'middle entity' }],
+    parents:  [],
+    category: { id: 1 }
+  }
+};
 
 describe("pages/admin/entities/entity-remap/EntityRemap", () => {
   beforeEach(() => {
@@ -23,28 +43,6 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
 
     page = new EntityRemap("some path", req, res);
 
-    entityMap = {
-      123: {
-        id: 123,
-        publicId: 'bottom entity',
-        parents:  [{ id: 234, publicId: 'middle entity' }],
-        category: { id: 2 }
-      },
-      234: {
-        id: 234,
-        publicId: 'middle entity',
-        parents:  [{ id: 345, publicId: 'top entity' }],
-        category: { id: 2 }
-      },
-      345: {
-        id: 345,
-        publicId: 'top entity',
-        children: [{ id: 234, publicId: 'middle entity' }],
-        parents:  [],
-        category: { id: 1 }
-      }
-    }
-    sinon.stub(page.entityHelper, 'entities').value(entityMap);
     sinon.stub(authentication, "protect").returns([]);
   });
 
@@ -151,6 +149,7 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
 
     beforeEach(async () => {
       CategoryParent.findAll.returns(categories);
+      Entity.findAll.resolves([entityMap[123], entityMap[234], entityMap[345]])
     });
 
     it("returns an objected key with category ID of entities within that category", async () => {

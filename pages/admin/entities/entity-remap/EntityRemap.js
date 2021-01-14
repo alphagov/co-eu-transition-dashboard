@@ -12,10 +12,6 @@ const flash = require('middleware/flash');
 const sequelize = require('services/sequelize');
 const logger = require('services/logger');
 class EntityRemap extends Page {
-  constructor(path, req, res) {
-    super(path, req, res)
-    this.entityHelper = new EntityHelper({ fields: true, category: true });
-  }
 
   get url() {
     return paths.admin.entityRemap;
@@ -34,6 +30,14 @@ class EntityRemap extends Page {
       ...authentication.protect(['admin']),
       flash
     ];
+  }
+
+  async initializeEntityHelper() {
+    if (!this.entityHelper) {
+      this.entityHelper = new EntityHelper({ fields: true, category: true });
+    }
+    
+    return this.entityHelper;
   }
 
   async getCategories() {
@@ -76,6 +80,7 @@ class EntityRemap extends Page {
   }
 
   async getParentEntities(selectedEntity) {
+    this.initializeEntityHelper();
     const categoryParents = await this.getCategoryParents(selectedEntity.categoryId);
     const categoryIds = categoryParents.map(category => category.parentCategoryId);
     const entities = await this.entityHelper.entitiesInCategories(categoryIds);
@@ -96,6 +101,7 @@ class EntityRemap extends Page {
   }
 
   async validatePostData({ remapEntities = {} }, selectedEntity) {
+    this.initializeEntityHelper();
     const errors = [];
     const entityCategories = [];
 
@@ -145,7 +151,7 @@ class EntityRemap extends Page {
   }
 
   async postRequest(req, res) {
-    const selectedEntity = await this.getEntity()
+    const selectedEntity = await this.getEntity();
     const formErrors = await this.validatePostData(req.body, selectedEntity);
 
     if (formErrors && formErrors.length) {
