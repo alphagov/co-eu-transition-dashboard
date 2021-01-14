@@ -34,7 +34,7 @@ const deleteRoleEntities = async (roleId, entityIds, transaction ) => {
     where: {
       roleId,
       entityId: entityIds 
-    } }, { transaction });
+    }, transaction });
 }
 
 const bulkUpdateRoleEntities = async (entitiesToUpdate, transaction) => {
