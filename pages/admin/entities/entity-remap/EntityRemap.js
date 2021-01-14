@@ -21,8 +21,12 @@ class EntityRemap extends Page {
     return paths.admin.entityRemap;
   }
 
+  get successMode() {
+    return this.req.params && this.req.params.success;
+  }
+
   get pathToBind() {
-    return `${this.url}/:publicId/:successful(successful)?`;
+    return `${this.url}/:publicId/:success(success)?`;
   }
 
   get middleware() {
@@ -74,8 +78,7 @@ class EntityRemap extends Page {
   async getParentEntities(selectedEntity) {
     const categoryParents = await this.getCategoryParents(selectedEntity.categoryId);
     const categoryIds = categoryParents.map(category => category.parentCategoryId);
-
-    const entities = await this.entityHelper.entitiesInCategories(categoryIds, [selectedEntity.id]);
+    const entities = await this.entityHelper.entitiesInCategories(categoryIds);
 
     for (const entity of entities) {
       entity.hierarchy = await this.entityHelper.getHierarchy(entity);
@@ -95,6 +98,10 @@ class EntityRemap extends Page {
   async validatePostData({ remapEntities = {} }, selectedEntity) {
     const errors = [];
     const entityCategories = [];
+
+    if (Object.keys(remapEntities).length === 0) {
+      errors.push("Must selected at least on parent entity");
+    }
     
     for (const entityId in remapEntities) {
       const entityData = await this.entityHelper.getEntityData(entityId);
@@ -102,7 +109,6 @@ class EntityRemap extends Page {
     }
 
     const categoryParents = await this.getCategoryParents(selectedEntity.categoryId);
-
     categoryParents.forEach(category => {
       if (category.isRequired && !entityCategories.includes(category.parentCategoryId)) {
         errors.push("Required category missing");
@@ -112,31 +118,30 @@ class EntityRemap extends Page {
     return errors;
   }
 
-  async saveData({ remapEntities }, selectedEntity) {
-    const transaction = await sequelize.transaction();
-    let redirectUrl = this.req.originalUrl;
-
-    const entityParentData = Object.keys(remapEntities).map(parentEntityId => ({
+  formatPostData({ remapEntities }, selectedEntity) {
+    return Object.keys(remapEntities).map(parentEntityId => ({
       entityId: selectedEntity.id,
       parentEntityId
     }));
-    
+  }
+
+  async saveData(entityParentData, selectedEntity) {
+    const transaction = await sequelize.transaction();
+
     try {
       await EntityParent.destroy({
         where: { entityId: selectedEntity.id },
         transaction
       });
-  
+
       await EntityParent.bulkCreate(entityParentData, { transaction });
 
       await transaction.commit();
-      redirectUrl += "/successful";
     } catch (error) {
       logger.error(error);
-      this.req.flash(["Error saving data"]);
       await transaction.rollback();
+      throw error;
     }
-    return this.res.redirect(redirectUrl);
   }
 
   async postRequest(req, res) {
@@ -148,7 +153,14 @@ class EntityRemap extends Page {
       return res.redirect(req.originalUrl);
     }
 
-    await this.saveData(req.body, selectedEntity);
+    try {
+      const entityParentData = this.formatPostData(req.body, selectedEntity);
+      await this.saveData(entityParentData, selectedEntity);
+      return res.redirect(`${req.originalUrl}/success`);
+    } catch(error) {
+      req.flash([error.message])
+      return res.redirect(req.originalUrl);
+    }
   }
 }
 
