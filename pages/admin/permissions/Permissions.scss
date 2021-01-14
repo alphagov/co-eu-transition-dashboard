@@ -1,21 +1,17 @@
 .category-group {
-    margin-top: 40px;
+    margin-top: 30px;
     margin-bottom: 10px;
-    
-    flex-direction: row;
-    justify-content: space-around;
     a {
-        padding-right: 10px;
-    }
-    a:link {
+        margin-right: 10px;
         text-decoration: none;
-    }
-    a:visited {
-        color: #1d70b8;
+        &:hover {
+            text-decoration: underline;
+        }
     }
     .category.selected {
-        font-weight: bold;
         color: black;
+        border-bottom: 5px solid #1d70b8;
+        padding-bottom: 5px;
     }
 }
 .permissions-radio {
@@ -34,7 +30,7 @@
 }
 
 #permissions-table{
-    margin-top: 50px;
+    margin-top: 30px;
     .header-first {
        width: 50%; 
     }

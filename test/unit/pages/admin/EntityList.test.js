@@ -38,12 +38,15 @@ describe("pages/admin/entities/entity-list/EntityList", () => {
     });
   });
 
-  describe("#categorySelected", () => {
-    it("returns categoryId from passed param", () => {
-      const categoryId = 2;
-      page.req.params = { categoryId };
-      const response = page.categorySelected
-      expect(response).to.eql(categoryId)
+  describe('#categorySelected', ()=>{
+    it('should return categoryId if set', ()=>{
+      page.req.params = { categoryId: 1 };
+      expect(page.categorySelected).to.eql(1);
+    });
+
+    it('should return categoryId as 0 if not set', ()=>{
+      page.req.params = {};
+      expect(page.categorySelected).to.eql(0);
     });
   });
   

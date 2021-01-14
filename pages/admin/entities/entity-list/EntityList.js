@@ -20,7 +20,7 @@ class EntityList extends Page {
   }
 
   get categorySelected() {
-    return this.req.params && parseInt(this.req.params.categoryId);
+    return this.req.params && parseInt(this.req.params.categoryId) || 0;
   }
 
   async getCategories() {
