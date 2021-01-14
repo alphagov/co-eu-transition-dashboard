@@ -8,7 +8,7 @@ const login = new Login();
 const hmg = new HMGDelivery();
 const fil = new Filters();
 
-const department = 'BEIS,HMRC';
+const { department } = Cypress.config();
 
 beforeEach(() => {
   // Preserve session across the entire test.
@@ -28,7 +28,7 @@ describe("TS_HMG_05_Verify_ShowHide_Filter - As a Management Overivew I can Hide
   });
 
   it("Can not view Filter Panel on 'Hide Filter'", function () {
-    nav.selectMainmenu(nav.Menu_HMG_delivery_megmt_info);
+    nav.selectMainmenu(nav.menuHMGdeliverymegmtinfo);
     hmg.verifyProjectDataHeader(department);
     fil.hideFilter();
   });
