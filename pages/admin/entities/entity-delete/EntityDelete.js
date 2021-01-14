@@ -4,6 +4,8 @@ const authentication = require('services/authentication');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const CategoryField = require('models/categoryField');
+const logger = require("services/logger");
+const flash = require('middleware/flash');
 
 class EntityDelete extends Page {
   get url() {
@@ -11,12 +13,17 @@ class EntityDelete extends Page {
   }
 
   get pathToBind() {
-    return `${this.url}/:publicId`;
+    return `${this.url}/:publicId/:successful(successful)?`;
+  }
+
+  get successfulMode() {
+    return this.req.params && this.req.params.successful;
   }
 
   get middleware() {
     return [
-      ...authentication.protect(['admin'])
+      ...authentication.protect(['admin']),
+      flash
     ];
   }
 
@@ -55,6 +62,25 @@ class EntityDelete extends Page {
     }
 
     return entity;
+  }
+
+  async deleteEntity() {
+    return Entity.destroy({
+      where: {
+        public_id: this.req.params.publicId
+      }
+    });
+  }
+
+  async postRequest(req, res) {
+    try {
+      await this.deleteEntity();
+    } catch (error) {
+      logger.error(error);
+      req.flash('An error has occurred when deleting this entity');  
+      return res.redirect(this.req.originalUrl);
+    }
+    return res.redirect(`${this.req.originalUrl}/successful`);
   }
 }
 
