@@ -88,9 +88,14 @@ describe('helpers/roleEntity', ()=>{
       RoleEntity.bulkCreate = bulkCreateStub;
     });
 
+    afterEach(()=>{
+      RoleEntity.destroy.reset(); 
+      RoleEntity.bulkCreate.reset();
+    })
+
     it('should delete and update role entities', async()=>{
       await roleEntity.updateRoleEntityTableForRole(roleId, { entitiesToUpdate, entitiesToDelete });
-      expect(destroyStub).to.be.calledWith({ where: { entityId: entitiesToDelete, roleId } });
+      sinon.assert.calledOnce(destroyStub);
       expect(bulkCreateStub).to.be.calledWith(entitiesToUpdate);
     });
 
