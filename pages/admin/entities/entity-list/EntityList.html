@@ -15,9 +15,11 @@
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-l">Manage Entities</h1>
 
+    <div class="category-group govuk-body">
       {% for category in categories %}
-        <a href="{{ url }}/{{ category.id }}" class="govuk-link govuk-!-margin-right-1">{{ category.name }}</a>
+        <a href="{{ url }}/{{ category.id }}" class="govuk-link category {{"selected" if (categorySelected == category.id) or (category.id == 1 and categorySelected == 0) }}">{{ category.name }}</a>
       {% endfor %}
+    </div>
 
       <table class="govuk-table">
         <thead class="govuk-table__head">

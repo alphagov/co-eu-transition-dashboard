@@ -8,19 +8,36 @@ const CategoryParent = require('models/categoryParent');
 const Entity = require('models/entity');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const EntityParent = require('models/entityParent');
+const flash = require('middleware/flash');
+const sequelize = require('services/sequelize');
+const logger = require('services/logger');
 class EntityRemap extends Page {
+
   get url() {
     return paths.admin.entityRemap;
   }
 
+  get successMode() {
+    return this.req.params && this.req.params.success;
+  }
+
   get pathToBind() {
-    return `${this.url}/:publicId`;
+    return `${this.url}/:publicId/:success(success)?`;
   }
 
   get middleware() {
     return [
-      ...authentication.protect(['admin'])
+      ...authentication.protect(['admin']),
+      flash
     ];
+  }
+
+  async initializeEntityHelper() {
+    if (!this.entityHelper) {
+      this.entityHelper = new EntityHelper({ fields: true, category: true });
+    }
+    
+    return this.entityHelper;
   }
 
   async getCategories() {
@@ -62,23 +79,94 @@ class EntityRemap extends Page {
     return entity;
   }
 
-  async getParentEntities(entity) {
-    const categoryParents = await this.getCategoryParents(entity.categoryId);
+  async getParentEntities(selectedEntity) {
+    this.initializeEntityHelper();
+    const categoryParents = await this.getCategoryParents(selectedEntity.categoryId);
     const categoryIds = categoryParents.map(category => category.parentCategoryId);
-
-    const entityHelper = new EntityHelper({ fields: true, category: true });
-    const entities = await entityHelper.entitiesInCategories(categoryIds);
+    const entities = await this.entityHelper.entitiesInCategories(categoryIds);
 
     for (const entity of entities) {
-      entity.hierarchy = await entityHelper.getHierarchy(entity);
+      entity.hierarchy = await this.entityHelper.getHierarchy(entity);
     }
 
     const entitiesByCategory = entities.reduce((acc, entity) => {
-      acc[entity.category.id] = [ ...(acc[entity.category.id] || []), entity]
+      if (entity.publicId !== selectedEntity.publicId) {
+        acc[entity.category.id] = [ ...(acc[entity.category.id] || []), entity]
+      }
+      
       return acc
     }, {});
 
     return entitiesByCategory;
+  }
+
+  async validatePostData({ remapEntities = {} }, selectedEntity) {
+    this.initializeEntityHelper();
+    const errors = [];
+    const entityCategories = [];
+
+    if (Object.keys(remapEntities).length === 0) {
+      errors.push("Must selected at least on parent entity");
+    }
+    
+    for (const entityId in remapEntities) {
+      const entityData = await this.entityHelper.getEntityData(entityId);
+      entityCategories.push(entityData.category.id);
+    }
+
+    const categoryParents = await this.getCategoryParents(selectedEntity.categoryId);
+    categoryParents.forEach(category => {
+      if (category.isRequired && !entityCategories.includes(category.parentCategoryId)) {
+        errors.push("Required category missing");
+      }
+    })
+
+    return errors;
+  }
+
+  formatPostData({ remapEntities }, selectedEntity) {
+    return Object.keys(remapEntities).map(parentEntityId => ({
+      entityId: selectedEntity.id,
+      parentEntityId
+    }));
+  }
+
+  async saveData(entityParentData, selectedEntity) {
+    const transaction = await sequelize.transaction();
+
+    try {
+      await EntityParent.destroy({
+        where: { entityId: selectedEntity.id },
+        transaction
+      });
+
+      await EntityParent.bulkCreate(entityParentData, { transaction });
+
+      await transaction.commit();
+    } catch (error) {
+      logger.error(error);
+      await transaction.rollback();
+      throw error;
+    }
+  }
+
+  async postRequest(req, res) {
+    const selectedEntity = await this.getEntity();
+    const formErrors = await this.validatePostData(req.body, selectedEntity);
+
+    if (formErrors && formErrors.length) {
+      req.flash(formErrors);
+      return res.redirect(req.originalUrl);
+    }
+
+    try {
+      const entityParentData = this.formatPostData(req.body, selectedEntity);
+      await this.saveData(entityParentData, selectedEntity);
+      return res.redirect(`${req.originalUrl}/success`);
+    } catch(error) {
+      req.flash([error.message])
+      return res.redirect(req.originalUrl);
+    }
   }
 }
 

@@ -28,11 +28,11 @@
         </td>
         <td class="govuk-table__cell">
         {{ govukCheckboxes({
-            name: entity.id,
+            name: "remapEntities[" + entity.id + "]",
             classes: "govuk-checkboxes--small",
             items: [
               {
-                value: "remap",
+                value: entity.id,
                 text: " ",
                 checked: entity.id in selectedEntity.parents
               }
