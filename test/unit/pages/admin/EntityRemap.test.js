@@ -168,7 +168,7 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
     })
 
     it('returns an empty array contain when all required category are present in entity post data', async ()=> {
-      const postDate = { remapEntities: { 234: "234", 345: "345" } }
+      const postDate = { remapEntities: ["234", "345"] }
       const response = await page.validatePostData(postDate, selectedEntity);
       expect(response).to.eql([]);
     });
@@ -180,7 +180,7 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
     });
 
     it('returns an array contain an error message when a required category is not in entity post data', async ()=> {
-      const postDate = { remapEntities: { 234: "234" } }
+      const postDate = { remapEntities: ["234"] }
       const response = await page.validatePostData(postDate, selectedEntity);
       expect(response[0]).to.eql("Required category missing");
     });
@@ -190,7 +190,7 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
     const selectedEntity = { id: 123, categoryId: 2 };
 
     it('should return correctly formatted post data', async ()=> {
-      const postDate = { remapEntities: { 234: "234", 345: "345" } }
+      const postDate = { remapEntities: ["234", "345"] }
       const response = await page.formatPostData(postDate, selectedEntity);
       expect(response).to.eql([{ entityId: 123, parentEntityId: "234" }, { entityId: 123, parentEntityId: "345" }]);
     });
@@ -266,7 +266,7 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
 
     it('should call saveData and redirect when save is successful', async ()=> {
       sinon.stub(page, "saveData");
-      req = { originalUrl, body: { remapEntities: { 345: "345" } }, flash: sinon.stub() };
+      req = { originalUrl, body: { remapEntities: ["345"] }, flash: sinon.stub() };
       await page.postRequest(req, res);
 
       sinon.assert.calledOnce(page.saveData);
@@ -275,7 +275,7 @@ describe("pages/admin/entities/entity-remap/EntityRemap", () => {
 
     it('should call flash and redirect when an error occurs during saveData', async ()=> {
       sinon.stub(page, "saveData").throws(new Error('some error'));
-      req = { originalUrl, body: { remapEntities: { 345: "345" } }, flash: sinon.stub() };
+      req = { originalUrl, body: { remapEntities: ["345"] }, flash: sinon.stub() };
       await page.postRequest(req, res);
 
       sinon.assert.calledOnce(req.flash);
