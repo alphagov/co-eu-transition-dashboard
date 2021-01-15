@@ -57,6 +57,7 @@ class Permissions extends Page {
         [parseInt(this.req.params.categoryId)]);
       const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
       for (const ec of entitiesForCategory) {
+        ec.hierarchy = await this.entityHelper.getHierarchy(ec);
         if (ec.id in roleEntities) {
           ec.edit = roleEntities[ec.id].canEdit;
           ec.notSelected = false;

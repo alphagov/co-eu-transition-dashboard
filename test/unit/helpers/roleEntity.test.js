@@ -29,11 +29,12 @@ describe('helpers/roleEntity', ()=>{
           shouldCascade: true
         }
       };
-      const entities = [{
+      const heierarcy = [{
+        id: 5,
         parents: [{ id:3 },{ id:2 }]
       }];
 
-      const hasParentsPermission = roleEntity.doesEntityHasParentsPermission(roleEntities,entities);
+      const hasParentsPermission = roleEntity.doesEntityHasParentsPermission(roleEntities,heierarcy);
       expect(hasParentsPermission).to.be.true;
     });
 
