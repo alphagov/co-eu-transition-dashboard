@@ -14,7 +14,7 @@
     }) }}
   {% endif %}
 
-  <h1 class="govuk-heading-xl">{{ data.groupDescription | default(measure.groupDescription) }}</h1>
+  <h1 class="govuk-heading-l">{{ data.groupDescription | default(measure.groupDescription) }}</h1>
 
   <form action='{{ editUrl }}' method='POST'>
     {{ govukTextarea({

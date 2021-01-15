@@ -11,12 +11,13 @@
 
 {% block pageTitle %}Edit RAYG Values{% endblock %}
 
-{% macro raygInput(id, name, value) %}
+{% macro raygInput(id, name, value, entity) %}
   {{ govukSelect({
       id: id,
       name: id,
       label: {
-        text: name
+        text: name,
+        classes: 'govuk-!-font-weight-bold' if entity == "theme"
       },
       items: [
         {
@@ -84,10 +85,10 @@
         <form action='{{ req.originalUrl }}' method='POST' >
           {% for theme in getThemesAndTopLevelStatements() | await %}
             <div class="themeContainer">
-              {{ raygInput(theme.id, theme.name, theme.raygStatus) }}
+              {{ raygInput(theme.id, theme.name, theme.raygStatus, 'theme') }}
 
               {% for statement in theme.children %}
-                {{ raygInput(statement.id, statement.name, statement.raygStatus) }}
+                {{ raygInput(statement.id, statement.name, statement.raygStatus, 'statement') }}
               {% endfor %}
             </div>
           {% endfor %}
