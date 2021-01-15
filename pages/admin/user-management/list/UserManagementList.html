@@ -15,7 +15,7 @@
 
 <div class="govuk-grid-row" id="hide-filters">
   <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-xl">Manage Users</h1>
+    <h1 class="govuk-heading-l">Manage Users</h1>
       {{
           govukButton({
             text: "Add new user",
@@ -27,7 +27,7 @@
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
           <th scope="col" class="govuk-table__header">Email</th>
-          <th scope="col" class="govuk-table__header govuk-!-width-one-half">Roles</th>
+          <th scope="col" class="govuk-table__header govuk-!-width-one-third">Roles</th>
           <th scope="col" class="govuk-table__header">Last login</th>
           <th scope="col" class="govuk-table__header">Is Active</th>
           <th scope="col" class="govuk-table__header"></th>
@@ -45,7 +45,7 @@
             <td class="govuk-table__cell">{{ user.lastLoginAt | date('DD/MM/YYYY HH:MM') }}</td>
             <td class="govuk-table__cell">{{ user.isActive }}</td>
             <td class="govuk-table__cell">
-              <a href="{{ config.paths.admin.editUser }}/{{ user.id }}" class="govuk-link">Edit user</a>
+              <a href="{{ config.paths.admin.editUser }}/{{ user.id }}" class="govuk-link edit-link">Edit user</a>
             </td>
           </tr>
         {% endfor %}

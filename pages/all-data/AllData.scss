@@ -71,6 +71,9 @@ table.govuk-table.table-content {
 
 #filterPanel, #hideFilters, #search-filters  {
     display: block;
+    .govuk-form-group {
+        margin-bottom: 10px;
+    }
 }
 
 #showFiltersBtn {
