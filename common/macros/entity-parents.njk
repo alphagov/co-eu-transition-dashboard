@@ -1,0 +1,12 @@
+{% macro entityParents(entity) %}
+  {% if entity.parents | length %}
+    <div class="govuk-breadcrumbs govuk-!-margin-bottom-0">
+      <strong>Parents</strong>:
+      <ol class="govuk-breadcrumbs__list">
+        {% for entityParents in entity.parents %}
+          <li class=""><strong>{{ entityParents.publicId }}</strong>: {{ entityParents.name }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+  {% endif %}
+{% endmacro %}

@@ -57,7 +57,7 @@ class Permissions extends Page {
         [parseInt(this.req.params.categoryId)]);
       const roleEntities = await getEntitiesForRoleId(this.req.params.roleId);
       for (const ec of entitiesForCategory) {
-        ec.hierarchy = await this.entityHelper.getHierarchy(ec);
+        ec.parents = await this.entityHelper.getParents(ec);
         if (ec.id in roleEntities) {
           ec.edit = roleEntities[ec.id].canEdit;
           ec.notSelected = false;
@@ -70,8 +70,7 @@ class Permissions extends Page {
           ec.shouldCascade = false;
         }
         ec.name = (ec.name) ? ec.name : 'Entity name is not set';
-        const hierarchy = await this.entityHelper.getHierarchy(ec);
-        ec.hasParentsPermission = doesEntityHasParentsPermission(roleEntities, hierarchy);
+        ec.hasParentsPermission = await doesEntityHasParentsPermission(roleEntities, ec.parents, this.entityHelper);
       }
       return entitiesForCategory;
     }

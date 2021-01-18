@@ -17,13 +17,14 @@ const getEntitiesForRoleId = async(roleId) => {
   },{})
 }
 
-const doesEntityHasParentsPermission = (roleEntities, entitiesHeirarchy) => {
-  for(const entity of entitiesHeirarchy) {
+const doesEntityHasParentsPermission = async (roleEntities, entityParents, entityHelpers) => {
+  for(const entity of entityParents) {
     if (entity.id in roleEntities && roleEntities[entity.id].shouldCascade) {
       return true;
     }
+    entity.parents = await entityHelpers.getParents(entity);
     if (entity.parents && entity.parents.length > 0) {
-      return doesEntityHasParentsPermission(roleEntities, entity.parents)
+      return doesEntityHasParentsPermission(roleEntities, entity.parents, entityHelpers)
     }
   }
   
