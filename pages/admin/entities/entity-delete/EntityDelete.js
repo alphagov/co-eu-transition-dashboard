@@ -49,15 +49,17 @@ class EntityDelete extends Page {
       }]
     });
 
-    entity.entityFieldEntries.map(entityfieldEntry => {
-      entity[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
-    });
+    if (entity) {
+      entity.entityFieldEntries.map(entityfieldEntry => {
+        entity[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
+      });
 
-    if (entity.children.length) {
-      for (const child of entity.children) {
-        child.entityFieldEntries.map(entityfieldEntry => {
-          child[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
-        });
+      if (entity.children.length) {
+        for (const child of entity.children) {
+          child.entityFieldEntries.map(entityfieldEntry => {
+            child[entityfieldEntry.categoryField.name] = entityfieldEntry.value;
+          });
+        }
       }
     }
 
