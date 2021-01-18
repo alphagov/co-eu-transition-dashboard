@@ -100,16 +100,16 @@ class EntityRemap extends Page {
     return entitiesByCategory;
   }
 
-  async validatePostData({ remapEntities = {} }, selectedEntity) {
+  async validatePostData({ remapEntities = [] }, selectedEntity) {
     this.initializeEntityHelper();
     const errors = [];
     const entityCategories = [];
 
-    if (Object.keys(remapEntities).length === 0) {
+    if (remapEntities.length === 0) {
       errors.push("Must selected at least on parent entity");
     }
-    
-    for (const entityId in remapEntities) {
+
+    for (const entityId of remapEntities) {
       const entityData = await this.entityHelper.getEntityData(entityId);
       entityCategories.push(entityData.category.id);
     }
@@ -125,7 +125,7 @@ class EntityRemap extends Page {
   }
 
   formatPostData({ remapEntities }, selectedEntity) {
-    return Object.keys(remapEntities).map(parentEntityId => ({
+    return remapEntities.map(parentEntityId => ({
       entityId: selectedEntity.id,
       parentEntityId
     }));
