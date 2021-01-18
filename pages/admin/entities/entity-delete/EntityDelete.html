@@ -32,12 +32,14 @@
     {% set entity = getEntity() | await %}
   
     <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Delete entity</h1>
-    <h2 class="govuk-heading-m govuk-!-font-weight-regular"><strong>{{ entity.publicId }}</strong>: {{ entity.name }}</h2> 
 
     {% if entity.children | length %}
         {% include "admin/entities/entity-delete/partials/children-entity.njk" %}
-    {% else %}
+    {% elseif entity.publicId %}
         {% include "admin/entities/entity-delete/partials/delete-confirmation.njk" %}
+    {% else %}
+      <p class="govuk-body-l">Entity {{ req.params.publicId }} can not be found.</p>
+      <a href="{{ config.paths.admin.entityList }}" class="govuk-link govuk-body">Back to entities list</a>  
     {% endif %}
 
   {% endif %}
