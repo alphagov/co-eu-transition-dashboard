@@ -699,9 +699,12 @@ const getThemesHierarchy = async (entitiesUserCanAccess) => {
 }
 
 const filterTopLevelOutcomeStatementsChildren = async(entities) => {
-  const statementCategory = await Category.findOne({
-    where: { name: 'Statement' }
+  const categories = await Category.findAll({
+    where: { name: ['Statement', 'Theme'] }
   });
+
+  const statementCategory = categories.find(category => category.name === 'Statement');
+  const themeCategory = categories.find(category => category.name === 'Theme');
 
   const filterChildren = (entities = []) => {
     for (var i = entities.length - 1; i >= 0; i--) {
@@ -731,7 +734,8 @@ const filterTopLevelOutcomeStatementsChildren = async(entities) => {
   return entities.filter(entity => {
     const hasChildren = entity.children && entity.children.length;
     const hasOnlyParentOrLess = entity.parents.length <= 1;
-    return hasChildren && hasOnlyParentOrLess;
+    const allParentAreThemes = entity.parents.every(parent => parent.categoryId === themeCategory.id)
+    return hasChildren && (hasOnlyParentOrLess || allParentAreThemes);
   });
 }
 

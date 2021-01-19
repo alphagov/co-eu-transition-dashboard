@@ -47,7 +47,7 @@ class RaygValues extends Page {
     return Object.keys(body).map(key => ({
       publicId: entities[key].publicId,
       categoryId: entities[key].categoryId,
-      raygStatus: body[key]
+      raygStatus: Array.isArray(body[key]) ? body[key][0] : body[key]
     }));
   }
 
