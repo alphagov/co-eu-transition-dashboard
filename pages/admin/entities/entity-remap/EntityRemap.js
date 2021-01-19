@@ -86,7 +86,7 @@ class EntityRemap extends Page {
     const entities = await this.entityHelper.entitiesInCategories(categoryIds);
 
     for (const entity of entities) {
-      entity.hierarchy = await this.entityHelper.getHierarchy(entity);
+      entity.parents = await this.entityHelper.getParents(entity);
     }
 
     const entitiesByCategory = entities.reduce((acc, entity) => {

@@ -1,4 +1,5 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "entity-parents.njk" import entityParents %}
 
 {% for categoryId, parentEntitied in parentEntitiesByCategory %}
   <table class="govuk-table govuk-!-margin-top-0">
@@ -15,16 +16,7 @@
       <tr class="govuk-table__row">
         <td class="govuk-table__cell">
           <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
-          {% if entity.hierarchy | length %}
-          <div class="govuk-breadcrumbs govuk-!-margin-bottom-0">
-            <strong>Hierarchy</strong>:
-            <ol class="govuk-breadcrumbs__list">
-              {% for entityHierarchyItem in entity.hierarchy %}
-                <li class="govuk-breadcrumbs__list-item">{{ entityHierarchyItem.name }}</li>
-              {% endfor %}
-            </ol>
-          </div>
-        {% endif %}
+          {{ entityParents(entity) }}
         </td>
         <td class="govuk-table__cell">
         {{ govukCheckboxes({

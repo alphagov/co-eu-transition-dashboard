@@ -20,7 +20,7 @@ describe('helpers/roleEntity', ()=>{
   });
 
   describe('doesEntityHasParentsPermission', ()=>{
-    it('should return true when parent has shouldCascade true', ()=>{
+    it('should return true when parent has shouldCascade true', async ()=>{
       const roleEntities = {
         '1':{
           shouldCascade: false
@@ -29,15 +29,20 @@ describe('helpers/roleEntity', ()=>{
           shouldCascade: true
         }
       };
-      const entities = [{
-        parents: [{ id:3 },{ id:2 }]
+      const heierarcy = [{
+        id: 5,
+        parents: [{ id:2 }]
       }];
+      
+      const entityHelpersStub = {
+        getParents: sinon.stub().resolves([{ id:2 }])
+      }
 
-      const hasParentsPermission = roleEntity.doesEntityHasParentsPermission(roleEntities,entities);
+      const hasParentsPermission = await roleEntity.doesEntityHasParentsPermission(roleEntities,heierarcy, entityHelpersStub);
       expect(hasParentsPermission).to.be.true;
     });
 
-    it('should return false when parent has shouldCascade false', ()=>{
+    it('should return false when parent has shouldCascade false', async ()=>{
       const roleEntities = {
         '1':{
           shouldCascade: false
@@ -50,11 +55,15 @@ describe('helpers/roleEntity', ()=>{
         parents: [{ id:3 },{ id:2 }]
       }];
 
-      const hasParentsPermission = roleEntity.doesEntityHasParentsPermission(roleEntities,entities);
+      const entityHelpersStub = {
+        getParents: sinon.stub().resolves([])
+      }
+
+      const hasParentsPermission = await roleEntity.doesEntityHasParentsPermission(roleEntities,entities, entityHelpersStub);
       expect(hasParentsPermission).to.be.false;
     });
 
-    it('should return false when parent is not in roleEntities', ()=>{
+    it('should return false when parent is not in roleEntities', async ()=>{
       const roleEntities = {
         '1':{
           shouldCascade: false
@@ -66,8 +75,12 @@ describe('helpers/roleEntity', ()=>{
       const entities = [{
         parents: [{ id:3 },{ id:4 }]
       }];
+
+      const entityHelpersStub = {
+        getParents: sinon.stub().resolves([])
+      }
   
-      const hasParentsPermission = roleEntity.doesEntityHasParentsPermission(roleEntities,entities);
+      const hasParentsPermission = await roleEntity.doesEntityHasParentsPermission(roleEntities,entities, entityHelpersStub);
       expect(hasParentsPermission).to.be.false;
     });
   });

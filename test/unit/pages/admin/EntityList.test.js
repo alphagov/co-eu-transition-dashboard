@@ -87,7 +87,7 @@ describe("pages/admin/entities/entity-list/EntityList", () => {
 
     it("returns list of entities within a category along with their hierarchy", async () => {
       const response = await page.getEntitiesForCategory(2);
-      expect(response).to.eql([{ ...entityMap[2], hierarchy:[entityMap[3]] }])
+      expect(response).to.eql([{ ...entityMap[2], parents:[entityMap[3]] }])
     });
   });
 });
