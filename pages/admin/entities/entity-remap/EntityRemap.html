@@ -7,14 +7,24 @@
 {% set parentEntitiesByCategory = getParentEntities(selectedEntity) | await %}
 
 {% block beforeContent %}
+{% if successMode %}
   {% include "navigation.njk" %}
+{% else %} 
+    {{ govukBackLink({
+        text: "Back",
+        href: "#",
+        attributes: {
+            onclick: "history.go(-1); return false;"
+        }
+    }) }}
+{% endif %}
 {% endblock %}
 
 {% block pageTitle %}Remap Entities{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
       <form action='{{ req.originalUrl }}' method='POST'>
         <h1 class="govuk-heading-l">Remap Entity</h1>
 
