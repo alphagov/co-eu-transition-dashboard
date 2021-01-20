@@ -87,57 +87,5 @@ describe('middleware/entityUserPermissions', () => {
         }
       ]);
     });
-
-    it('sets locals.entitiesUserCanAccess with all entities user can access via blacklist', async () => {
-      const entities = [{
-        publicId: 'entity 01',
-        id: 1,
-        children: [],
-        parents: [],
-        roleEntities: [{ roleId: 1 }]
-      },
-      {
-        publicId: 'entity 02',
-        id: 2,
-        children: [],
-        parents: [],
-        roleEntities: []
-      }];
-
-      Entity.findAll.resolves([entities[0]]);
-
-      Role.findAll.resolves([{
-        name: "all",
-        id: 1,
-        roleEntities: [
-          {
-            roleId: 1,
-            entityId: 1
-          }
-        ]
-      }]);
-
-      await entityUserPermissions.assignEntityIdsUserCanAccessToLocals(req, res, next);
-
-      sinon.assert.calledWith(Role.findAll, {
-        include: {
-          model: UserRole,
-          where: { userId: req.user.id },
-        }
-      });
-
-      sinon.assert.called(next);
-      expect(res.locals.entitiesUserCanAccess).to.eql([{
-        publicId: 'entity 01',
-        id: 1,
-        children: [],
-        parents: [],
-        roles: {
-          1: {
-            roleId: 1
-          }
-        }
-      }]);
-    });
   });
 });
