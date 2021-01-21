@@ -138,8 +138,8 @@ class EntityHelper {
   }
   
   async entitiesWithViewPermission(roles) {
-    if(!this.options.roles) {
-      throw new Error('Must include roles in constructor');
+    if(!roles || roles.length === 0) {
+      throw new Error('Must include roles');
     }
     const roleIds = roles.map(r => r.id);
     const es = await this.entities;
@@ -152,9 +152,9 @@ class EntityHelper {
     for(const vr of viewRoleEntities){
       entitesWithViewRoles[vr.entityId] = es[vr.entityId];
       if(vr.shouldCascade && es[vr.entityId].children.length >0) {
-        const childIds = es[vr.entityId].children.map(c => c.id);
-        for(const cid of childIds) {
-          await this.getAllChildrenEntities(cid, entitesWithViewRoles, es);
+        // const childIds = es[vr.entityId].children.map(c => c.id);
+        for(const child of es[vr.entityId].children) {
+          await this.getAllChildrenEntities(child.id, entitesWithViewRoles, es);
         }
       }
     }
@@ -169,9 +169,9 @@ class EntityHelper {
     entitesWithViewRoles[entityId] = allEntities[entityId];
     const entity = await this.getEntityData(entityId); 
     if (entity.children.length >0) {
-      const childEntityIds = entity.children.map(c => c.id);
-      for(const cid of childEntityIds) {
-        await this.getAllChildrenEntities(cid, entitesWithViewRoles, allEntities);
+      // const childEntityIds = entity.children.map(c => c.id);
+      for(const child of entity.children) {
+        await this.getAllChildrenEntities(child.id, entitesWithViewRoles, allEntities);
       }
     }
   }
