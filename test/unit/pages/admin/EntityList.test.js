@@ -1,7 +1,7 @@
 const { expect, sinon } = require("test/unit/util/chai");
 const config = require("config");
 
-const EntityList = require("pages/admin/entity-list/EntityList");
+const EntityList = require("pages/admin/entities/entity-list/EntityList");
 const authentication = require("services/authentication");
 const Entity = require("models/entity");
 const Category = require("models/category");
@@ -10,7 +10,7 @@ let page = {};
 let res = {};
 let req = {};
 
-describe("pages/admin/entity-list/EntityList", () => {
+describe("pages/admin/entities/entity-list/EntityList", () => {
   beforeEach(() => {
     res = { cookies: sinon.stub() };
     req = { cookies: [] };
@@ -38,12 +38,15 @@ describe("pages/admin/entity-list/EntityList", () => {
     });
   });
 
-  describe("#categorySelected", () => {
-    it("returns categoryId from passed param", () => {
-      const categoryId = 2;
-      page.req.params = { categoryId };
-      const response = page.categorySelected
-      expect(response).to.eql(categoryId)
+  describe('#categorySelected', ()=>{
+    it('should return categoryId if set', ()=>{
+      page.req.params = { categoryId: 1 };
+      expect(page.categorySelected).to.eql(1);
+    });
+
+    it('should return categoryId as 0 if not set', ()=>{
+      page.req.params = {};
+      expect(page.categorySelected).to.eql(0);
     });
   });
   
@@ -84,7 +87,7 @@ describe("pages/admin/entity-list/EntityList", () => {
 
     it("returns list of entities within a category along with their hierarchy", async () => {
       const response = await page.getEntitiesForCategory(2);
-      expect(response).to.eql([{ ...entityMap[2], hierarchy:[entityMap[3]] }])
+      expect(response).to.eql([{ ...entityMap[2], parents:[entityMap[3]] }])
     });
   });
 });

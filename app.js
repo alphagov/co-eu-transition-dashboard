@@ -21,7 +21,7 @@ app.set('trust proxy', true);
 
 helmet.attach(app);
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, parameterLimit: 5000 }));
 app.use(cookieParser());
 
 app.use(httpContext.middleware);

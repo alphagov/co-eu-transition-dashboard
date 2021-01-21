@@ -2,6 +2,21 @@
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% block beforeContent %}
+{% if editMode %}
+  {{ govukBackLink({
+      text: "Back",
+      href: "#",
+      attributes: {
+          onclick: "history.go(-1); return false;"
+      }
+  }) }}
+{% else %} 
+  {% include "navigation.njk" %}
+{% endif %}
+{% endblock %}
 
 {% set fields = getFields() | await %}
 {% set fieldGroups = getProjectGroups() | await %}
@@ -14,7 +29,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-  <h1 class="govuk-heading-l">{{ "Project input data" if editMode else "Manage project data input fields" }}</h1>
+  <h1 class="govuk-heading-l">{{ "Re-order fields" if editMode else "Manage project data input fields" }}</h1>
 
   {% if editMode and flash %}
   {{ govukErrorSummary({
@@ -30,13 +45,13 @@
   {% if not editMode %}
   <p class="govuk-body-l">Changes made to the data input fields will
   be reflected in the downloadable template for the MI commision. </p>
-  {% endif %}
 
   <p class="govuk-body">
     <a href="{{ config.paths.admin.projectField }}" class="govuk-link">Add a new field</a><br>
-    <a href="{{ config.paths.admin.projectFieldList }}/edit" class="{{ 'reorder-link' if editMode else 'govuk-link' }}">Re-order fields</a><br>
+    <a href="{{ config.paths.admin.projectFieldList }}/edit" class="govuk-link">Re-order fields</a><br>
   </p>
   <hr class="govuk-section-break govuk-section-break--m">
+  {% endif %}
 
   </div>
 </div>
@@ -101,8 +116,8 @@
         {% endif %}
         <td class="govuk-table__cell">{{ fieldType }}</td>
         <td class="govuk-table__cell">{{ "Active" if (field.isActive == true) else "Not active" }}</td>
-        {% if not editMode and field.id %}
-        <td class="govuk-table__cell"><a href="{{ config.paths.admin.projectField + '/' + field.id }}" class="govuk-link">Edit</a></td>
+        {% if not editMode %}
+        <td class="govuk-table__cell">{% if field.id %}<a href="{{ config.paths.admin.projectField + '/' + field.id }}" class="govuk-link">Edit</a>{% endif %}</td>
         {% endif %}
       </tr>
       {% endif %}

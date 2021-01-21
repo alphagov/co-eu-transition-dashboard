@@ -1,0 +1,38 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "entity-parents.njk" import entityParents %}
+
+{% for categoryId, parentEntitied in parentEntitiesByCategory %}
+  <table class="govuk-table govuk-!-margin-top-0">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">
+        {{ categories[categoryId] }}
+        </th>
+        <th scope="col" class="govuk-table__header"></th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for entity in parentEntitied %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">
+          <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
+          {{ entityParents(entity) }}
+        </td>
+        <td class="govuk-table__cell">
+        {{ govukCheckboxes({
+            name: "remapEntities[]",
+            classes: "govuk-checkboxes--small",
+            items: [
+              {
+                value: entity.id,
+                text: " ",
+                checked: entity.id in selectedEntity.parents
+              }
+            ]
+          }) }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endfor %}

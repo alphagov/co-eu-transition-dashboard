@@ -181,18 +181,10 @@ describe('helpers/entityHelper', () => {
     });
   });
 
-  describe('#buildHierarchy', () => {
-    it('add entites which make up the entity hierarchy to the passed array', async () => {
-      const parents = [];
-      await entityHelper.buildHierarchy(entityMap[1], parents);
-      expect(parents).to.eql([entityMap[3], entityMap[2]]);
-    });
-  });
-
-  describe('#getHierarchy', () => {
-    it('returns the hierarchy for the selected entity, in reserve order', async () => {
-      const hierarchy = await entityHelper.getHierarchy(entityMap[1]);
-      expect(hierarchy).to.eql([entityMap[3], entityMap[2]]);
+  describe('#getParents', () => {
+    it('returns the parents for the selected entity', async () => {
+      const parents = await entityHelper.getParents(entityMap[1]);
+      expect(parents).to.deep.eql([entityMap[2]]);
     });
   });
 

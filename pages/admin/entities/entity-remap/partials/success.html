@@ -1,0 +1,8 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{{ govukPanel({
+  titleText: "Success",
+  text: "Entity data updated successfully"
+}) }}
+
+<a  class="govuk-link" href="{{ config.paths.admin.entityList }}">Back to manage entity list</a>

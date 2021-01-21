@@ -5,7 +5,7 @@ import Admin from '../../pages/Admin';
 const nav = new Navigation(); 
 const login = new Login();
 const admin = new Admin();
-const department = "BEIS";
+const department = Cypress.config().department.split(',')[0];
 
 beforeEach(() => {
   // Preserve session across the entire test.
@@ -28,15 +28,15 @@ describe("TS_Admin_01_Managetags - As an admin I can Manage(Create/Delete) tags"
 
   //Verify that I am allowed to access 'Tranistion Readiness' menu and all submenus underneath
   it("Can view list of Tags and 'Delete' link against each of them", function () {
-    nav.selectMainmenu(nav.Menu_Admin);
-    nav.selectSubmenu(nav.SubMenu_ManageTags)
+    nav.selectMainmenu(nav.menuAdmin);
+    nav.selectSubmenu(nav.subMenuManageTags)
     admin.verifyManageTagsHeader();
     admin.verifyTagList();
   });
 
   it("Can view list of measures tagged on Delete tag confirmation for relevant tag", function () {
-    nav.selectMainmenu(nav.Menu_Admin);
-    nav.selectSubmenu(nav.SubMenu_ManageTags)
+    nav.selectMainmenu(nav.menuAdmin);
+    nav.selectSubmenu(nav.subMenuManageTags)
     let taglist = [];
     cy.getTagList().as('dbResultTagList');
     cy.get('@dbResultTagList').then((res) => {

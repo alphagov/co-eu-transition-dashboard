@@ -29,7 +29,7 @@ describe('pages/admin/permissions/Permissions', ()=>{
     
   describe('#pathToBind', () => {
     it('returns correct url', () => {
-      expect(page.pathToBind).to.eql(`${paths.admin.permissions}/:roleId?/:categoryId?`);
+      expect(page.pathToBind).to.eql(`${paths.admin.permissions}/:roleId?/:categoryId?/:success?`);
     });
   });
 

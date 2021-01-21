@@ -1,0 +1,8 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{{ govukPanel({
+  titleText: "Permissions saved successfully",
+  text: "Permissions saved successfully"
+}) }}
+
+<a  class="govuk-link govuk-body" href="{{ config.paths.admin.permissions }}">Back to Permissions</a>

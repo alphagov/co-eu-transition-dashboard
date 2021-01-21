@@ -20,7 +20,7 @@ class EntityList extends Page {
   }
 
   get categorySelected() {
-    return this.req.params && parseInt(this.req.params.categoryId);
+    return this.req.params && parseInt(this.req.params.categoryId) || 0;
   }
 
   async getCategories() {
@@ -32,7 +32,7 @@ class EntityList extends Page {
     const entities = await entityHelper.entitiesInCategories([this.categorySelected || defaultCategoryId]);
 
     for(const entity of entities) {
-      entity.hierarchy = await entityHelper.getHierarchy(entity);
+      entity.parents = await entityHelper.getParents(entity);
     }
 
     return entities;
