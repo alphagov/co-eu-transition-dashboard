@@ -1,103 +1,56 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
-
-{% set tableRows = [] %}
-
-
-{% for entity in entities %}
-  {% from "govuk/components/radios/macro.njk" import govukRadios %}
-  {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-
-  {% set entityName %}
-  <div>
-    <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
-              {% if entity.hierarchy | length %}
-                <div class="govuk-breadcrumbs govuk-!-margin-bottom-0">
-                  <strong>Hierarchy</strong>:
-                  <ol class="govuk-breadcrumbs__list">
-                    {% for entityHierarchyItem in entity.hierarchy %}
-                      <li class="govuk-breadcrumbs__list-item">{{ entityHierarchyItem.name }}</li>
-                    {% endfor %}
-                  </ol>
-                </div>
-              {% endif %}
-    <div><b>{{"Permissions are set by parent" if entity.hasParentsPermission}}</b></div>
-  </div>
-  {% endset -%}
-
-  {% set cascadeCheckBox %}
-        {{ govukCheckboxes({
-          idPrefix: entity.id,
-          name: entity.id,
-          classes: "govuk-checkboxes--small",
-          items: [
-            {
-              value: "cascade",
-              text: " ",
-              checked: entity.shouldCascade
-            }
-          ]
-        }) }}
-  {% endset -%}
-
-  {% set permissionRadio %}
-    {{ govukRadios({
-      classes: "govuk-radios--inline radio-option govuk-radios--small",
-      idPrefix: entity.id,
-      name: entity.id,
-      items: [
-        {
-          value: "view",
-          text: "view",
-          checked: entity.view
-        },
-        {
-          value: "edit",
-          text: "edit",
-          checked: entity.edit
-        },
-        {
-          value: "none",
-          text: "none",
-          checked: entity.notSelected
-        }
-      ]
-    }) }}
-  {% endset -%}
-
-  {% set rowItems = [] %}
-  {% set rowItems= (rowItems.push({
-        html: entityName,
-        classes: "category-name"
-      }, {
-        html: permissionRadio,
-        classes: "permissions-radio"
-      },
-      {
-        html: cascadeCheckBox,
-        classes: "cascade-checkbox"
-      }), rowItems) 
-  %}
-
-  {% set tableRows= (tableRows.push(rowItems), tableRows) %}
-{% endfor %}
+{% from "entity-parents.njk" import entityParents %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 <div id="permissions-table">
-  {{ govukTable({
-      firstCellIsHeader: true,
-      head: [
-        {
-          text: "Category",
-          classes: "header-first"
-        },
-        {
-          text: "Permissions",
-          classes: "header-middle"
-        },
-        {
-          text: "Cascade",
-          classes: "header-middle"
-        }
-      ],
-      rows: tableRows
-    }) }}
+  <table class="govuk-table govuk-!-margin-top-0">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header header-first">Category</th>
+      <th scope="col" class="govuk-table__header header-middle">Permissions</th>
+      <th scope="col" class="govuk-table__header header-middle">Cascade</th> 
+    </tr>
+    <tbody class="govuk-table__body">
+      {% for entity in entities %}
+        <tr class="govuk-table__row">
+          <th scope="col"  class="govuk-table__header category-name">
+              <div>
+              <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
+              {{ entityParents(entity) }}
+              <br>
+              <div><b>{{"Permissions are set by parent" if entity.hasParentsPermission}}</b></div>
+            </div>
+          </th>
+          <td class="govuk-table__cell permissions-radio">
+            <div class="govuk-form-group">
+              <div class="govuk-radios govuk-radios--inline radio-option govuk-radios--small">
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="{{ entity.id }}" name="{{ entity.id }}" type="radio" value="view" {% if entity.view %}checked{% endif %}>
+                  <label class="govuk-label govuk-radios__label" for="{{ entity.id }}">view</label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="{{ entity.id }}-edit" name="{{ entity.id }}" type="radio" value="edit" {% if entity.edit %}checked{% endif %}>
+                  <label class="govuk-label govuk-radios__label" for="{{ entity.id }}-edit">edit</label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="{{ entity.id }}-none" name="{{ entity.id }}" type="radio" value="none" {% if entity.notSelected %}checked{% endif %}>
+                  <label class="govuk-label govuk-radios__label" for="{{ entity.id }}-none">none</label>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="govuk-table__cell cascade-checkbox">
+            <div class="govuk-form-group">
+              <div class="govuk-checkboxes govuk-checkboxes--small">
+                <div class="govuk-checkboxes__item">
+                  <input class="govuk-checkboxes__input" id="{{ entity.id }}" name="{{ entity.id }}" type="checkbox" value="cascade" {% if entity.shouldCascade %}checked{% endif %}>
+                  <label class="govuk-label govuk-checkboxes__label" for="{{ entity.id }}"></label>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>

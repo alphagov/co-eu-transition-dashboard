@@ -1,5 +1,6 @@
 {% extends "template.njk" %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "entity-parents.njk" import entityParents %}
 
 {% set categories = getCategories() | await %}
 {% set entities = getEntitiesForCategory(categories[0].id) | await %}
@@ -12,7 +13,7 @@
 
 {% block content %}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-l">Manage Entities</h1>
 
     <div class="category-group govuk-body">
@@ -33,16 +34,7 @@
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">
               <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
-              {% if entity.hierarchy | length %}
-                <div class="govuk-breadcrumbs govuk-!-margin-bottom-0">
-                  <strong>Hierarchy</strong>:
-                  <ol class="govuk-breadcrumbs__list">
-                    {% for entityHierarchyItem in entity.hierarchy %}
-                      <li class="govuk-breadcrumbs__list-item">{{ entityHierarchyItem.name }}</li>
-                    {% endfor %}
-                  </ol>
-                </div>
-              {% endif %}
+               {{ entityParents(entity) }}
             </td>
             <td class="govuk-table__cell text-align-right">
               <a href="{{ config.paths.admin.entityRemap }}/{{ entity.publicId }}" class="govuk-link govuk-!-margin-right-2">Remap</a>

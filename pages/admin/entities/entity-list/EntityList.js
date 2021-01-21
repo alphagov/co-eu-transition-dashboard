@@ -32,7 +32,7 @@ class EntityList extends Page {
     const entities = await entityHelper.entitiesInCategories([this.categorySelected || defaultCategoryId]);
 
     for(const entity of entities) {
-      entity.hierarchy = await entityHelper.getHierarchy(entity);
+      entity.parents = await entityHelper.getParents(entity);
     }
 
     return entities;

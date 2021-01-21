@@ -105,35 +105,14 @@ class EntityHelper {
     }
   }
 
-  async buildHierarchy(entity, parents = []) {
-    const entityCategoryId = entity.category.id;
+  async getParents(entity) {
+    const parents = []
     if(entity.parents && entity.parents.length) {
-      let selectedEntityParent = entity.parents[0];
-      
-      if (entity.parents.length > 1) {
-        // Entities can be nested and have multiple parents.  When we have multiple
-        // parents we want to find the item which will has the same category ID
-        for (const parent of entity.parents) {
-          const parentEntity = await this.getEntityData(parent.id);
-
-          if (parentEntity.category.id === entityCategoryId) {
-            selectedEntityParent = parent;
-          }  
-        }
-      }
-
-      const parent = await this.getEntityData(selectedEntityParent.id)
-      parents.unshift(parent);
-
-      if (parent.parents && parent.parents.length) {
-        await this.buildHierarchy(parent, parents)
-      }
+      for (const parent of entity.parents) {
+        const parentEntity = await this.getEntityData(parent.id); 
+        parents.push(parentEntity)
+      }  
     }
-  }
-
-  async getHierarchy(entity) {
-    const parents = [];
-    await this.buildHierarchy(entity, parents)
     return parents;
   }
   

@@ -10,16 +10,12 @@
 {% from "govuk/components/accordion/macro.njk" import govukAccordion %}
 {% from "status.njk" import currentStatus %}
 
-{% block beforeContent %}
-  {% include "navigation.njk" %}
-{% endblock %}
-
 {% block pageTitle %}Measures{% endblock %}
 
 {% block content %}
 
   <div id="measures-list" class="govuk-grid-row">
-    <div class="govuk-grid-column-three-quarters">
+    <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-l">Measures</h1>
 
       <h2 class="govuk-heading-s">Grouped measures</h2>
