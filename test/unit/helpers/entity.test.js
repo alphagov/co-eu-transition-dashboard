@@ -142,21 +142,21 @@ describe('helpers/entityHelper', () => {
     });
   });
 
-  describe('#entitiesWithRoles', () => {
-    it('returns all entities which have role', async () => {
-      const entitiesWithRole = await entityHelper.entitiesWithRoles([{ id: 2 }]);
-      expect(entitiesWithRole).to.eql([entityMap[2], entityMap[3]]);
-    });
+  // describe('#entitiesWithRoles', () => {
+  //   it('returns all entities which have role', async () => {
+  //     const entitiesWithRole = await entityHelper.entitiesWithRoles([{ id: 2 }]);
+  //     expect(entitiesWithRole).to.eql([entityMap[2], entityMap[3]]);
+  //   });
 
-    it('throws an error when roles is not set to true when the helper object is created', async() => {
-      try{
-        const entityHelperCategory = new EntityHelper({ roles: false });
-        await entityHelperCategory.entitiesInCategories([1]);
-      } catch(err) {
-        expect(err.message).to.equal('Must include category in constructor');
-      }
-    });
-  });
+  //   it('throws an error when roles is not set to true when the helper object is created', async() => {
+  //     try{
+  //       const entityHelperCategory = new EntityHelper({ roles: false });
+  //       await entityHelperCategory.entitiesInCategories([1]);
+  //     } catch(err) {
+  //       expect(err.message).to.equal('Must include category in constructor');
+  //     }
+  //   });
+  // });
 
   describe('#entitiesInCategories', () => {
     it('returns all entities within the selected category', async () => {

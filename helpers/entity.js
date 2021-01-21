@@ -78,17 +78,17 @@ class EntityHelper {
     return Object.values(await this.entities);
   }
 
-  async entitiesWithRoles(roles) {
-    if(!this.options.roles) {
-      throw new Error('Must include roles in constructor');
-    }
+  // async entitiesWithRoles(roles) {
+  //   if(!this.options.roles) {
+  //     throw new Error('Must include roles in constructor');
+  //   }
 
-    return Object.values(await this.entities)
-      .filter(entity => {
-        const entityHasRole = roles.find(role => entity.roles[role.id]);
-        return entityHasRole;
-      }, {});
-  }
+  //   return Object.values(await this.entities)
+  //     .filter(entity => {
+  //       const entityHasRole = roles.find(role => entity.roles[role.id]);
+  //       return entityHasRole;
+  //     }, {});
+  // }
 
   async entitiesInCategories(categoryIds = []) {
     if(!this.options.category) {

@@ -15,7 +15,7 @@ const authentication = require('services/authentication');
 const { tableauIpWhiteList } = require('middleware/ipWhitelist');
 const Role = require('models/role');
 const logger = require('services/logger');
-const EntityHelper = require('helpers/entity.js');
+const EntityHelper = require('helpers/entity');
 
 class TableauExport extends Page {
   get url() {
@@ -74,7 +74,7 @@ class TableauExport extends Page {
     }
 
     const entityHelper = new EntityHelper({ roles: true });
-    const entities = await entityHelper.entitiesWithRoles([role]);
+    const entities = await entityHelper.entitiesWithViewPermission([role]);
 
     return entities.map(entity => entity.id);
   }
