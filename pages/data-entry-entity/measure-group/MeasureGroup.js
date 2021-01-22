@@ -102,7 +102,7 @@ class MeasureGroup extends Page {
 
       const transaction = await sequelize.transaction();
       try {
-        await Entity.import(measureToSave, measureCategory, categoryFields, { transaction, ignoreParents: true, updatedAt: true });
+        await Entity.import(measureToSave, measureCategory, categoryFields, { transaction, ignoreParents: true, updatedAt: false });
         await transaction.commit();
       } catch (error) {
         await transaction.rollback();
