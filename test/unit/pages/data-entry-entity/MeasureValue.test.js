@@ -660,7 +660,7 @@ describe('pages/data-entry-entity/measure-value/MeasureValue', () => {
       await page.deleteAndUpdateRaygMeasureData(entities, raygEntities);
 
       sinon.assert.calledWith(Entity.delete, entities[0].id, { transaction });
-      sinon.assert.calledWith(Entity.import, raygEntities[0], category, categoryFields, { transaction, ignoreParents: true, updatedAt: true });
+      sinon.assert.calledWith(Entity.import, raygEntities[0], category, categoryFields, { transaction, ignoreParents: true, updatedAt: false });
       sinon.assert.calledOnce(transaction.commit);
       sinon.assert.calledOnce(page.updateDateDueOn);
       const { metricId, groupId, date } = req.params;

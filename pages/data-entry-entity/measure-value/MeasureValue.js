@@ -208,7 +208,7 @@ class MeasureValue extends Page {
         const category = await measures.getCategory("Measure");
         const categoryFields = await Category.fieldDefinitions("Measure");
         for (const entity of updatedRaygEntities) {
-          await Entity.import(entity, category, categoryFields, { transaction, ignoreParents: true, updatedAt: true });
+          await Entity.import(entity, category, categoryFields, { transaction, ignoreParents: true, updatedAt: false });
         }
       }
 
@@ -352,7 +352,7 @@ class MeasureValue extends Page {
     if (errors.length > 0) {
       return this.renderRequest(this.res, { errors: ["Error in entity data"] });
     }
-    return await this.saveMeasureData(entitiesToBeSaved, { updatedAt: true });
+    return await this.saveMeasureData(entitiesToBeSaved, { updatedAt: false });
   }
 
   async saveMeasureData(entities, options = {}) {
