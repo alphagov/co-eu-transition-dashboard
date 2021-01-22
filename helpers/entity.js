@@ -78,17 +78,17 @@ class EntityHelper {
     return Object.values(await this.entities);
   }
 
-  async entitiesWithRoles(roles) {
-    if(!this.options.roles) {
-      throw new Error('Must include roles in constructor');
-    }
+  // async entitiesWithRoles(roles) {
+  //   if(!this.options.roles) {
+  //     throw new Error('Must include roles in constructor');
+  //   }
 
-    return Object.values(await this.entities)
-      .filter(entity => {
-        const entityHasRole = roles.find(role => entity.roles[role.id]);
-        return entityHasRole;
-      }, {});
-  }
+  //   return Object.values(await this.entities)
+  //     .filter(entity => {
+  //       const entityHasRole = roles.find(role => entity.roles[role.id]);
+  //       return entityHasRole;
+  //     }, {});
+  // }
 
   async entitiesInCategories(categoryIds = []) {
     if(!this.options.category) {
@@ -114,6 +114,45 @@ class EntityHelper {
       }  
     }
     return parents;
+  }
+  
+  async entitiesWithViewPermission(roles) {
+    if(!roles || roles.length === 0) {
+      throw new Error('Must include roles');
+    }
+    const roleIds = roles.map(r => r.id);
+    const es = await this.entities;
+    const viewRoleEntities = await RoleEntity.findAll({
+      where: {
+        roleId: roleIds,
+        canEdit: false
+      } });
+    let entitesWithViewRoles = {};
+    for(const vr of viewRoleEntities){
+      entitesWithViewRoles[vr.entityId] = es[vr.entityId];
+      if(vr.shouldCascade && es[vr.entityId].children.length >0) {
+        // const childIds = es[vr.entityId].children.map(c => c.id);
+        for(const child of es[vr.entityId].children) {
+          await this.getAllChildrenEntities(child.id, entitesWithViewRoles, es);
+        }
+      }
+    }
+    return Object.values(entitesWithViewRoles);
+  }
+
+  async getAllChildrenEntities(entityId, entitesWithViewRoles, allEntities) {
+    //Skip adding child if already trasversed (this is in case a child has more than one parent)
+    if (entityId in entitesWithViewRoles) {
+      return
+    }
+    entitesWithViewRoles[entityId] = allEntities[entityId];
+    const entity = await this.getEntityData(entityId); 
+    if (entity.children.length >0) {
+      // const childEntityIds = entity.children.map(c => c.id);
+      for(const child of entity.children) {
+        await this.getAllChildrenEntities(child.id, entitesWithViewRoles, allEntities);
+      }
+    }
   }
 }
 
