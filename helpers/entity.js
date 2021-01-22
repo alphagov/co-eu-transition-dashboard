@@ -105,8 +105,8 @@ class EntityHelper {
   }
   
   async entitiesWithViewPermission(roles) {
-     const entitesWithViewRoles = await this.getAllEntitiesInRoleEntity(roles);
-     return Object.values(entitesWithViewRoles)
+    const entitesWithViewRoles = await this.getAllEntitiesInRoleEntity(roles);
+    return Object.values(entitesWithViewRoles)
   }
 
   async entitiesWithEditPermission(roles) {

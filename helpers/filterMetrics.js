@@ -10,7 +10,6 @@ const filterMetrics = async (user, entities) => {
   if (user.canViewAllData) {
     filteredMetrics = entities;
   } else {
-    console.log('***canViewAllData');
     let roles = await Role.findAll({
       include: {
         model: UserRole,
