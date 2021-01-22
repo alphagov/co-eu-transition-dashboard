@@ -33,8 +33,6 @@ describe('helpers/vizualisationHelper', () => {
   });
 
   describe('#constructEntityVisualisations', () => {
-    
-
     it('should throw an error if entityId is not passed to function', async () => {
       try{
         new VizualisationHelper(entityId, req);
