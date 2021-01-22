@@ -20,10 +20,19 @@ const daoStub = function() {
   };
 };
 
+let entitiesWithViewPermissionStub = sinon.stub();
+
+const entityHelperStub = function(){
+  return {
+    entitiesWithViewPermission: entitiesWithViewPermissionStub
+  }
+}
+
 describe('pages/tableau-export/TableauExport', () => {
   beforeEach(() => {
     const TableauExport = proxyquire('pages/tableau-export/TableauExport', {
-      'services/dao': daoStub
+      'services/dao': daoStub,
+      'helpers/entity': entityHelperStub
     });
 
     req = { query: {} };
@@ -111,9 +120,11 @@ describe('pages/tableau-export/TableauExport', () => {
 
     it('returns ids of entities role can access', async () => {
       const role = 'static';
+      entitiesWithViewPermissionStub.resolves(entities)
       const entityIds = await page.entitiesRoleCanAccess(role);
 
       expect(entityIds).to.eql(entities.map(entity => entity.id));
+      sinon.assert.calledWith(entitiesWithViewPermissionStub, [publicRole])
     });
 
     it('throws error if cannot find role', async () => {

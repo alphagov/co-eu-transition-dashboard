@@ -142,21 +142,21 @@ describe('helpers/entityHelper', () => {
     });
   });
 
-  describe('#entitiesWithRoles', () => {
-    it('returns all entities which have role', async () => {
-      const entitiesWithRole = await entityHelper.entitiesWithRoles([{ id: 2 }]);
-      expect(entitiesWithRole).to.eql([entityMap[2], entityMap[3]]);
-    });
+  // describe('#entitiesWithRoles', () => {
+  //   it('returns all entities which have role', async () => {
+  //     const entitiesWithRole = await entityHelper.entitiesWithRoles([{ id: 2 }]);
+  //     expect(entitiesWithRole).to.eql([entityMap[2], entityMap[3]]);
+  //   });
 
-    it('throws an error when roles is not set to true when the helper object is created', async() => {
-      try{
-        const entityHelperCategory = new EntityHelper({ roles: false });
-        await entityHelperCategory.entitiesInCategories([1]);
-      } catch(err) {
-        expect(err.message).to.equal('Must include category in constructor');
-      }
-    });
-  });
+  //   it('throws an error when roles is not set to true when the helper object is created', async() => {
+  //     try{
+  //       const entityHelperCategory = new EntityHelper({ roles: false });
+  //       await entityHelperCategory.entitiesInCategories([1]);
+  //     } catch(err) {
+  //       expect(err.message).to.equal('Must include category in constructor');
+  //     }
+  //   });
+  // });
 
   describe('#entitiesInCategories', () => {
     it('returns all entities within the selected category', async () => {
@@ -188,4 +188,47 @@ describe('helpers/entityHelper', () => {
     });
   });
 
+  describe('#entitiesWithViewPermission', ()=>{
+    it('gets all entities with view permission', async ()=>{
+      const viewRoleEntities = [{ entityId:'a1', shouldCascade: false },{ entityId:'a1', shouldCascade: true }]
+      entityHelper.entities ={ 'a1':{ children:[{ id:'b1' },{ id:'b2' }] },'a2':{ children:[] } };
+      RoleEntity.findAll.resolves(viewRoleEntities);
+      const getAllChildrenEntitiesStub = sinon.stub(entityHelper,'getAllChildrenEntities').resolves();
+      await entityHelper.entitiesWithViewPermission([{ id:1 },{ id:2 }]);
+      expect(getAllChildrenEntitiesStub.callCount).to.eql(2);      
+      expect(getAllChildrenEntitiesStub.getCall(0).args).include.members(['b1']);
+      expect(getAllChildrenEntitiesStub.getCall(1).args).include.members(['b2']);
+    })
+  })
+
+  
+  describe('#getAllChildrenEntities', ()=>{
+    it('returns the all children for an entity', async () => {
+      const entitesWithViewRoles = {};
+      const allEntities = {
+        'a1' :{
+        },
+        'a2':{
+        },
+        'b1':{
+        },
+        'b2':{
+        }
+      }
+      const entityId = 'a1';
+      const getEntityDataStub = sinon.stub(entityHelper, 'getEntityData');
+      const sp = sinon.spy(entityHelper,'getAllChildrenEntities');
+      getEntityDataStub.onCall(0).resolves({ children:[{ id:'b1' }, { id:'b2' },{ id:'a2' }] });
+      getEntityDataStub.onCall(1).resolves({ children:[] });
+      getEntityDataStub.onCall(2).resolves({ children:[] });
+
+      getEntityDataStub.onCall(3).resolves({ children:[{ id:'b1' }] });
+      
+      await entityHelper.getAllChildrenEntities(entityId, entitesWithViewRoles, allEntities);
+      expect(sp.callCount).to.eql(5);      
+      expect(entitesWithViewRoles).to.eql(allEntities);
+      sp.restore();
+      getEntityDataStub.restore();
+    });
+  })
 });
