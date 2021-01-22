@@ -1,0 +1,32 @@
+{% macro visualisations(entityVisualisations, selectedItem) %}
+
+  {# Once all entities have been assigned visualisation all the below if statements should be able to be removed
+  and only the forloop to include the visualisation templates should be required.
+  Further to this selectedItem should be able to be removed from this macro once the logic for projects & milestones is updated.
+  #}
+
+  {% set projectedIsSelected = selectedItem.category and selectedItem.category.name === 'Project' %}
+  {% set milestoneIsSelected = selectedItem.category and selectedItem.name === 'Milestone' %}
+  {% set isCommentOnlyMeasure = selectedItem.category and selectedItem.category.name === 'Measure' and selectedItem.commentsOnly == "Yes" %}
+
+  <div class="visualisations">
+    {% if projectedIsSelected %}
+      {% set showViewLinks = canAccessProject(selectedItem.publicId) %}
+      {% include "visualisations/projectDetails.njk" %}
+    {% elseif milestoneIsSelected %}
+      {% set showViewLinks = canAccessProject(selectedItem.parents[0].publicId) %}
+      {% include "visualisations/milestoneDetails.njk" %}
+    {% elseif isCommentOnlyMeasure %}
+      {% include "visualisations/commentOnlyMeasure.njk" %}
+    {% elseif entityVisualisations and entityVisualisations.iframeUrl.error %}
+      <p class="govuk-body-s tableu-message">There has been an error accessing this data, please contact The Transition Taskforce Dashboard Team</p>
+    {% else %}
+      {# Loop through all visualisations and include the template. Commenting out for now. 
+      {% for visualisation in entityVisualisations.visualisations %} 
+        {% set path = "visualisations/" + visualisation.template + ".njk" %}
+        {% include path ignore missing %}
+      {% endfor %} #}
+      <iframe title="Data view" src="{{ entityVisualisations.iframeUrl.url }}" class="theme-tableu"></iframe>
+    {% endif %}
+  </div>
+{% endmacro %}

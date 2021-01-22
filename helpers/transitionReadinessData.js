@@ -806,11 +806,9 @@ const themeDetail = async (entitiesUserCanAccess, pageUrl, req) => {
   theme.color = theme.raygStatus && theme.raygStatus !== 'default' ? theme.raygStatus : rags.find(rag => outcomeColors.includes(rag));
 
   const selected = subOutcomeStatementsAndDatas.reduce(findSelected(req.params.selectedPublicId), false);
-  const iframeUrl = await getIframeUrl(req, selected);
 
   return {
     selected,
-    iframeUrl,
     theme,
     topLevelOutcomeStatements,
     subOutcomeStatementsAndDatas
@@ -895,5 +893,6 @@ module.exports = {
   overview,
   measuresWithLink,
   getThemeEntities,
-  getThemesHierarchy
+  getThemesHierarchy,
+  getIframeUrl
 };
