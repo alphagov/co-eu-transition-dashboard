@@ -78,18 +78,6 @@ class EntityHelper {
     return Object.values(await this.entities);
   }
 
-  // async entitiesWithRoles(roles) {
-  //   if(!this.options.roles) {
-  //     throw new Error('Must include roles in constructor');
-  //   }
-
-  //   return Object.values(await this.entities)
-  //     .filter(entity => {
-  //       const entityHasRole = roles.find(role => entity.roles[role.id]);
-  //       return entityHasRole;
-  //     }, {});
-  // }
-
   async entitiesInCategories(categoryIds = []) {
     if(!this.options.category) {
       throw new Error('Must include category in constructor');
@@ -117,6 +105,15 @@ class EntityHelper {
   }
   
   async entitiesWithViewPermission(roles) {
+     const entitesWithViewRoles = await this.getAllEntitiesInRoleEntity(roles);
+     return Object.values(entitesWithViewRoles)
+  }
+
+  async entitiesWithEditPermission(roles) {
+    return this.getAllEntitiesInRoleEntity(roles, true);
+  }
+
+  async getAllEntitiesInRoleEntity(roles, canEdit=false) {
     if(!roles || roles.length === 0) {
       throw new Error('Must include roles');
     }
@@ -125,7 +122,7 @@ class EntityHelper {
     const viewRoleEntities = await RoleEntity.findAll({
       where: {
         roleId: roleIds,
-        canEdit: false
+        canEdit
       } });
     let entitesWithViewRoles = {};
     for(const vr of viewRoleEntities){
@@ -137,7 +134,7 @@ class EntityHelper {
         }
       }
     }
-    return Object.values(entitesWithViewRoles);
+    return entitesWithViewRoles;
   }
 
   async getAllChildrenEntities(entityId, entitesWithViewRoles, allEntities) {
