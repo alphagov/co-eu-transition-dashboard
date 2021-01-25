@@ -110,7 +110,8 @@ class EntityHelper {
   }
 
   async entitiesWithEditPermission(roles) {
-    return this.getAllEntitiesInRoleEntity(roles, true);
+    const entitesWithEditRoles = await this.getAllEntitiesInRoleEntity(roles, true);
+    return Object.values(entitesWithEditRoles)
   }
 
   async getAllEntitiesInRoleEntity(roles, canEdit=false) {
@@ -128,7 +129,6 @@ class EntityHelper {
     for(const vr of viewRoleEntities){
       entitesWithViewRoles[vr.entityId] = es[vr.entityId];
       if(vr.shouldCascade && es[vr.entityId].children.length >0) {
-        // const childIds = es[vr.entityId].children.map(c => c.id);
         for(const child of es[vr.entityId].children) {
           await this.getAllChildrenEntities(child.id, entitesWithViewRoles, es);
         }

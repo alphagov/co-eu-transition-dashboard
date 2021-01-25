@@ -182,8 +182,31 @@ describe('helpers/entityHelper', () => {
       expect(getAllChildrenEntitiesStub.callCount).to.eql(2);      
       expect(getAllChildrenEntitiesStub.getCall(0).args).include.members(['b1']);
       expect(getAllChildrenEntitiesStub.getCall(1).args).include.members(['b2']);
-    })
-  })
+      sinon.assert.calledWith(RoleEntity.findAll,{
+        where: {
+          roleId: [1,2],
+          canEdit: false
+        } });
+    });
+  });
+
+  describe('#entitiesWithWritePermission', ()=>{
+    it('gets all entities with write permission', async ()=>{
+      const viewRoleEntities = [{ entityId:'a1', shouldCascade: false },{ entityId:'a1', shouldCascade: true }]
+      entityHelper.entities ={ 'a1':{ children:[{ id:'b1' },{ id:'b2' }] },'a2':{ children:[] } };
+      RoleEntity.findAll.resolves(viewRoleEntities);
+      const getAllChildrenEntitiesStub = sinon.stub(entityHelper,'getAllChildrenEntities').resolves();
+      await entityHelper.entitiesWithEditPermission([{ id:1 },{ id:2 }]);
+      expect(getAllChildrenEntitiesStub.callCount).to.eql(2);      
+      expect(getAllChildrenEntitiesStub.getCall(0).args).include.members(['b1']);
+      expect(getAllChildrenEntitiesStub.getCall(1).args).include.members(['b2']);
+      sinon.assert.calledWith(RoleEntity.findAll,{
+        where: {
+          roleId: [1,2],
+          canEdit: true
+        } });
+    });
+  });
 
   
   describe('#getAllChildrenEntities', ()=>{

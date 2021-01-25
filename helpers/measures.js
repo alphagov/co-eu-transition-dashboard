@@ -146,7 +146,6 @@ const validateEntities = async (entities) => {
 
 const getMeasureEntities = async({ measureCategory, themeCategory, where, user }) => {
   where = { categoryId: measureCategory.id, ...where };
-  console.log('***where', where);
   let measureEntities = await Entity.findAll({
     where,
     include: [{
@@ -177,7 +176,6 @@ const getMeasureEntities = async({ measureCategory, themeCategory, where, user }
   if (user) {
     measureEntities = await filterMetricsHelper.filterMetrics(user, measureEntities);
   }
-  console.log('***measureEntities', measureEntities);
   return measureEntities.map(entity => {
     const theme = get(entity, 'parents[0].parents').find(parentEntity => {
       return parentEntity.categoryId === themeCategory.id;
