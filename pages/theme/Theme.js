@@ -7,6 +7,7 @@ const { ipWhiteList } = require('middleware/ipWhitelist');
 const entityUserPermissions = require('middleware/entityUserPermissions');
 const DAO = require('services/dao');
 const sequelize = require('services/sequelize');
+const VizualisationHelper = require('helpers/visualisation');
 
 class Theme extends Page {
   static get isEnabled() {
@@ -42,6 +43,12 @@ class Theme extends Page {
     if (!data) {
       throw `Cannot fetch data for ${this.req.params.theme}`;
     }
+
+    if (data.selected) {
+      const vizualisationHelper = new VizualisationHelper(data.selected.id, this.req);
+      data.visualisations = await vizualisationHelper.getVisualisations(data.selected.id, this.req)
+    }
+
     return data;
   }
 
