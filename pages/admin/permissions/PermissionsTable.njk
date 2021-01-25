@@ -16,6 +16,7 @@
           <th scope="col"  class="govuk-table__header category-name">
               <div>
               <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
+              {% if entity.metricID %}<br><strong>Metric ID</strong>: {{ entity.metricID }} {% endif %}
               {{ entityParents(entity) }}
               <br>
               <div><b>{{"Permissions are set by parent" if entity.hasParentsPermission}}</b></div>
