@@ -34,7 +34,8 @@
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">
               <strong>{{ entity.publicId }}</strong>: {{ entity.name }}
-               {{ entityParents(entity) }}
+              {% if entity.metricID %}<br><strong>Metric ID</strong>: {{ entity.metricID }} {% endif %}
+              {{ entityParents(entity) }}
             </td>
             <td class="govuk-table__cell text-align-right">
               <a href="{{ config.paths.admin.entityRemap }}/{{ entity.publicId }}" class="govuk-link govuk-!-margin-right-2">Remap</a>
