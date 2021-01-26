@@ -9,6 +9,7 @@ const CategoryField = require('models/categoryField');
 const transitionReadinessData = require('helpers/transitionReadinessData');
 const { paths } = require('config');
 const moment = require('moment');
+const filterMetricsHelper = require('helpers/filterMetrics');
 
 describe('helpers/measures', () => {
   describe('#applyLabelToEntities', () => {
@@ -267,9 +268,13 @@ describe('helpers/measures', () => {
       updateDueOn: "2020-11-20T13:15:30Z"
     }];
     const category = { id: 1 };
-
     beforeEach(() => {
       Entity.findAll = sinon.stub().returns(entities);
+      sinon.stub(filterMetricsHelper, 'filterMetrics').returns(entities);
+    });
+
+    afterEach(() => {
+      filterMetricsHelper.filterMetrics.restore();
     });
 
     it('gets entities for a given category if admin', async () => {
