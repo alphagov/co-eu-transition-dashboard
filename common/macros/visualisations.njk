@@ -21,12 +21,10 @@
     {% elseif entityVisualisations and entityVisualisations.iframeUrl.error %}
       <p class="govuk-body-s tableu-message">There has been an error accessing this data, please contact The Transition Taskforce Dashboard Team</p>
     {% else %}
-      {# Loop through all visualisations and include the template. Commenting out for now. 
       {% for visualisation in entityVisualisations.visualisations %} 
         {% set path = "visualisations/" + visualisation.template + ".njk" %}
         {% include path ignore missing %}
-      {% endfor %} #}
-      <iframe title="Data view" src="{{ entityVisualisations.iframeUrl.url }}" class="theme-tableu"></iframe>
+      {% endfor %}
     {% endif %}
   </div>
 {% endmacro %}
