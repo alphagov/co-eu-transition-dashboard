@@ -142,22 +142,6 @@ describe('helpers/entityHelper', () => {
     });
   });
 
-  // describe('#entitiesWithRoles', () => {
-  //   it('returns all entities which have role', async () => {
-  //     const entitiesWithRole = await entityHelper.entitiesWithRoles([{ id: 2 }]);
-  //     expect(entitiesWithRole).to.eql([entityMap[2], entityMap[3]]);
-  //   });
-
-  //   it('throws an error when roles is not set to true when the helper object is created', async() => {
-  //     try{
-  //       const entityHelperCategory = new EntityHelper({ roles: false });
-  //       await entityHelperCategory.entitiesInCategories([1]);
-  //     } catch(err) {
-  //       expect(err.message).to.equal('Must include category in constructor');
-  //     }
-  //   });
-  // });
-
   describe('#entitiesInCategories', () => {
     it('returns all entities within the selected category', async () => {
       const entitiesInCategories = await entityHelper.entitiesInCategories([1]);
@@ -198,8 +182,31 @@ describe('helpers/entityHelper', () => {
       expect(getAllChildrenEntitiesStub.callCount).to.eql(2);      
       expect(getAllChildrenEntitiesStub.getCall(0).args).include.members(['b1']);
       expect(getAllChildrenEntitiesStub.getCall(1).args).include.members(['b2']);
-    })
-  })
+      sinon.assert.calledWith(RoleEntity.findAll,{
+        where: {
+          roleId: [1,2],
+          canEdit: false
+        } });
+    });
+  });
+
+  describe('#entitiesWithWritePermission', ()=>{
+    it('gets all entities with write permission', async ()=>{
+      const viewRoleEntities = [{ entityId:'a1', shouldCascade: false },{ entityId:'a1', shouldCascade: true }]
+      entityHelper.entities ={ 'a1':{ children:[{ id:'b1' },{ id:'b2' }] },'a2':{ children:[] } };
+      RoleEntity.findAll.resolves(viewRoleEntities);
+      const getAllChildrenEntitiesStub = sinon.stub(entityHelper,'getAllChildrenEntities').resolves();
+      await entityHelper.entitiesWithEditPermission([{ id:1 },{ id:2 }]);
+      expect(getAllChildrenEntitiesStub.callCount).to.eql(2);      
+      expect(getAllChildrenEntitiesStub.getCall(0).args).include.members(['b1']);
+      expect(getAllChildrenEntitiesStub.getCall(1).args).include.members(['b2']);
+      sinon.assert.calledWith(RoleEntity.findAll,{
+        where: {
+          roleId: [1,2],
+          canEdit: true
+        } });
+    });
+  });
 
   
   describe('#getAllChildrenEntities', ()=>{
