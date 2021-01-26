@@ -9,7 +9,11 @@ let page = {};
 let res = { locals: {
   entitiesUserCanAccess: ['e1', 'e2']
 } };
-let req = {};
+let req = {
+  user: {
+    roles: [1,2]
+  }
+};
 
 describe('pages/search-transition-readiness/SearchTransitionReadiness.js', () => {
   beforeEach(() => {
@@ -68,7 +72,7 @@ describe('pages/search-transition-readiness/SearchTransitionReadiness.js', () =>
     it('returns list of measures', async()=> {
       const data = await page.getData();
       expect(data).to.eql(mockData);
-      sinon.assert.calledWith(measures.getMeasuresWhichUserHasAccess, ['e1', 'e2'])
+      sinon.assert.calledWith(measures.getMeasuresWhichUserHasAccess, ['e1', 'e2'], [1,2])
     })
   })
 });

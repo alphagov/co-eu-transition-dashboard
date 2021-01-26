@@ -24,7 +24,7 @@ async function entitiesUserCanAccess(user) {
 
 const assignEntityIdsUserCanAccessToLocals = async (req, res, next) => {
   res.locals.entitiesUserCanAccess = await entitiesUserCanAccess(req.user);
-  res.locals.themesUserCanAccess = await transitionReadinessData.getThemeEntities(res.locals.entitiesUserCanAccess);
+  res.locals.themesUserCanAccess = await transitionReadinessData.getThemeEntities(res.locals.entitiesUserCanAccess, req.user.roles);
 
   next();
 };
