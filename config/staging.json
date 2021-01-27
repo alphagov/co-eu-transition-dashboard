@@ -21,7 +21,6 @@
     }
   },
   "features": {
-    "missedMilestones": true,
-    "permissions": true
+    "missedMilestones": true
   }
 }

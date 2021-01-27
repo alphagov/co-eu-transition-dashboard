@@ -233,11 +233,10 @@ const groupMeasures = (measures) => {
   return measureGroups;
 }
 
-const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
+const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess, roles) => {
   const categories = await getCategory('Measure', 'Project', 'Communication');
   const categoryIds = categories.map(category => category.id);
-
-  const allThemes = await transitionReadinessData.getThemesHierarchy(entitiesUserCanAccess);
+  const allThemes = await transitionReadinessData.getThemesHierarchy(entitiesUserCanAccess, roles);
 
   const findEntities = (allEntites, entity) => {
     if(categoryIds.includes(entity.categoryId)) {

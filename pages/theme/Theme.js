@@ -39,7 +39,7 @@ class Theme extends Page {
   }
 
   async data() {
-    const data = await transitionReadinessData.themeDetail(this.res.locals.entitiesUserCanAccess,this.url, this.req);
+    const data = await transitionReadinessData.themeDetail(this.res.locals.entitiesUserCanAccess, this.url, this.req);
     if (!data) {
       throw `Cannot fetch data for ${this.req.params.theme}`;
     }
