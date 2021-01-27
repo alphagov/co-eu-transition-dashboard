@@ -13,9 +13,6 @@
     {% if projectedIsSelected %}
       {% set showViewLinks = canAccessProject(selectedItem.publicId) %}
       {% include "visualisations/projectDetails.njk" %}
-    {% elseif milestoneIsSelected %}
-      {% set showViewLinks = canAccessProject(selectedItem.parents[0].publicId) %}
-      {% include "visualisations/milestoneDetails.njk" %}
     {% elseif isCommentOnlyMeasure %}
       {% include "visualisations/commentOnlyMeasure.njk" %}
     {% elseif entityVisualisations and entityVisualisations.iframeUrl.error %}
