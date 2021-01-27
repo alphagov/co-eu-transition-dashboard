@@ -17,7 +17,6 @@ const cache = require('services/cache');
 const config = require('config');
 const uniq = require('lodash/uniq');
 const Tag = require('models/tag');
-const Role = require('models/role');
 
 const rags = ['red', 'amber', 'yellow', 'green'];
 
@@ -498,7 +497,7 @@ function whitelistEntityArrayChildren(array,whitelistMap) {
 }
 
 const whitelistEntityHeirarchy = async (whitelist,heirarchy) => {
-  if (whitelist && whitelist.length) {
+  if (whitelist) {
     const map = whitelist.reduce( (acc,entity) => {
       acc[entity.id] = entity;
       return acc;
@@ -512,9 +511,8 @@ const whitelistEntityHeirarchy = async (whitelist,heirarchy) => {
 }
 
 const getRoleBasedCacheName = async (prefix, roles) => {
-  const allDataRoleId = await Role.findOne({ where: { name:'all_data' } });
-  const rolesIds = roles.map(r => r.id);
-  const rolesToString = (rolesIds.includes(allDataRoleId.id)) ? 'all-data' : rolesIds.sort().join("-");
+  const allDataRole = roles.find(r => r.name === 'all_data');
+  const rolesToString = (allDataRole) ? 'all-data' : roles.map(r => r.id).sort().join("-");
   return `${prefix}-${rolesToString}`; 
 }
 
@@ -585,7 +583,7 @@ const createEntityHierarchyForTheme = async (entitiesUserCanAccess,topLevelEntit
   }
 
   const filteredHeirarchy = await whitelistEntityHeirarchy(entitiesUserCanAccess,[topLevelEntityMapped]);
-  return (filteredHeirarchy && filteredHeirarchy.length > 0)?filteredHeirarchy[0]: [];
+  return (filteredHeirarchy && filteredHeirarchy.length > 0)?filteredHeirarchy[0]: {};
 }
 
 const constructTopLevelCategories = async () => {
