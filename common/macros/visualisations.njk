@@ -6,7 +6,6 @@
   #}
 
   {% set projectedIsSelected = selectedItem.category and selectedItem.category.name === 'Project' %}
-  {% set milestoneIsSelected = selectedItem.category and selectedItem.category.name === 'Milestone' %}
   {% set isCommentOnlyMeasure = selectedItem.category and selectedItem.category.name === 'Measure' and selectedItem.commentsOnly == "Yes" %}
 
   <div class="visualisations">
