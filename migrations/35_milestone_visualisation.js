@@ -7,7 +7,7 @@ const up = async (query) => {
   } catch (error) {
     logger.error(`Error migrating ${error}`);
     logger.error(`Rolling back changes`);
-    // await down(query);
+    await down(query);
     throw error;
   }
 };
