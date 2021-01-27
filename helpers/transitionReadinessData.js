@@ -17,6 +17,7 @@ const cache = require('services/cache');
 const config = require('config');
 const uniq = require('lodash/uniq');
 const Tag = require('models/tag');
+const Role = require('models/role');
 
 const rags = ['red', 'amber', 'yellow', 'green'];
 
@@ -510,12 +511,19 @@ const whitelistEntityHeirarchy = async (whitelist,heirarchy) => {
   return heirarchy;
 }
 
+const getRoleBasedCacheName = async (prefix, roles) => {
+  const allDataRoleId = await Role.findOne({ where: { name:'all_data' } });
+  const rolesIds = roles.map(r => r.id);
+  const rolesToString = (rolesIds.includes(allDataRoleId.id)) ? 'all-data' : rolesIds.sort().join("-");
+  return `${prefix}-${rolesToString}`; 
+}
+
 const createEntityHierarchy = async (entitiesUserCanAccess, category, roles) => {
 
   let heirarchy = [];
-  const rolesToString = roles.map(r => r.id).sort().join("-");
+  const cacheName = await getRoleBasedCacheName(`cache-transition-overview`,roles);
   if(config.features.transitionReadinessCache) {
-    const cached = await cache.get(`cache-transition-overview-${rolesToString}`);
+    const cached = await cache.get(cacheName);
     if(cached) {
       heirarchy = JSON.parse(cached);
     }
@@ -538,7 +546,7 @@ const createEntityHierarchy = async (entitiesUserCanAccess, category, roles) => 
       }
       heirarchy.push(entitiesMapped)
     }
-    await cache.set(`cache-transition-overview-${rolesToString}`, JSON.stringify(heirarchy));
+    await cache.set(cacheName, JSON.stringify(heirarchy));
   }
 
   heirarchy = whitelistEntityHeirarchy(entitiesUserCanAccess,heirarchy);
@@ -546,13 +554,14 @@ const createEntityHierarchy = async (entitiesUserCanAccess, category, roles) => 
   return heirarchy;
 }
 
+
 const createEntityHierarchyForTheme = async (entitiesUserCanAccess,topLevelEntityPublicId, roles) => {
 
   let topLevelEntityMapped;
-  const roleIdsToString = roles.map(r => r.id).sort().join("-");
+  const cacheName = await getRoleBasedCacheName(`cache-transition-${topLevelEntityPublicId}`,roles);
   if(config.features.transitionReadinessCache) {
     
-    const cached = await cache.get(`cache-transition-${topLevelEntityPublicId}-${roleIdsToString}`);
+    const cached = await cache.get(cacheName);
     if(cached) {
       topLevelEntityMapped = JSON.parse(cached);
     }
@@ -572,11 +581,11 @@ const createEntityHierarchyForTheme = async (entitiesUserCanAccess,topLevelEntit
     topLevelEntityMapped = mapEntityChildren(allEntities, topLevelEntity);
     await mapProjectsToEntities(topLevelEntityMapped);
 
-    await cache.set(`cache-transition-${topLevelEntityPublicId}-${roleIdsToString}`, JSON.stringify(topLevelEntityMapped));
+    await cache.set(cacheName, JSON.stringify(topLevelEntityMapped));
   }
 
   const filteredHeirarchy = await whitelistEntityHeirarchy(entitiesUserCanAccess,[topLevelEntityMapped]);
-  return filteredHeirarchy[0];
+  return (filteredHeirarchy && filteredHeirarchy.length > 0)?filteredHeirarchy[0]: [];
 }
 
 const constructTopLevelCategories = async () => {
