@@ -497,7 +497,7 @@ function whitelistEntityArrayChildren(array,whitelistMap) {
 }
 
 const whitelistEntityHeirarchy = async (whitelist,heirarchy) => {
-  if (whitelist && whitelist.length) {
+  if (whitelist) {
     const map = whitelist.reduce( (acc,entity) => {
       acc[entity.id] = entity;
       return acc;
@@ -510,12 +510,18 @@ const whitelistEntityHeirarchy = async (whitelist,heirarchy) => {
   return heirarchy;
 }
 
-const createEntityHierarchy = async (entitiesUserCanAccess,category) => {
+const getRoleBasedCacheName = async (prefix, roles) => {
+  const allDataRole = roles.find(r => r.name === 'all_data');
+  const rolesToString = (allDataRole) ? 'all-data' : roles.map(r => r.id).sort().join("-");
+  return `${prefix}-${rolesToString}`; 
+}
+
+const createEntityHierarchy = async (entitiesUserCanAccess, category, roles) => {
 
   let heirarchy = [];
-
+  const cacheName = await getRoleBasedCacheName(`cache-transition-overview`,roles);
   if(config.features.transitionReadinessCache) {
-    const cached = await cache.get(`cache-transition-overview`);
+    const cached = await cache.get(cacheName);
     if(cached) {
       heirarchy = JSON.parse(cached);
     }
@@ -538,8 +544,7 @@ const createEntityHierarchy = async (entitiesUserCanAccess,category) => {
       }
       heirarchy.push(entitiesMapped)
     }
-
-    await cache.set(`cache-transition-overview`, JSON.stringify(heirarchy));
+    await cache.set(cacheName, JSON.stringify(heirarchy));
   }
 
   heirarchy = whitelistEntityHeirarchy(entitiesUserCanAccess,heirarchy);
@@ -547,12 +552,14 @@ const createEntityHierarchy = async (entitiesUserCanAccess,category) => {
   return heirarchy;
 }
 
-const createEntityHierarchyForTheme = async (entitiesUserCanAccess,topLevelEntityPublicId) => {
+
+const createEntityHierarchyForTheme = async (entitiesUserCanAccess,topLevelEntityPublicId, roles) => {
 
   let topLevelEntityMapped;
-
+  const cacheName = await getRoleBasedCacheName(`cache-transition-${topLevelEntityPublicId}`,roles);
   if(config.features.transitionReadinessCache) {
-    const cached = await cache.get(`cache-transition-${topLevelEntityPublicId}`);
+    
+    const cached = await cache.get(cacheName);
     if(cached) {
       topLevelEntityMapped = JSON.parse(cached);
     }
@@ -572,11 +579,11 @@ const createEntityHierarchyForTheme = async (entitiesUserCanAccess,topLevelEntit
     topLevelEntityMapped = mapEntityChildren(allEntities, topLevelEntity);
     await mapProjectsToEntities(topLevelEntityMapped);
 
-    await cache.set(`cache-transition-${topLevelEntityPublicId}`, JSON.stringify(topLevelEntityMapped));
+    await cache.set(cacheName, JSON.stringify(topLevelEntityMapped));
   }
 
   const filteredHeirarchy = await whitelistEntityHeirarchy(entitiesUserCanAccess,[topLevelEntityMapped]);
-  return filteredHeirarchy[0];
+  return (filteredHeirarchy && filteredHeirarchy.length > 0)?filteredHeirarchy[0]: {};
 }
 
 const constructTopLevelCategories = async () => {
@@ -682,13 +689,13 @@ const getThemeCategory = async () => {
   });
 }
 
-const getThemeEntities = async (entitiesUserCanAccess) => {
+const getThemeEntities = async (entitiesUserCanAccess, roles) => {
   const themeCategory = await getThemeCategory();
-  return createEntityHierarchy(entitiesUserCanAccess,themeCategory);
+  return createEntityHierarchy(entitiesUserCanAccess,themeCategory, roles);
 }
 
-const getThemesHierarchy = async (entitiesUserCanAccess) => {
-  const allThemes = await getThemeEntities(entitiesUserCanAccess);
+const getThemesHierarchy = async (entitiesUserCanAccess, roles) => {
+  const allThemes = await getThemeEntities(entitiesUserCanAccess, roles);
 
   allThemes.forEach(entity => {
     groupById(entity);
@@ -782,7 +789,7 @@ const findSelected = (selectedPublicId) => {
 }
 
 const themeDetail = async (entitiesUserCanAccess, pageUrl, req) => {
-  const theme = await createEntityHierarchyForTheme(entitiesUserCanAccess,req.params.theme);
+  const theme = await createEntityHierarchyForTheme(entitiesUserCanAccess,req.params.theme, req.user.roles);
   if (!theme) {
     return;
   }
@@ -844,8 +851,8 @@ const findTopLevelOutcomeStatementFromEntity = (statementCategory, allThemes, pu
   }
 };
 
-const overview = async (entitiesUserCanAccess, transitionReadinessThemeDetailLink, headlinePublicIds) => {
-  const allThemes = await getThemesHierarchy(entitiesUserCanAccess);
+const overview = async (entitiesUserCanAccess, transitionReadinessThemeDetailLink, headlinePublicIds, roles) => {
+  const allThemes = await getThemesHierarchy(entitiesUserCanAccess, roles);
 
   // set headline Entity link
   let headlineEntites = await measuresWithLink(allThemes, headlinePublicIds, transitionReadinessThemeDetailLink);

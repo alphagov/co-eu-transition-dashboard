@@ -22,7 +22,6 @@
     "tableau": {}
   },
   "features": {
-    "missedMilestones": true,
-    "permissions": false
+    "missedMilestones": true
   }
 }

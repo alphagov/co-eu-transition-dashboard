@@ -27,7 +27,11 @@ class ReadinessOverview extends Page {
     const headlinePublicIds = await HeadlineMeasures.findAll({
       order: ['priority']
     });
-    const data = await transitionReadinessData.overview(this.res.locals.entitiesUserCanAccess,paths.transitionReadinessThemeDetail, headlinePublicIds.map(entity => entity.entityPublicId));
+    // this.req.user.roles
+    const data = await transitionReadinessData.overview(
+      this.res.locals.entitiesUserCanAccess,paths.transitionReadinessThemeDetail, headlinePublicIds.map(entity => entity.entityPublicId),
+      this.req.user.roles
+    );
 
     data.allThemes.forEach(entity => {
       entity.link = `${paths.transitionReadinessThemeDetail}/${entity.publicId}`;
