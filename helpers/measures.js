@@ -146,7 +146,6 @@ const validateEntities = async (entities) => {
 
 const getMeasureEntities = async({ measureCategory, themeCategory, where, user }) => {
   where = { categoryId: measureCategory.id, ...where };
-
   let measureEntities = await Entity.findAll({
     where,
     include: [{
@@ -177,7 +176,6 @@ const getMeasureEntities = async({ measureCategory, themeCategory, where, user }
   if (user) {
     measureEntities = await filterMetricsHelper.filterMetrics(user, measureEntities);
   }
-
   return measureEntities.map(entity => {
     const theme = get(entity, 'parents[0].parents').find(parentEntity => {
       return parentEntity.categoryId === themeCategory.id;
@@ -235,11 +233,10 @@ const groupMeasures = (measures) => {
   return measureGroups;
 }
 
-const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess) => {
+const getMeasuresWhichUserHasAccess = async (entitiesUserCanAccess, roles) => {
   const categories = await getCategory('Measure', 'Project', 'Communication');
   const categoryIds = categories.map(category => category.id);
-
-  const allThemes = await transitionReadinessData.getThemesHierarchy(entitiesUserCanAccess);
+  const allThemes = await transitionReadinessData.getThemesHierarchy(entitiesUserCanAccess, roles);
 
   const findEntities = (allEntites, entity) => {
     if(categoryIds.includes(entity.categoryId)) {

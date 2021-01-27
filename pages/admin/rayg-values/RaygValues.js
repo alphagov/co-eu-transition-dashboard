@@ -114,7 +114,8 @@ class RaygValues extends Page {
 
   async getThemesAndTopLevelStatements() {
     const themeEntities = await transitionReadinessData.getThemeEntities(
-      this.res.locals.entitiesUserCanAccess
+      this.res.locals.entitiesUserCanAccess,
+      this.req.user.roles
     );
 
     for (const themeEntity of themeEntities) {

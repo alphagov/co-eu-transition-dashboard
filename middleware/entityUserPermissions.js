@@ -1,14 +1,13 @@
 const UserRole = require('models/userRole');
 const Role = require('models/role');
 const transitionReadinessData = require('helpers/transitionReadinessData');
-const EntityHelper = require('helpers/entity.js');
+const EntityHelper = require('helpers/entity');
 
 async function entitiesUserCanAccess(user) {
   const entityHelper = new EntityHelper({ roles: true });
 
   let whitelist = [];
   if (user.canViewAllData) {
-    //console.log("Allowing user to view all data");
     whitelist = await entityHelper.getAllEntities();
   } else {
     let roles = await Role.findAll({
@@ -17,16 +16,15 @@ async function entitiesUserCanAccess(user) {
         where: { userId: user.id }
       }
     });
-
-    whitelist = await entityHelper.entitiesWithRoles(roles);
+    
+    whitelist = await entityHelper.entitiesWithViewPermission(roles);
   }
-
   return whitelist;
 }
 
 const assignEntityIdsUserCanAccessToLocals = async (req, res, next) => {
   res.locals.entitiesUserCanAccess = await entitiesUserCanAccess(req.user);
-  res.locals.themesUserCanAccess = await transitionReadinessData.getThemeEntities(res.locals.entitiesUserCanAccess);
+  res.locals.themesUserCanAccess = await transitionReadinessData.getThemeEntities(res.locals.entitiesUserCanAccess, req.user.roles);
 
   next();
 };

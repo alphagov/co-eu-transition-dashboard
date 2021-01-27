@@ -9,6 +9,8 @@ const pick = require('lodash/pick');
 const sprintf = require('sprintf-js').sprintf;
 const Tag = require('./tag');
 const TagEntity = require('./tagEntity');
+const Visualisation = require('./visualisation');
+const EntityVisualisation = require('./entityVisualisation');
 
 class Entity extends Model {
   static async import(entity, category, entityFields, options) {
@@ -193,5 +195,8 @@ RoleEntityBlacklist.belongsTo(Entity, { foreignKey: 'entityId' });
 
 Entity.belongsToMany(Tag, { through: TagEntity, foreignKey: 'entityId' });
 Tag.belongsToMany(Entity, { through: TagEntity, foreignKey: 'tagId' });
+
+Entity.belongsToMany(Visualisation, { through: EntityVisualisation, foreignKey: 'entityId' });
+Visualisation.belongsToMany(Entity, { through: EntityVisualisation, foreignKey: 'visualisationId' });
 
 module.exports = Entity;

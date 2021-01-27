@@ -3,6 +3,8 @@ const sequelize = require('services/sequelize');
 const CategoryParent = require('./categoryParent');
 const CategoryField = require('./categoryField');
 const Entity = require('./entity');
+const CategoryVisualisation = require('./categoryVisualisation');
+const Visualisation = require('./visualisation');
 
 class Category extends Model {
   static parentPublicIdString(category) {
@@ -103,5 +105,8 @@ Category.belongsToMany(Category, { through: CategoryParent, foreignKey: 'categor
 CategoryField.belongsTo(Category, { foreignKey: 'categoryId' });
 
 Entity.belongsTo(Category, { foreignKey: 'categoryId' });
+
+Category.belongsToMany(Visualisation, { through: CategoryVisualisation, foreignKey: 'categoryId' });
+Visualisation.belongsToMany(Category, { through: CategoryVisualisation, foreignKey: 'visualisationId' });
 
 module.exports = Category;
