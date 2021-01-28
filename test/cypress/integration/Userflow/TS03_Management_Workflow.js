@@ -18,7 +18,7 @@ describe("TS03_Management_Workflow - 'Management' with 'Viewer' User role - Veri
   //Log into Dashboard 
   it("Can Login into Dashboard as an 'Management & Viewer' User", function () {
     //Add all role to user
-    cy.addroles("management,viewer");
+    cy.addroles("all_data,management,viewer");
     //Add departments to user
     cy.addDepartments(department);
     //Login
