@@ -46,7 +46,7 @@ class Theme extends Page {
 
     if (data.selected) {
       const vizualisationHelper = new VizualisationHelper(data.selected.id, this.req);
-      data.visualisations = await vizualisationHelper.getVisualisations(data.selected.id, this.req)
+      data.visualisations = await vizualisationHelper.getVisualisations()
     }
 
     return data;

@@ -4,12 +4,61 @@ const Visualisation = require('models/visualisation');
 const EntityFieldEntry = require('models/entityFieldEntry');
 const CategoryField = require('models/categoryField');
 const readinessHelper = require('./transitionReadinessData');
+const DAO = require('services/dao');
+const sequelize = require('services/sequelize');
 
 class VisualisationHelper {
   constructor(entityId, req) {
     this.entityId = entityId;
     this.req = req;
     this.entityVisualisations = this.constructEntityVisualisations();
+  }
+
+  async canAccessProject(dao, projectUid) {
+    const projects = await dao.getAllData(this.req.user.id, {
+      uid: [ projectUid ]
+    });
+
+    return projects.length;
+  }
+
+  async getProjectAndMilestones(dao, projectUid) {
+    const projects = await dao.getAllData(undefined, {
+      uid: projectUid
+    });
+
+    this.mapProjectFields(projects[0])
+
+    return projects[0];
+  }
+
+  mapProjectFields(project) {
+    project.name = `${project.departmentName} - ${project.title}`;
+
+    project.projectFieldEntries.forEach(projectFieldEntry => {
+      project[projectFieldEntry.projectField.name] = projectFieldEntry.value
+    });
+  }
+
+  mapMilestoneFields(milestone, project) {
+    milestone.name = milestone.description;
+    milestone.hmgConfidence = project.hmgConfidence;
+
+    milestone.milestoneFieldEntries.forEach(milestoneFieldEntry => {
+      if (milestone.milestoneField.name === "category") {
+        milestone.categoryName = milestoneFieldEntry.value
+      } else {
+        milestone[milestoneFieldEntry.milestoneField.name] = milestoneFieldEntry.value
+      }
+    });
+  }
+
+  async getParentEntity(id) {
+    return Entity.findOne({
+      where: {
+        id
+      },
+    });
   }
 
   async constructEntityVisualisations() {
@@ -46,6 +95,28 @@ class VisualisationHelper {
         entityVisualisations[entityFieldEntry.categoryField.name] = entityFieldEntry.value;
       }, {});
       delete entityVisualisations.entityFieldEntries;
+    }
+
+    if (entityVisualisations.category.name.match(/^(Project|Milestone)$/)) {
+      let publicId = entityVisualisations.publicId;
+
+      if (entityVisualisations.category.name === 'Milestone') {
+        const parentEntity = await this.getParentEntity(entityVisualisations.parents[0].id);
+        publicId = parentEntity.publicId
+      }
+
+      const dao = new DAO({
+        sequelize: sequelize
+      });
+
+      entityVisualisations.project = await this.getProjectAndMilestones(dao, publicId)
+      entityVisualisations.canViewProject = await this.canAccessProject(dao, publicId)
+
+      if (entityVisualisations.category.name === 'Milestone') {
+        const milestone = entityVisualisations.project.milestones.find(milestone => milestone.uid === entityVisualisations.publicId)
+        this.mapMilestoneFields(milestone, entityVisualisations.project)
+        entityVisualisations.milestone = milestone;
+      }
     }
 
     return entityVisualisations;
