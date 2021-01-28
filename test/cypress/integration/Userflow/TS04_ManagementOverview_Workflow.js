@@ -18,7 +18,7 @@ describe("TS04_ManagementOverview_Workflow - 'Management and Overview' with 'Vie
   //Log into Dashboard 
   it("Can Login into Dashboard as an 'Management and Overview & Viewer' User", function () {
     //Add all role to user
-    cy.addroles("management,viewer,management_overview");
+    cy.addroles("all_data,management,viewer,management_overview");
     //Add departments to user
     cy.addDepartments(department);
     //Login

@@ -2,7 +2,7 @@ const config = Cypress.config();
 
 Cypress.Commands.add('createuser', () => {
   cy.fixture('login').then((data) => {
-    createuser(data.hashed_passphrase, data.secret).as('dbResultUserID');
+    createuser(data.hashed_passphrase).as('dbResultUserID');
   });
 });
 
@@ -68,13 +68,12 @@ Cypress.Commands.add('deletedepartment', ( departmentname) => {
   deletedepartment(config.username, departmentname).as('dbResultUserID');
 });
 
-function createuser(hashed_passphrase, secret) {
+function createuser(hashed_passphrase) {
   const query =
     `set @email = '${config.username}'  COLLATE utf8mb4_0900_ai_ci;
       INSERT INTO user (\`email\`, \`last_login_at\`, \`hashed_passphrase\`, \`role\`, \`login_attempts\`, \`must_change_password\`) 
       VALUES (@email, '2020-11-27 12:12:59', '${hashed_passphrase}', 'admin', '0', '0'); 
-      select id into @l_userid from user where email = @email; 
-      UPDATE user SET \`twofa_secret\` = '${secret}' WHERE (\`id\` = @l_userid);`;
+      select id into @l_userid from user where email = @email;`;
   return cy.task('queryDb', query);
 }
 
