@@ -58,8 +58,18 @@ module.exports = {
       }
     ]
   },
-  entry: [
-    path.resolve(__dirname, 'common/javascript/main.js'),
-    path.resolve(__dirname, 'common/scss/main.scss')
-  ]
+  entry: {
+    main: [
+      path.resolve(__dirname, 'common/javascript/main.js'),
+      path.resolve(__dirname, 'common/scss/main.scss')
+    ],
+    visualisations: [
+      path.resolve(__dirname, 'common/javascript/visualisations/index.js'),
+    ]
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
 };

@@ -43,18 +43,24 @@ class VisualisationHelper {
   }
 
   mapMilestoneFields(milestone, project) {
-    milestone.name = milestone.description;
-    milestone.hmgConfidence = project.hmgConfidence;
+    const milestoneFieldMap = {
+      name: milestone.description,
+      hmgConfidence: project.hmgConfidence,
+      deliveryConfidence: milestone.deliveryConfidence,
+      date: milestone.date,
+      complete: milestone.complete,
+      projectUid: milestone.projectUid
+    };
 
     milestone.milestoneFieldEntries.forEach(milestoneFieldEntry => {
       if (milestoneFieldEntry.milestoneField.name === "category") {
-        milestone.categoryName = milestoneFieldEntry.value
+        milestoneFieldMap.categoryName = milestoneFieldEntry.value
       } else {
-        milestone[milestoneFieldEntry.milestoneField.name] = milestoneFieldEntry.value
+        milestoneFieldMap[milestoneFieldEntry.milestoneField.name] = milestoneFieldEntry.value
       }
     });
 
-    return milestone;
+    return milestoneFieldMap;
   }
 
   async getParentEntity(id) {
@@ -118,8 +124,7 @@ class VisualisationHelper {
 
       if (entityVisualisations.category.name === 'Milestone') {
         const milestone = entityVisualisations.project.milestones.find(milestone => milestone.uid === entityVisualisations.publicId)
-        this.mapMilestoneFields(milestone, entityVisualisations.project)
-        entityVisualisations.milestone = milestone;
+        entityVisualisations.milestone = this.mapMilestoneFields(milestone, entityVisualisations.project)
       }
     }
 

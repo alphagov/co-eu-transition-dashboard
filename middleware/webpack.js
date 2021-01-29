@@ -68,11 +68,16 @@ const webpackSettings = () => {
         }
       ]
     },
-    entry: [
-      'webpack-hot-middleware/client',
-      path.resolve(__dirname, '..', 'common/javascript/main.js'),
-      path.resolve(__dirname, '..', 'common/scss/main.scss')
-    ]
+    entry: {
+      main: [
+        'webpack-hot-middleware/client',
+        path.resolve(__dirname, '..', 'common/javascript/main.js'),
+        path.resolve(__dirname, '..', 'common/scss/main.scss')
+      ],
+      visualisations: [
+        path.resolve(__dirname, '..', 'common/javascript/visualisations/index.js'),
+      ]
+    },
   };
 };
 

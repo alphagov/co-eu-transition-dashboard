@@ -1,13 +1,13 @@
-{% macro visualisations(entityVisualisations, selectedItem) %}
+{% macro visualisations(entityVisualisations) %}
 
   {# Once all entities have been assigned visualisation(s) the below IF statements should be able to be removed
   and only the FOR loop to include the visualisation templates should be required.
-  Further to this selectedItem should be able to be removed from this macro once the logic for projects & milestones is updated.
   #}
 
-  {% set isCommentOnlyMeasure = selectedItem.category and selectedItem.category.name === 'Measure' and selectedItem.commentsOnly == "Yes" %}
+  {% set isCommentOnlyMeasure = entityVisualisations.category and entityVisualisations.category.name === 'Measure' and entityVisualisations.commentsOnly == "Yes" %}
 
   <div class="visualisations">
+    <script type="text/javascript" src="/assets/visualisations.js"></script>
     {% if isCommentOnlyMeasure %}
       {% include "visualisations/commentOnlyMeasure.njk" %}
     {% elseif entityVisualisations and entityVisualisations.iframeUrl.error %}

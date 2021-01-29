@@ -39,17 +39,17 @@ const verticalLinePlugin = {
 
 const getColor = data => {
   let color;
-  switch(data.color) {
-  case 'red':
+  switch(data.deliveryConfidence) {
+  case 0:
     color = '#C21D03';
     break;
-  case 'amber':
+  case 1:
     color = '#FF7631';
     break;
-  case 'yellow':
+  case 2:
     color = '#FFDD00';
     break;
-  case 'green':
+  case 3:
     color = '#00B661';
     break;
   }

@@ -35,3 +35,7 @@
     <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', entityVisualisations.project.publicId | urlencode) }}">View Project</a>
   {% endif %}
 </div>
+
+<script>
+  DASHBOARDVISUALISATIONS.milestoneTimeline('milestone-timeline', {{ entityVisualisations.milestone | dump | safe }});
+</script>
