@@ -23,11 +23,10 @@ import './db_project'
 const dev = require('../../../config/development.json')
 
 const url = dev.serviceUrl;
-const config = Cypress.config();
 
 before(() => {
-  cy.deleteuser(config.username).as('dbResultUserID');
-  cy.createuser(config.username).as('dbResultUserID');
+  cy.deleteuser().as('dbResultUserID');
+  cy.createuser().as('dbResultUserID');
   cy.visit(url);
 });
 

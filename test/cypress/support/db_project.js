@@ -141,7 +141,7 @@ function getMissedMilestone(projUid,department,theme) {
     (p.department_name is not null and @department = 'All'))  
     and( (FIND_IN_SET(pfe.value, @theme) and @theme <> 'All') or
     (pfe.value is not null and @theme = 'All'))  
-    and compl.duedate < sysdate()
+    and compl.duedate < DATE_ADD(sysdate(), INTERVAL -1 DAY)
     and compl.Complete = 'No'
     and p.impact in(0,1)
     and pf.display_name ='Delivery Theme'

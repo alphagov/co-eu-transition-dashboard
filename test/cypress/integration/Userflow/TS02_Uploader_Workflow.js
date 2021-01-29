@@ -18,7 +18,7 @@ describe("TS02_Uploader_Workflow - 'Uploader' with 'Viewer' User role - Verify a
   //Log into Dashboard 
   it("Can Login into Dashboard as an 'Uploader & Viewer' User", function () {
     //Add all role to user
-    cy.addroles("uploader,viewer");
+    cy.addroles("all_data,uploader,viewer");
     //Add departments to user
     cy.addDepartments(department);
     //Login
