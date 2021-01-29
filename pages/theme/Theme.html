@@ -79,7 +79,7 @@
     {% if not data.visualisations %}
       <p class="govuk-body-s tableu-message">To view data of measures and metrics, select a data grouping or type</p>
     {% else %}
-      {{ visualisations(data.visualisations, data.selected) }}
+      {{ visualisations(data.visualisations) }}
     {% endif %}
 
   </div>
@@ -87,10 +87,4 @@
   </div>
 </div>
 
-{% endblock %}
-
-{% block afterScript %}
-  <script>
-    TRANSITIONDELIVERYDASHBOARD.milestoneTimeline('milestone-timeline', {{ data.selected | dump | safe }});
-  </script>
 {% endblock %}

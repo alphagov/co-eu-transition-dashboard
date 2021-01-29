@@ -10,15 +10,15 @@
 
 {% if completed %}
   <img src="/assets/images/completed-icon.png" class="rayg-img" alt=""/><p class="{{ style }}">COMPLETED</p>
-{% elseif color == 'red' %}
+{% elseif color == 'red' or color == 0 %}
     <img src="/assets/images/highrisk-icon.png" class="rayg-img" alt=""/><p class="{{ style }}">HIGH RISK</p>
-{% elseif color == 'amber' %}
+{% elseif color == 'amber' or color == 1 %}
     <img src="/assets/images/mediumrisk-icon.png" class="rayg-img" alt=""/><p class="{{ style }}">MEDIUM RISK</p>
-{% elseif color == 'yellow' %}
+{% elseif color == 'yellow' or color == 2 %}
     <img src="/assets/images/lowrisk-icon.png" class="rayg-img" alt=""/><p class="{{ style }}">LOW RISK</p>
-{% elseif color == 'green' %}
+{% elseif color == 'green' or color == 3 %}
     <img src="/assets/images/low-norisk-icon.png" class="rayg-img" alt=""/><p class="{{ style }}">MINIMAL/NO RISK</p>
-{% elseif color == 'grey' %}
+{% elseif color == 'grey' or color == '' %}
     <img src="/assets/images/unknownrisk-icon.png" class="rayg-img" alt=""/><p class="{{ style }}">UNASSIGNED RISK</p>
 {% endif %}
 </div>

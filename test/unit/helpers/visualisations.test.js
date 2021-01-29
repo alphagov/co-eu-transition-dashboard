@@ -155,4 +155,41 @@ describe('helpers/vizualisationHelper', () => {
       sinon.assert.calledOnce(getCategoryVisualisationSpy);
     });
   });
+
+  describe('#Project and Milestones', () => {
+    it('should call mapProjectFields', async () => {
+      const project = { departmentName: 'DIT', title: 'title', projectFieldEntries: [] };
+      const response = await visualisationHelper.mapProjectFields(project);
+      expect(response).to.eql({ departmentName: 'DIT', title: 'title', name: 'DIT - title', projectFieldEntries: [] });
+    });
+
+    it('should call mapMilestoneFields', async () => {
+      const project = { hmgConfidence: 0 };
+      const milestone = { description: 'desc', deliveryConfidence: 0, date: '01/01/2020', complete: 'yes', projectUid: 1, milestoneFieldEntries: [] };
+      const response = await visualisationHelper.mapMilestoneFields(milestone, project);
+      expect(response).to.eql({ name: 'desc', deliveryConfidence: 0, hmgConfidence: 0, date: '01/01/2020', complete: 'yes', projectUid: 1 });
+    });
+  });
+
+  describe('#getParentEntity', () => {
+    const entity =  { 
+      public_id: 1
+    }; 
+
+    beforeEach(()=>{
+      Entity.findOne.returns(entity);
+    });
+
+    it('returns parent entity ID', async ()=>{
+      const response = await visualisationHelper.getParentEntity(1);
+
+      sinon.assert.calledWith(Entity.findOne, {
+        where: {
+          id: 1
+        }
+      });
+
+      expect(response).to.deep.equal({ public_id: 1 })
+    })
+  })
 });
