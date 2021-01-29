@@ -38,6 +38,8 @@ class VisualisationHelper {
     project.projectFieldEntries.forEach(projectFieldEntry => {
       project[projectFieldEntry.projectField.name] = projectFieldEntry.value
     });
+
+    return project;
   }
 
   mapMilestoneFields(milestone, project) {
@@ -45,12 +47,14 @@ class VisualisationHelper {
     milestone.hmgConfidence = project.hmgConfidence;
 
     milestone.milestoneFieldEntries.forEach(milestoneFieldEntry => {
-      if (milestone.milestoneField.name === "category") {
+      if (milestoneFieldEntry.milestoneField.name === "category") {
         milestone.categoryName = milestoneFieldEntry.value
       } else {
         milestone[milestoneFieldEntry.milestoneField.name] = milestoneFieldEntry.value
       }
     });
+
+    return milestone;
   }
 
   async getParentEntity(id) {

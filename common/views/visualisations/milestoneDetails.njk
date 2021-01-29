@@ -1,28 +1,28 @@
-<div class="govuk-!-padding-left-2" id="project-information-{{ selectedItem.id }}">
-  <h3 class="govuk-heading-m">{{ selectedItem.name }}</h3>
-  {{ currentStatus(selectedItem.color, false, selectedItem.complete == "Yes") }}<br>
+<div class="govuk-!-padding-left-2" id="project-information-{{ entityVisualisations.milestone.id }}">
+  <h3 class="govuk-heading-m">{{ entityVisualisations.milestone.name }}</h3>
+  {{ currentStatus(entityVisualisations.milestone.hmgConfidence, false, entityVisualisations.milestone.complete == "Yes") }}<br>
 
   <ul class="govuk-list govuk-body-s">
     <li>
-      <strong>Project UID</strong>: {{ selectedItem.parents[0].publicId }}
+      <strong>Project UID</strong>: {{ entityVisualisations.project.publicId }}
     </li>
     <li>
-      <strong>Milestone UID</strong>: {{ selectedItem.publicId }}
+      <strong>Milestone UID</strong>: {{ entityVisualisations.milestone.publicId }}
     </li>
     <li>
-      <strong>Completed</strong>: {{ selectedItem.complete }}
+      <strong>Completed</strong>: {{ entityVisualisations.milestone.complete }}
     </li>
     <li>
-      <strong>Delivery Confidence</strong>: <span class="cell-color-{{ 'complete' if selectedItem.complete == "Yes" else selectedItem.deliveryConfidence }}">{{ selectedItem.deliveryConfidence }}</span>
+      <strong>Delivery Confidence</strong>: <span class="cell-color-{{ 'complete' if entityVisualisations.milestone.complete == "Yes" else entityVisualisations.milestone.deliveryConfidence }}">{{ entityVisualisations.milestone.deliveryConfidence }}</span>
     </li>
     <li>
-      <strong>Category</strong>: {{ selectedItem.categoryName }}
+      <strong>Category</strong>: {{ entityVisualisations.milestone.categoryName }}
     </li>
     <li>
-      <strong>Theme</strong>: {{ selectedItem.priorityTheme }}
+      <strong>Theme</strong>: {{ entityVisualisations.milestone.priorityTheme }}
     </li>
     <li>
-      <strong>Comment</strong>: {{ selectedItem.comments }}
+      <strong>Comment</strong>: {{ entityVisualisations.milestone.comments }}
     </li>
   </ul>
 
@@ -30,8 +30,8 @@
   <canvas id="milestone-timeline" aria-label="Milestone delivery timeline" role="img"></canvas>
 
   <br><br>
-  {% if (req.user.roles | includes(['management'])) and canAccessProject(selectedItem.parents[0].publicId) %}
-    <a class="govuk-link" href="{{ config.paths.milestoneDetails | replace(':uid', selectedItem.publicId | urlencode) }}">View Milestone</a> &nbsp;&nbsp;
-    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', selectedItem.parents[0].publicId | urlencode) }}">View Project</a>
+  {% if (req.user.roles | includes(['management'])) and entityVisualisations.canViewProject == 1 %}
+    <a class="govuk-link" href="{{ config.paths.milestoneDetails | replace(':uid', entityVisualisations.milestone.publicId | urlencode) }}">View Milestone</a> &nbsp;&nbsp;
+    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', entityVisualisations.project.publicId | urlencode) }}">View Project</a>
   {% endif %}
 </div>

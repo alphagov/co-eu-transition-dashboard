@@ -1,8 +1,8 @@
-<div class="govuk-!-padding-left-2 project-information" id="project-information-{{ selectedItem.id }}">
-  <h3 class="govuk-heading-m">{{ selectedItem.name }}</h3>
-  <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ selectedItem.hmgConfidence }}">{{ selectedItem.hmgConfidence }}</span></p>
-  <p class="govuk-body">{{ selectedItem.description }}</p>
-  {% if (req.user.roles | includes(['management'])) and showViewLinks %}
-    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', selectedItem.publicId | urlencode) }}">View project</a>
+<div class="govuk-!-padding-left-2 project-information" id="project-information-{{ entityVisualisations.project.id }}">
+  <h3 class="govuk-heading-m">{{ entityVisualisations.project.name }}</h3>
+  <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ entityVisualisations.project.hmgConfidence }}">{{ entityVisualisations.project.hmgConfidence }}</span></p>
+  <p class="govuk-body">{{ entityVisualisations.project.description }}</p>
+  {% if (req.user.roles | includes(['management'])) and entityVisualisations.canViewProject == 1 %}
+    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', entityVisualisations.project.publicId | urlencode) }}">View project</a>
   {% endif %}
 </div>
