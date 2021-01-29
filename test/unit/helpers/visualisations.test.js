@@ -165,9 +165,9 @@ describe('helpers/vizualisationHelper', () => {
 
     it('should call mapMilestoneFields', async () => {
       const project = { hmgConfidence: 0 };
-      const milestone = { description: 'desc', milestoneFieldEntries: [] };
+      const milestone = { description: 'desc', deliveryConfidence: 0, date: '01/01/2020', complete: 'yes', projectUid: 1, milestoneFieldEntries: [] };
       const response = await visualisationHelper.mapMilestoneFields(milestone, project);
-      expect(response).to.eql({ name: 'desc', description: 'desc', hmgConfidence: 0, milestoneFieldEntries: [] });
+      expect(response).to.eql({ name: 'desc', deliveryConfidence: 0, hmgConfidence: 0, date: '01/01/2020', complete: 'yes', projectUid: 1 });
     });
   });
 
