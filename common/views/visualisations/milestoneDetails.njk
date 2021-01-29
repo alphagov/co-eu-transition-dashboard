@@ -31,8 +31,8 @@
 
   <br><br>
   {% if (req.user.roles | includes(['management'])) and entityVisualisations.canViewProject == 1 %}
-    <a class="govuk-link" href="{{ config.paths.milestoneDetails | replace(':uid', entityVisualisations.milestone.publicId | urlencode) }}">View Milestone</a> &nbsp;&nbsp;
-    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', entityVisualisations.project.publicId | urlencode) }}">View Project</a>
+    <a class="govuk-link" href="{{ config.paths.milestoneDetails | replace(':uid', entityVisualisations.publicId | urlencode) }}">View Milestone</a> &nbsp;&nbsp;
+    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', entityVisualisations.project.uid | urlencode) }}">View Project</a>
   {% endif %}
 </div>
 

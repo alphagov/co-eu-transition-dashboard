@@ -3,6 +3,6 @@
   <p class="govuk-body">HMG Confidence: <span class="cell-color-{{ entityVisualisations.project.hmgConfidence }}">{{ entityVisualisations.project.hmgConfidence }}</span></p>
   <p class="govuk-body">{{ entityVisualisations.project.description }}</p>
   {% if (req.user.roles | includes(['management'])) and entityVisualisations.canViewProject == 1 %}
-    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', entityVisualisations.project.publicId | urlencode) }}">View project</a>
+    <a class="govuk-link" href="{{ config.paths.projectDetails | replace(':uid', entityVisualisations.publicId | urlencode) }}">View project</a>
   {% endif %}
 </div>
