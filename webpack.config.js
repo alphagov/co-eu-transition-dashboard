@@ -66,10 +66,5 @@ module.exports = {
     visualisations: [
       path.resolve(__dirname, 'common/javascript/visualisations/index.js'),
     ]
-  },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
-  },
+  }
 };
