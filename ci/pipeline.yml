@@ -14,12 +14,12 @@ resources:
       branch: staging
       uri: https://github.com/alphagov/co-eu-transition-dashboard.git
 
-  - name: co-eu-transition-dashboard-production
-    type: git
-    icon: git
-    source:
-      branch: production
-      uri: https://github.com/alphagov/co-eu-transition-dashboard.git
+#  - name: co-eu-transition-dashboard-production
+#    type: git
+#    icon: git
+#    source:
+#      branch: production
+#      uri: https://github.com/alphagov/co-eu-transition-dashboard.git
 
 jobs:
   - name: deploy-staging
@@ -86,22 +86,22 @@ jobs:
           params:
             APP_URL: https://transition-dashboard-staging.london.cloudapps.digital/login
 
-  - name: deploy-production
-    serial: true
-    plan:
-      - get: repo
-        resource: co-eu-transition-dashboard-production
-        trigger: true
-
-      - task: deploy
-        config:
-          <<: *deploy-config
-          params:
-            <<: *deploy-config-params
-            CF_SPACE: production
-
-      - task: smoke-test
-        config:
-          <<: *smoke-test-config
-          params:
-            APP_URL: https://transition-dashboard.london.cloudapps.digital/login
+#  - name: deploy-production
+#    serial: true
+#    plan:
+#      - get: repo
+#        resource: co-eu-transition-dashboard-production
+#        trigger: true
+#
+#      - task: deploy
+#        config:
+#          <<: *deploy-config
+#          params:
+#            <<: *deploy-config-params
+#            CF_SPACE: production
+#
+#      - task: smoke-test
+#        config:
+#          <<: *smoke-test-config
+#          params:
+#            APP_URL: https://transition-dashboard.london.cloudapps.digital/login
