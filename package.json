@@ -83,7 +83,7 @@
     "redis": "^3.0.2",
     "request-promise-native": "^1.0.9",
     "sass-loader": "^8.0.2",
-    "sequelize": "^5.22.3",
+    "sequelize": "^6.28.2",
     "speakeasy": "^2.0.0",
     "sprintf-js": "^1.1.2",
     "tar": "^6.0.5",
